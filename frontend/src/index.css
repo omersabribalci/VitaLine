@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  /* Ana Marka Renkleri */
+  --color-primary: #9c27b0; /* Ana butonlar, öne çıkan linkler */
+  --color-primary-hover: #7b1fa2;
+
+  /* Arka Plan ve Yüzey Renkleri */
+  --color-background: #f8fafc; /* Sayfa arka planı */
+  --color-surface: #ffffff; /* Kartlar, modallar */
+  --color-login: oklch(29.1% 0.149 302.717);
+
+  /* Metin Renkleri */
+  --color-text-main: #0f172a; /* Başlıklar ve ana metinler */
+  --color-text-muted: #64748b; /* Alt başlıklar, pasif yazılar */
+
+  /* Durum Renkleri (State) */
+  --color-danger: #ef4444; /* Hata mesajları, silme butonları */
+  --color-success: #22c55e; /* Başarılı bildirimleri */
+
+  --color-myBlackBg: #0a0f19;
+
+  --background-image-cardBg: linear-gradient(
+    0deg,
+    hsla(210, 78%, 59%, 0.5) 0%,
+    hsla(195, 85%, 51%, 0.5) 100%
+  );
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a.active {
+  color: rgb(0, 179, 235);
+}
+
+a.transitioning {
+  view-transition-name: my-transition;
+}
+
+.card {
+  @apply bg-cardBg rounded-2xl shadow-xl p-6;
+}

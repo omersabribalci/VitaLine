@@ -1,0 +1,183 @@
+import { Controller, useForm } from "react-hook-form";
+import { useUpdateDoctorMutation } from "../../store/services/doctorApi";
+import { useEffect, useState } from "react";
+import { parseISO } from "date-fns";
+import CustomDatePicker from "../UI/CustomDatePicker";
+import Button from "@mui/material/Button";
+import ConfirmationDialog from "../UI/ConfirmationDialog";
+import { toast } from "react-toastify";
+import type { ApiError, Doctor, DoctorSetHolidayFormData } from "../../types";
+
+const DoctorSetHoliday = ({
+  doctor,
+  doctorId,
+}: {
+  doctor: Doctor;
+  doctorId: string;
+}) => {
+  const [updateDoctor, { isLoading: isUpdating }] = useUpdateDoctorMutation();
+  const [showCancelHolidayDialog, setShowCancelHolidayDialog] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    getValues,
+    formState: { isSubmitting },
+  } = useForm<DoctorSetHolidayFormData>({
+    mode: "onSubmit",
+  });
+
+  useEffect(() => {
+    if (doctor) {
+      reset({
+        startDate: doctor.unavailableDates?.[0]?.start
+          ? parseISO(doctor.unavailableDates[0].start)
+          : null,
+        endDate: doctor.unavailableDates?.[0]?.end
+          ? parseISO(doctor.unavailableDates[0].end)
+          : null,
+      });
+    }
+  }, [doctor, reset]);
+
+  const onSubmit = async (data: DoctorSetHolidayFormData) => {
+    try {
+      console.log(data);
+
+      const id = doctorId;
+      const payload = {
+        id,
+        unavailableDates: [
+          {
+            start: data.startDate,
+            end: data.endDate,
+          },
+        ],
+      };
+      await updateDoctor(payload).unwrap();
+      toast.success("Doctor holiday added successfully!");
+    } catch (err) {
+      const error = err as ApiError;
+      console.error("Updating error:", error.data.message);
+    }
+  };
+
+  const cancelHoliday = async () => {
+    try {
+      const id = doctorId;
+      if (doctor.unavailableDates.length !== 0)
+        await updateDoctor({
+          id,
+          unavailableDates: [],
+        }).unwrap();
+      toast.success("Doctor holiday removed successfully!");
+      setShowCancelHolidayDialog(false);
+    } catch (err) {
+      const error = err as ApiError;
+      console.error("Cancel Holiday error:", error.data.message);
+    }
+  };
+
+  return (
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+      <h3 className="text-xl">Manage Holiday</h3>
+      <p className="text-sm text-gray-700">
+        Please pick the days you won’t be available for appointments. (End date
+        will be first working day.)
+      </p>
+      <div className="flex flex-row gap-4">
+        <div>
+          <Controller
+            name="startDate"
+            control={control}
+            defaultValue={null}
+            rules={{ required: "Start date is required" }}
+            render={({ field: { onChange, value } }) => (
+              <CustomDatePicker
+                label="Start Date"
+                onChange={onChange}
+                value={value}
+              />
+            )}
+          />
+          {errors?.startDate && (
+            <div className="text-red-500 text-xs font-medium mt-1 ml-1">
+              {errors.startDate.message}
+            </div>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="endDate"
+            control={control}
+            defaultValue={null}
+            rules={{
+              required: "End date is required",
+              validate: {
+                checkEndDateIsBigger: (value: Date | null) => {
+                  const startDate = getValues("startDate");
+                  if (!startDate || !value) {
+                    return "Both dates are required";
+                  }
+                  return (
+                    startDate < value ||
+                    "End Date must be later than Start Date."
+                  );
+                },
+              },
+            }}
+            render={({ field: { onChange, value } }) => (
+              <CustomDatePicker
+                label="End Date"
+                onChange={onChange}
+                value={value}
+              />
+            )}
+          />
+          {errors?.endDate && (
+            <div className="text-red-500 text-xs font-medium mt-1 ml-1">
+              {errors.endDate.message}
+            </div>
+          )}
+        </div>
+      </div>
+      <span className="w-full border-t border-white/0"></span>
+      <div className="flex flex-row gap-2">
+        <Button
+          type="submit"
+          variant="contained"
+          color="success"
+          loading={isUpdating || isSubmitting}
+        >
+          Save Changes
+        </Button>
+        <Button
+          type="button"
+          variant="contained"
+          color="error"
+          disabled={
+            isUpdating || isSubmitting || doctor.unavailableDates.length === 0
+          }
+          onClick={() => setShowCancelHolidayDialog(true)}
+        >
+          Remove Holiday
+        </Button>
+      </div>
+
+      <ConfirmationDialog
+        open={showCancelHolidayDialog}
+        onClose={() => setShowCancelHolidayDialog(false)}
+        onConfirm={cancelHoliday}
+        title="Cancel Holiday"
+        message="Are you sure you want to cancel holiday settings?"
+        confirmText="Remove Holiday"
+        confirmColor="error"
+        isLoading={isUpdating}
+      />
+    </form>
+  );
+};
+
+export default DoctorSetHoliday;

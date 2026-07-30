@@ -1,0 +1,234 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Ömer Sabri",
+      "email": "omer@vitaline.com",
+      "password": "Testadmin123",
+      "role": "admin"
+    },
+    {
+      "id": "COmNq3Y",
+      "name": "Adam Madam",
+      "email": "adam.madam@vitaline.com",
+      "password": "Testdoc123",
+      "role": "doctor"
+    },
+    {
+      "id": "NUBZANF",
+      "name": "Lina Koral",
+      "email": "lina.koral@vitaline.com",
+      "password": "Testdoc123",
+      "role": "doctor"
+    },
+    {
+      "id": "NEU001",
+      "name": "Elif Yıldız",
+      "email": "elif.yildiz@vitaline.com",
+      "password": "Testdoc123",
+      "role": "doctor"
+    },
+    {
+      "id": "DERM001",
+      "name": "Selin Kaya",
+      "email": "selin.kaya@vitaline.com",
+      "password": "Testdoc123",
+      "role": "doctor"
+    },
+    {
+      "id": "ORTH001",
+      "name": "Ali Mali",
+      "email": "ali.mali@vitaline.com",
+      "password": "Testdoc123",
+      "role": "doctor"
+    },
+    {
+      "id": "PED001",
+      "name": "Ayhan Öz",
+      "email": "Ayhan.oz@vitaline.com",
+      "password": "Testdo123",
+      "role": "doctor"
+    },
+    {
+      "id": "ONC001",
+      "name": "Gül Çetin",
+      "email": "gul.cetin@vitaline.com",
+      "password": "Testdoc123",
+      "role": "doctor"
+    },
+    {
+      "id": "END001",
+      "name": "Sevim Aksoy",
+      "email": "sevim.aksoy@vitaline.com",
+      "password": "Testdoc123",
+      "role": "doctor"
+    },
+    {
+      "id": "GAST001",
+      "name": "Nazlı Ergin",
+      "email": "nazli.ergin@vitaline.com",
+      "password": "Testdoc123",
+      "role": "doctor"
+    },
+    {
+      "id": "RAD001",
+      "name": "Melis Karaca",
+      "email": "melis.karaca@vitaline.com",
+      "password": "Testdoc123",
+      "role": "doctor"
+    },
+    {
+      "id": "j86JeBD",
+      "name": "Omer Sabri Balci",
+      "email": "omersabribalci@gmail.com",
+      "password": "Testpat123",
+      "role": "patient"
+    },
+    {
+      "id": "V1t8Kj9",
+      "name": "Joe Doe",
+      "email": "test@icloud.com",
+      "password": "Testpat123",
+      "role": "patient"
+    },
+    {
+      "id": "tvFNJgt",
+      "name": "Jonathon Silver",
+      "email": "j.silver@gmail.com",
+      "password": "Testpat123",
+      "role": "patient"
+    }
+  ],
+  "doctors": [
+    {
+      "id": "COmNq3Y",
+      "title": "Prof. Dr.",
+      "name": "Adam Madam",
+      "speciality": "Psychiatry",
+      "email": "adam.madam@vitaline.com",
+      "phone": "+90 555 111 22 33",
+      "image": "https://randomuser.me/api/portraits/men/57.jpg",
+      "availability": true,
+      "workingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+    },
+    {
+      "id": "NUBZANF",
+      "title": "Assoc. Prof.",
+      "name": "Lina Koral",
+      "speciality": "Cardiology",
+      "email": "lina.koral@vitaline.com",
+      "phone": "+90 555 222 33 44",
+      "image": "https://randomuser.me/api/portraits/women/87.jpg",
+      "availability": true,
+      "workingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+    },
+    {
+      "id": "NEU001",
+      "title": "Dr.",
+      "name": "Elif Yıldız",
+      "speciality": "Neurology",
+      "email": "elif.yildiz@vitaline.com",
+      "phone": "+90 555 333 44 55",
+      "image": "https://randomuser.me/api/portraits/women/12.jpg",
+      "availability": true,
+      "workingDays": ["Monday", "Wednesday", "Friday"]
+    },
+    {
+      "id": "DERM001",
+      "title": "Dr.",
+      "name": "Selin Kaya",
+      "speciality": "Dermatology",
+      "email": "selin.kaya@vitaline.com",
+      "phone": "+90 555 444 55 66",
+      "image": "https://randomuser.me/api/portraits/women/45.jpg",
+      "availability": true,
+      "workingDays": ["Tuesday", "Thursday"]
+    },
+    {
+      "id": "ORTH001",
+      "title": "Dr.",
+      "name": "Ali Mali",
+      "speciality": "Orthopedics",
+      "email": "ali.mali@vitaline.com",
+      "phone": "+90 555 555 66 77",
+      "image": "https://randomuser.me/api/portraits/men/32.jpg",
+      "availability": true,
+      "workingDays": ["Monday", "Thursday"]
+    },
+    {
+      "id": "PED001",
+      "title": "Dr.",
+      "name": "Ayhan Öz",
+      "speciality": "Pediatrics",
+      "email": "Ayhan.oz@vitaline.com",
+      "phone": "+90 555 666 77 88",
+      "image": "https://randomuser.me/api/portraits/men/33.jpg",
+      "availability": true,
+      "workingDays": ["Tuesday", "Friday"]
+    },
+    {
+      "id": "ONC001",
+      "title": "Dr.",
+      "name": "Gül Çetin",
+      "speciality": "Oncology",
+      "email": "gul.cetin@vitaline.com",
+      "phone": "+90 555 777 88 99",
+      "image": "https://randomuser.me/api/portraits/women/66.jpg",
+      "availability": true,
+      "workingDays": ["Monday", "Wednesday"]
+    },
+    {
+      "id": "END001",
+      "title": "Dr.",
+      "name": "Sevim Aksoy",
+      "speciality": "Endocrinology",
+      "email": "sevim.aksoy@vitaline.com",
+      "phone": "+90 555 888 99 00",
+      "image": "https://randomuser.me/api/portraits/women/77.jpg",
+      "availability": true,
+      "workingDays": ["Thursday", "Friday"]
+    },
+    {
+      "id": "GAST001",
+      "title": "Dr.",
+      "name": "Nazlı Ergin",
+      "speciality": "Gastroenterology",
+      "email": "nazli.ergin@vitaline.com",
+      "phone": "+90 555 999 00 11",
+      "image": "https://randomuser.me/api/portraits/women/88.jpg",
+      "availability": true,
+      "workingDays": ["Monday", "Tuesday"]
+    },
+    {
+      "id": "RAD001",
+      "title": "Dr.",
+      "name": "Melis Karaca",
+      "speciality": "Radiology",
+      "email": "melis.karaca@vitaline.com",
+      "phone": "+90 555 000 11 22",
+      "image": "https://randomuser.me/api/portraits/women/99.jpg",
+      "availability": true,
+      "workingDays": ["Wednesday", "Friday"]
+    }
+  ],
+  "patients": [
+    {
+      "id": "j86JeBD",
+      "name": "Omer Sabri Balci",
+      "email": "omersabribalci@gmail.com",
+      "phone": "05515529291"
+    },
+    {
+      "id": "V1t8Kj9",
+      "name": "Joe Doe",
+      "email": "test@icloud.com",
+      "phone": "1234568749456123"
+    },
+    {
+      "id": "tvFNJgt",
+      "name": "Jonathon Silver",
+      "email": "j.silver@gmail.com",
+      "phone": "12345678910"
+    }
+  ]
+}

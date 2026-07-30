@@ -1,0 +1,17 @@
+export const specialities = [
+  "Psychiatry",
+  "Cardiology",
+  "Neurology",
+  "Dermatology",
+  "Orthopedics",
+  "Pediatrics",
+  "Oncology",
+  "Endocrinology",
+  "Gastroenterology",
+  "Radiology",
+  "Internal Medicine",
+  "General Surgery",
+  "Ophthalmology",
+  "Otolaryngology",
+  "Obstetrics & Gynecology",
+];
