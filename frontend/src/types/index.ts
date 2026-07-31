@@ -162,13 +162,13 @@ export type ConfirmationDialogProps = {
   confirmText?: string;
   cancelText?: string;
   confirmColor?:
-  | "inherit"
-  | "primary"
-  | "secondary"
-  | "success"
-  | "error"
-  | "info"
-  | "warning";
+    | "inherit"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "error"
+    | "info"
+    | "warning";
   isLoading?: boolean;
 };
 
