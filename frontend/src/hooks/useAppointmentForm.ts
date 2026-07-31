@@ -13,7 +13,7 @@ export const useAppointmentForm = (
   speciality: string,
 ) => {
   const { id: patientId, name: patientName } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth as { id: string; name: string },
   );
 
   const navigate = useNavigate();
