@@ -6,6 +6,7 @@ const patientRouter = require("./routes/patientRoutes");
 const morganMiddleware = require("./middleware/morgan");
 const errorHandler = require("./middleware/errorHandler");
 const { corsOptions } = require("./config/corsOptions");
+const notFound = require("./middleware/notFound");
 const app = express();
 
 app.use(cors(corsOptions));
@@ -15,6 +16,8 @@ app.use(morganMiddleware);
 app.use("/api/appointments", appointmentRouter);
 app.use("/api/doctors", doctorRouter);
 app.use("/api/patients", patientRouter);
+
+app.use(notFound);
 
 app.use(errorHandler);
 

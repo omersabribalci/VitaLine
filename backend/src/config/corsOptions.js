@@ -1,8 +1,9 @@
 const AppError = require("../utils/AppError");
 
 const getOrigins = () => {
+  // TODO
   if (process.env.NODE_ENV === "production") {
-    return ["https://gercek-domain.com TODO"];
+    return ["https://gercek-domain.com "];
   }
 
   if (process.env.CORS_ORIGIN) {

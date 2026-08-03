@@ -4,7 +4,7 @@ import type { Doctor } from "../../types";
 export const doctorApi = createApi({
   reducerPath: "doctorApi",
   tagTypes: ["Doctor"],
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3001/" }),
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL }),
   endpoints: (builder) => ({
     getDoctors: builder.query<Doctor[], void>({
       query: () => "doctors",
@@ -23,7 +23,7 @@ export const doctorApi = createApi({
 
     addDoctor: builder.mutation({
       query: (newDoctor) => ({
-        url: `addDoctor`,
+        url: `doctors`,
         method: "POST",
         body: newDoctor,
       }),
@@ -32,7 +32,7 @@ export const doctorApi = createApi({
 
     updateDoctor: builder.mutation({
       query: ({ id, ...data }) => ({
-        url: `updateDoctor/${id}`,
+        url: `doctors/${id}`,
         method: "PATCH",
         body: data,
       }),
@@ -45,7 +45,7 @@ export const doctorApi = createApi({
 
     deleteDoctor: builder.mutation({
       query: (id) => ({
-        url: `deleteDoctor/${id}`,
+        url: `doctors/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Doctor"],

@@ -5,7 +5,7 @@ export const patientApi = createApi({
   reducerPath: "patientApi",
   tagTypes: ["Patient"],
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3001/",
+    baseUrl: import.meta.env.VITE_API_URL,
   }),
   endpoints: (builder) => ({
     getPatients: builder.query<Patient[], void>({
@@ -20,7 +20,7 @@ export const patientApi = createApi({
 
     updatePatient: builder.mutation({
       query: ({ id, ...data }) => ({
-        url: `updatePatient/${id}`,
+        url: `patients/${id}`,
         method: "PATCH",
         body: data,
       }),

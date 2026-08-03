@@ -4,11 +4,11 @@ import type { Appointment } from "../../types";
 export const appointmentApi = createApi({
   reducerPath: "appointmentApi",
   tagTypes: ["Appointment"],
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3001/" }),
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL }),
   endpoints: (builder) => ({
     newAppointment: builder.mutation({
       query: (newAppointment) => ({
-        url: "newAppointment",
+        url: "appointments",
         method: "POST",
         body: newAppointment,
       }),
@@ -37,7 +37,7 @@ export const appointmentApi = createApi({
 
     updateAppointment: builder.mutation({
       query: ({ id, ...data }) => ({
-        url: `updateAppointment/${id}`,
+        url: `appointments/${id}`,
         method: "PATCH",
         body: data,
       }),
