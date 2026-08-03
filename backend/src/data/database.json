@@ -598,7 +598,7 @@
       "patientName": "Jonathon Silver",
       "speciality": "Radiology",
       "dateAndTime": "2026-05-29T13:45",
-      "status": "canceled"
+      "status": "completed"
     },
     {
       "id": "app_1779237861671",
@@ -1388,6 +1388,36 @@
       "patientName": "Jonathon Silver",
       "speciality": "Radiology",
       "dateAndTime": "2026-08-29T13:45",
+      "status": "scheduled"
+    },
+    {
+      "id": "app_1785509151966",
+      "doctorId": "RAD001",
+      "doctorName": "Arzu Kanlı",
+      "patientId": "tvFNJgt",
+      "patientName": "Jonathon Silver",
+      "speciality": "Radiology",
+      "dateAndTime": "2027-08-29T13:45",
+      "status": "scheduled"
+    },
+    {
+      "id": "app_1785509211220",
+      "doctorId": "RAD001",
+      "doctorName": "Arzu Kanlı",
+      "patientId": "tvFNJgt",
+      "patientName": "Jonathon Silver",
+      "speciality": "Radiology",
+      "dateAndTime": "2027-08-29T13:45",
+      "status": "scheduled"
+    },
+    {
+      "id": "app_1785509220456",
+      "doctorId": "RAD001",
+      "doctorName": "Arzu Kanlı",
+      "patientId": "tvFNJgt",
+      "patientName": "Jonathon Silver",
+      "speciality": "Radiology",
+      "dateAndTime": "2028-08-29T13:45",
       "status": "scheduled"
     }
   ]

@@ -8,9 +8,7 @@ const {
 
 const router = express.Router();
 
-router.get("/", getAppointments);
-router.get("/:id", getAppointmentById);
-router.post("/", createAppointment);
-router.patch("/:id", updateAppointment);
+router.route("/").get(getAppointments).post(createAppointment);
+router.route("/:id").get(getAppointmentById).patch(updateAppointment);
 
 module.exports = router;
