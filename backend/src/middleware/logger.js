@@ -21,6 +21,7 @@ const logger = winston.createLogger({
       filename: path.join(__dirname, "..", "logs", "combined.log"),
       format: fileFormat,
     }),
+    new winston.transports.Console(),
   ],
 });
 
