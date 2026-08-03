@@ -1,6 +1,0 @@
-2026-08-03 09:03:22 [ERROR]: 404 - Appointment does not exist with this ID app_177923778571 - /api/appointments/app_177923778571 - GET
-2026-08-03 09:07:51 [ERROR]: 404 - Appointment does not exist with this ID app_177923778571 - /api/appointments/app_177923778571 - GET
-2026-08-03 09:16:02 [ERROR]: 404 - Appointment does not exist with this ID app_177923778571 - /api/appointments/app_177923778571 - GET
-2026-08-03 10:55:42 [ERROR]: 403 - CORS Politikası: Bu origin için erişim izni bulunmuyor. - /api/appointments - GET
-2026-08-03 15:51:49 [ERROR]: 404 - Route not found: /api/appointmentss - /api/appointmentss - GET
-2026-08-03 15:54:47 [ERROR]: 404 - Route not found: /api/auth/login - /api/auth/login - POST
