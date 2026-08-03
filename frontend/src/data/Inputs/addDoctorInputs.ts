@@ -14,8 +14,8 @@ export const addDoctorInputs = [
     rules: {
       required: "Name is required.",
       minLength: {
-        value: 2,
-        message: "Name must be at least 2 characters",
+        value: 3,
+        message: "Name must be at least 3 characters",
       },
       maxLength: {
         value: 30,
