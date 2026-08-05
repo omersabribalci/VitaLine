@@ -1,64 +1,138 @@
+const mongoose = require("mongoose");
 const AppError = require("../utils/AppError");
-const readFile = require("../utils/readFile");
-const writeFile = require("../utils/writeFile");
+const Appointment = require("../models/Appointment");
+const sendSuccessResponse = require("../utils/sendSuccessResponse");
+const Doctor = require("../models/Doctor");
+const Patient = require("../models/Patient");
 
-const getAppointments = (req, res, next) => {
-  const data = readFile();
-  let appointments = data.appointments;
+const getAppointments = async (req, res, next) => {
+  try {
+    const filter = {};
 
-  if (req.query.doctorId) {
-    appointments = appointments.filter(
-      (app) => app.doctorId === req.query.doctorId,
-    );
+    if (req.query.doctorId) {
+      filter.doctorId = req.query.doctorId;
+    }
+
+    if (req.query.patientId) {
+      filter.patientId = req.query.patientId;
+    }
+
+    const appointments = await Appointment.find(filter)
+      .sort({ dateAndTime: 1 })
+      .lean();
+
+    return sendSuccessResponse(res, 200, appointments);
+  } catch (error) {
+    next(error);
   }
-
-  if (req.query.patientId) {
-    appointments = appointments.filter(
-      (app) => app.patientId === req.query.patientId,
-    );
-  }
-
-  return res.json(appointments);
 };
 
-const getAppointmentById = (req, res, next) => {
-  const data = readFile();
-  const appointments = data.appointments;
-  const id = req.params.id;
-  const appointment = appointments.find((app) => app.id === id);
+const getAppointmentById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
-  if (!appointment) {
-    return next(
-      new AppError(`Appointment does not exist with this ID ${id}`, 404),
-    );
+    if (!mongoose.isValidObjectId(id)) {
+      return next(new AppError(`Invalid id format! ${id}`, 400));
+    }
+
+    const appointment = await Appointment.findById(id).lean();
+
+    if (!appointment) {
+      return next(
+        new AppError(`Appointment does not exist with this ID -> ${id}`, 404),
+      );
+    }
+    return sendSuccessResponse(res, 200, appointment);
+  } catch (error) {
+    next(error);
   }
-
-  return res.json(appointment);
 };
 
-const createAppointment = (req, res, next) => {
-  // TODO validation
-  const data = readFile();
-  const id = `app_${Date.now()}`;
-  const newAppointment = {
-    id,
-    ...req.body,
-  };
-  data.appointments.push(newAppointment);
-  writeFile(data);
-  res.status(201).json(newAppointment);
+const createAppointment = async (req, res, next) => {
+  try {
+    // TODO - İlerde model içindeki validate olarak yaz
+
+    const { doctorId, patientId } = req.body;
+
+    const [doctor, patient] = await Promise.all([
+      Doctor.findById(req.body.doctorId),
+      Patient.findById(req.body.patientId),
+    ]);
+
+    if (!doctor) return next(new AppError("Doctor could not be found!", 400));
+
+    if (!patient) return next(new AppError("Patient could not be found!", 400));
+
+    //
+
+    const appointment = await Appointment.create(req.body);
+
+    return sendSuccessResponse(
+      res,
+      201,
+      appointment,
+      "Appointment created successfully!",
+    );
+  } catch (error) {
+    next(error);
+  }
 };
 
-const updateAppointment = (req, res) => {
-  // TODO validation
-  const data = readFile();
-  const appointments = data.appointments;
-  const id = req.params.id;
-  const appInd = appointments.findIndex((app) => app.id === id);
+const updateAppointment = async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
-  data.appointments[appInd] = { ...data.appointments[appInd], ...req.body };
-  writeFile(data);
-  res.json(data.appointments[appInd]);
+    if (!mongoose.isValidObjectId(id)) {
+      return next(new AppError(`Invalid id format! -> ${id}`, 400));
+    }
+
+    const appointment = await Appointment.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!appointment) {
+      return next(
+        new AppError(`Appointment does not exist with this ID -> ${id}`, 404),
+      );
+    }
+
+    return sendSuccessResponse(
+      res,
+      200,
+      appointment,
+      "Appointment updated successfully!",
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteAppointment = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return next(new AppError(`Invalid id format! -> ${id}`, 400));
+    }
+
+    const appointment = await Appointment.findByIdAndDelete(id);
+
+    if (!appointment) {
+      return next(
+        new AppError(`Appointment does not exist with this ID -> ${id}`, 404),
+      );
+    }
+
+    return sendSuccessResponse(
+      res,
+      200,
+      appointment,
+      "Appointment is deleted successfully!",
+    );
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
@@ -66,4 +140,5 @@ module.exports = {
   getAppointmentById,
   createAppointment,
   updateAppointment,
+  deleteAppointment,
 };
