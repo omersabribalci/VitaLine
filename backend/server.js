@@ -13,7 +13,7 @@ const startServer = async () => {
       logger.info(`Server is running on port ${PORT}`);
     });
   } catch (error) {
-    logger.error("Failed to start the application.", error.message);
+    logger.error(`Failed to start the application: ${error.message}`);
     process.exit(1);
   }
 };

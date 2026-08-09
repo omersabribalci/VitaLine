@@ -4,8 +4,9 @@ const logger = require("../middleware/logger");
 const connectDatabase = async () => {
   const mongoUri = process.env.MONGODB_URI;
 
-  if (!mongoUri)
+  if (!mongoUri) {
     throw new Error("The MONGODB_URI environment variable is not defined.");
+  }
 
   await mongoose.connect(mongoUri);
 

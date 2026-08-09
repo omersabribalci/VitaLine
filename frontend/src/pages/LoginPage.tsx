@@ -17,7 +17,7 @@ const LoginPage = () => {
     (state: RootState) => state.auth,
   );
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const {
     register,
@@ -35,13 +35,13 @@ const LoginPage = () => {
       toast.success(`Welcome, ${userData.user.name}`);
       reset();
 
-      if (userData.user.role === "admin") {
+      /* if (userData.user.role === "admin") {
         navigate("/admin");
       } else if (userData.user.role === "doctor") {
         navigate("/doctor");
       } else {
         navigate("/patient");
-      }
+      } */
     } catch (err) {
       const error = err as ApiError;
       console.error("Login error:", error.data.message);

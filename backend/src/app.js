@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const authRouter = require("./routes/authRoutes");
 const appointmentRouter = require("./routes/appointmentRoutes");
 const doctorRouter = require("./routes/doctorRoutes");
 const patientRouter = require("./routes/patientRoutes");
@@ -13,6 +14,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morganMiddleware);
 
+app.use("/api/auth", authRouter);
 app.use("/api/appointments", appointmentRouter);
 app.use("/api/doctors", doctorRouter);
 app.use("/api/patients", patientRouter);

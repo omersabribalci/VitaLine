@@ -12,6 +12,10 @@ const PatientSchema = new mongoose.Schema(
       enum: ["enabled", "disabled"],
       default: "enabled",
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
