@@ -24,6 +24,10 @@ const DoctorSchema = new mongoose.Schema(
     unavailableDates: {
       type: [Date], // TODO
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

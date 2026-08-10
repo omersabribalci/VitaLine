@@ -1,9 +1,16 @@
 const express = require("express");
-const registerPatient = require("../controllers/authController");
+const {
+  registerPatient,
+  login,
+  refresh,
+  logout,
+} = require("../controllers/authController");
 
 const router = express.Router();
 
 router.post("/register", registerPatient);
-//router.route("/login", loginUser);
+router.post("/login", login);
+router.post("/refresh", refresh);
+router.post("/logout", logout);
 
 module.exports = router;

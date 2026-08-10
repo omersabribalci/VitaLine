@@ -6,8 +6,11 @@ const {
   updateAppointment,
   deleteAppointment,
 } = require("../controllers/appointmentController");
+const verifyToken = require("../middleware/auth");
 
 const router = express.Router();
+
+router.use(verifyToken);
 
 router.route("/").get(getAppointments).post(createAppointment);
 router

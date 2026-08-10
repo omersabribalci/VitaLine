@@ -235,3 +235,9 @@ export interface FormInputProps {
   register: UseFormRegister<any>;
   errors?: FieldErrors<any>;
 }
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}

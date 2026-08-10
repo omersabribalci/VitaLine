@@ -9,10 +9,12 @@ const errorHandler = require("./middleware/errorHandler");
 const { corsOptions } = require("./config/corsOptions");
 const notFound = require("./middleware/notFound");
 const app = express();
+const cookieParser = require("cookie-parser");
 
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morganMiddleware);
+app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/appointments", appointmentRouter);

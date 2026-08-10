@@ -41,11 +41,17 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       required: [true, "Phone number is required."],
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
   },
 );
+
+// document middleware, password hashleme user.create/update'den önce
 
 UserSchema.pre("save", async function () {
   if (!this.isModified("password")) return;

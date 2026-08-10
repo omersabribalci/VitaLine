@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { Appointment } from "../../types";
+import type { ApiResponse, Appointment } from "../../types";
 
 export const appointmentApi = createApi({
   reducerPath: "appointmentApi",
@@ -18,6 +18,9 @@ export const appointmentApi = createApi({
     getAllAppointments: builder.query<Appointment[], void>({
       query: () => "appointments",
       providesTags: ["Appointment"],
+      transformResponse: (response: ApiResponse<Appointment[]>) => {
+        return response.data;
+      },
     }),
 
     getAppointmentsByDoctorId: builder.query({

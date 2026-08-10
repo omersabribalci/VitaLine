@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { ApiResponse, CredentialsPayload } from "../../types";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -10,6 +11,9 @@ export const authApi = createApi({
         method: "POST",
         body: credentials,
       }),
+      transformResponse: (response: ApiResponse<CredentialsPayload>) => {
+        return response.data;
+      },
     }),
     signup: builder.mutation({
       query: (registerInfos) => ({
@@ -17,6 +21,9 @@ export const authApi = createApi({
         method: "POST",
         body: registerInfos,
       }),
+      transformResponse: (response: ApiResponse<unknown>) => {
+        return response.data;
+      },
     }),
   }),
 });
