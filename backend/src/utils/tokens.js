@@ -47,7 +47,7 @@ function setRefreshCookie(res, refreshToken) {
     httpOnly: true,
     secure: isProd,
     sameSite: "strict",
-    path: "/api/auth/refresh",
+    path: "/api/auth",
     maxAge: REFRESH_TTL_SEC * 1000,
   });
 }

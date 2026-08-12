@@ -15,7 +15,7 @@ const {
   hashToken,
   rotateRefreshToken,
 } = require("../utils/tokens");
-const refreshToken = require("../models/RefreshToken");
+const RefreshToken = require("../models/RefreshToken");
 
 const registerPatient = async (req, res, next) => {
   // TODO validation
@@ -113,9 +113,7 @@ const refresh = async (req, res, next) => {
     try {
       decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
     } catch (err) {
-      return res
-        .status(401)
-        .json({ message: "Invalid or expired refresh token" });
+      return next(new AppError("Invalid or expired refresh token", 401));
     }
 
     const tokenHash = hashToken(token);
@@ -128,7 +126,14 @@ const refresh = async (req, res, next) => {
       return res.status(401).json({ message: "Refresh token not recognized" });
     }
     if (doc.revokedAt) {
-      return res.status(401).json({ message: "Refresh token revoked" });
+      // TEHLİKE! İptal edilmiş token tekrar kullanılıyor. Kullanıcının tüm oturumlarını kapat!
+      await RefreshToken.updateMany(
+        { user: decoded.id, revokedAt: null }, // Kullanıcının tüm geçerli tokenları
+        { $set: { revokedAt: new Date() } },
+      );
+      return res.status(401).json({
+        message: "Token reuse detected! All sessions terminated for security.",
+      });
     }
     if (doc.expiresAt < new Date()) {
       return res.status(401).json({ message: "Refresh token expired" });
@@ -146,13 +151,19 @@ const logout = async (req, res, next) => {
     const token = req.cookies?.refresh_token;
     if (token) {
       const tokenHash = hashToken(token);
-      const doc = await refreshToken.findOne({ tokenHash });
+      const doc = await RefreshToken.findOne({ tokenHash });
       if (doc && !doc.revokedAt) {
         doc.revokedAt = new Date();
         await doc.save();
       }
     }
-    res.clearCookie("refresh_token", { path: "/api/auth/refresh" });
+    const isProd = process.env.NODE_ENV === "production";
+    res.clearCookie("refresh_token", {
+      path: "/api/auth",
+      httpOnly: true,
+      secure: isProd,
+      sameSite: "strict",
+    });
     res.json({ message: "Logged out" });
   } catch (err) {
     next(err);

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const refreshTokenSchema = new mongoose.Schema({
+const RefreshTokenSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
   tokenHash: { type: String, required: true, unique: true },
   jti: { type: String, required: true, index: true },
@@ -12,4 +12,7 @@ const refreshTokenSchema = new mongoose.Schema({
   userAgent: String,
 });
 
-module.exports = mongoose.model("RefreshToken", refreshTokenSchema);
+// expiresAt tarihi geldiği an MongoDB bu kaydı veritabanından OTOMATİK siler
+RefreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
+module.exports = mongoose.model("RefreshToken", RefreshTokenSchema);

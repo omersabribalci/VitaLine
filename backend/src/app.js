@@ -11,6 +11,8 @@ const notFound = require("./middleware/notFound");
 const app = express();
 const cookieParser = require("cookie-parser");
 
+app.set("trust proxy", 1); // ????
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morganMiddleware);
