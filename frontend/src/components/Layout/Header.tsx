@@ -4,22 +4,35 @@ import { logOut } from "../../store/slices/authSlice";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Avatar from "@mui/material/Avatar";
 import type { RootState } from "../../store/store";
+import { useLogoutMutation } from "../../store/services/authApi";
 
 const Header = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.auth);
+  const [logoutApi] = useLogoutMutation();
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  const handleLogout = async () => {
+    try {
+      await logoutApi().unwrap();
+    } catch (err) {
+      console.error("Backend logout failed:", err);
+    } finally {
+      dispatch(logOut());
+    }
+  };
+
   return (
     <header className="p-4 flex flex-row items-center justify-between">
       <h1 className="hidden md:block text-2xl text-gray-800 font-semibold flex-1">
-        Hello, {user.name}
+        Hello, {user?.name}
       </h1>
 
       <div className="flex flex-row items-center gap-2 pr-2">
         <Avatar
-          src={user.image ?? undefined}
+          //src={user?.image ?? undefined}
           className="w-10 h-10 rounded-full object-cover"
         />
-        <span>{user.name}</span>
+        <span>{user?.name}</span>
       </div>
       <Button
         sx={{
@@ -29,9 +42,7 @@ const Header = () => {
           borderRadius: "50%",
           color: "white",
         }}
-        onClick={() => {
-          dispatch(logOut());
-        }}
+        onClick={handleLogout}
         variant="text"
       >
         <LogoutIcon className="p-0 m-0" />

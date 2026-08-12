@@ -7,12 +7,12 @@ import icon from "../../assets/icon.png";
 import type { RootState } from "../../store/store";
 
 const SideBar = () => {
-  const { role } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const navigation =
-    role === "admin"
+    user?.role === "admin"
       ? adminNavigation
-      : role === "doctor"
+      : user?.role === "doctor"
         ? doctorNavigation
         : patientNavigation;
   return (

@@ -4,7 +4,7 @@ import type { RootState } from "../store/store";
 import type { ProtectedRouteProps } from "../types";
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const { role, isAuthenticated } = useSelector(
+  const { user, isAuthenticated } = useSelector(
     (state: RootState) => state.auth,
   );
 
@@ -12,7 +12,7 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
     return <Navigate to="/login" replace />; // replace "Geri" tuşuna basıp tekrar korumalı sayfaya düşmemesi için.
   }
 
-  if (!role || !allowedRoles.includes(role)) {
+  if (!user?.role || !allowedRoles.includes(user?.role)) {
     return <Navigate to="/" replace />;
   }
 

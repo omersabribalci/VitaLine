@@ -99,10 +99,18 @@ const login = async (req, res, next) => {
 
     setRefreshCookie(res, refreshToken); // tokenı cookie olarak yollama
 
+    const userData = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+    };
+
     return sendSuccessResponse(
       res,
       200,
-      { token: accessToken },
+      { token: accessToken, user: userData },
       "Logged in successfully!",
     );
 

@@ -27,7 +27,7 @@ const RegisterPage = () => {
       navigate("/login");
     } catch (err) {
       const error = err as ApiError;
-      console.error("Login error:", error.data.message);
+      console.error("Register error:", error.data.message);
     }
   };
 

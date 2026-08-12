@@ -7,9 +7,9 @@ import type { RootState } from "../../store/store";
 import Error from "../../components/UI/Error";
 
 const DoctorManagement = () => {
-  const { id: doctorId } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
 
-  if (!doctorId) {
+  if (!user?._id) {
     return <NotFound role="Doctor" />;
   }
 
@@ -19,7 +19,7 @@ const DoctorManagement = () => {
     error,
     refetch,
     isFetching,
-  } = useGetDoctorByIdQuery(doctorId);
+  } = useGetDoctorByIdQuery(user._id);
 
   if (isLoading) return <Loading />;
   if (error) {

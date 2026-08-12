@@ -13,12 +13,11 @@ import type { ApiError, LoginFormData } from "../types";
 
 const LoginPage = () => {
   const [login, { isLoading: isLoggingIn, error }] = useLoginMutation();
-  const { role, isAuthenticated } = useSelector(
+  const { isAuthenticated, user } = useSelector(
     (state: RootState) => state.auth,
   );
   const dispatch = useDispatch();
-  //const navigate = useNavigate();
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -30,18 +29,18 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const userData = await login(data).unwrap();
-      dispatch(setCredentials(userData));
-      toast.success(`Welcome, ${userData.user.name}`);
+      const res = await login(data).unwrap();
+      dispatch(setCredentials(res));
+      toast.success(`Welcome, ${res.user.name}`);
       reset();
 
-      /* if (userData.user.role === "admin") {
-        navigate("/admin");
-      } else if (userData.user.role === "doctor") {
-        navigate("/doctor");
-      } else {
-        navigate("/patient");
-      } */
+      if (res.user.role === "admin") {
+        navigate("/admin", { replace: true });
+      } else if (res.user.role === "doctor") {
+        navigate("/doctor", { replace: true });
+      } else if (res.user.role === "patient") {
+        navigate("/patient", { replace: true });
+      }
     } catch (err) {
       const error = err as ApiError;
       console.error("Login error:", error.data.message);
@@ -49,9 +48,9 @@ const LoginPage = () => {
   };
 
   if (isAuthenticated) {
-    if (role === "admin") return <Navigate to="/admin" replace />;
-    if (role === "doctor") return <Navigate to="/doctor" replace />;
-    if (role === "patient") return <Navigate to="/patient" replace />;
+    if (user?.role === "admin") return <Navigate to="/admin" replace />;
+    if (user?.role === "doctor") return <Navigate to="/doctor" replace />;
+    if (user?.role === "patient") return <Navigate to="/patient" replace />;
   }
 
   let errMsg = "";

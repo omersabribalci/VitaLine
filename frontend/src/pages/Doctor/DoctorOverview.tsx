@@ -7,7 +7,7 @@ import DoctorDetails from "../../components/Doctor/DoctorDetails";
 import type { RootState } from "../../store/store";
 
 const DoctorOverview = () => {
-  const { id } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const {
     data: doctor,
@@ -15,7 +15,7 @@ const DoctorOverview = () => {
     error,
     refetch,
     isFetching,
-  } = useGetDoctorByIdQuery(id);
+  } = useGetDoctorByIdQuery(user?._id);
 
   if (isLoading) {
     return <Loading />;

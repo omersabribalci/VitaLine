@@ -7,14 +7,14 @@ import Error from "../../components/UI/Error";
 import type { RootState } from "../../store/store";
 
 const DoctorAppointments = () => {
-  const { id: doctorId } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const {
     data: appointments,
     isLoading,
     error,
     refetch,
     isFetching,
-  } = useGetAppointmentsByDoctorIdQuery(doctorId);
+  } = useGetAppointmentsByDoctorIdQuery(user?._id);
 
   if (isLoading) {
     return <Loading />;

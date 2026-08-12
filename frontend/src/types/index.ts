@@ -8,23 +8,25 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
+export type Role = "admin" | "doctor" | "patient";
+
 export type User = {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: Role;
+};
+
+export type AuthState = {
   token: string | null;
   isAuthenticated: boolean;
-  role: string | null;
-  id: string | null;
-  name: string | null;
-  image: string | null;
+  user: User | null;
 };
 
 export type CredentialsPayload = {
-  token: string | null;
-  user: {
-    role: string | null;
-    id: string | null;
-    name: string | null;
-    image: string | null;
-  };
+  accessToken: string;
+  user: User;
 };
 
 export type LoginFormData = {
@@ -36,6 +38,11 @@ export type ApiError = {
   data: {
     message: string;
   };
+};
+
+export type LoginData = {
+  token: string;
+  user: User;
 };
 
 export type ProtectedRouteProps = {
@@ -55,34 +62,36 @@ type dateRange = {
   end: string;
 };
 
+export type DoctorTitle =
+  | "Dr."
+  | "Ast. Dr."
+  | "Uzm. Dr."
+  | "Op. Dr."
+  | "Doç. Dr."
+  | "Prof. Dr.";
+
 export interface Doctor {
-  id: string;
-  title: string;
-  name: string;
+  _id: string;
+  userId: User;
+  title: DoctorTitle;
   speciality: string;
-  email: string;
-  phone: string;
   image: string;
   unavailableDates: dateRange[];
 }
 
+export type AccountStatus = "enabled" | "disabled";
 export interface Patient {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  accountStatus: string;
+  _id: string;
+  userId: User;
+  accountStatus: AccountStatus;
 }
-
+export type AppointmentStatus = "scheduled" | "completed" | "cancelled";
 export interface Appointment {
-  id: string;
-  doctorId: string;
-  doctorName: string;
+  _id: string;
+  doctorId: Doctor;
   patientId: string;
-  patientName: string;
-  speciality: string;
   dateAndTime: string;
-  status: string;
+  status: AppointmentStatus;
 }
 
 export type TableProps<
