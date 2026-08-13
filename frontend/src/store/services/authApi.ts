@@ -1,22 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ApiResponse, LoginData, LoginFormData } from "../../types";
-import type { RootState } from "../store";
+import { baseQuery } from "./baseQuery";
 
 export const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_URL,
-    credentials: "include",
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      console.log("Header için alınan token:", token);
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-
-      return headers;
-    },
-  }),
+  baseQuery,
   endpoints: (builder) => ({
     login: builder.mutation<LoginData, LoginFormData>({
       query: (credentials) => ({
@@ -42,7 +30,6 @@ export const authApi = createApi({
       query: () => ({
         url: "auth/refresh",
         method: "POST",
-        credentials: "include", // Cookie'lerin tarayıcı tarafından gönderilmesi için.
       }),
       transformResponse: (response: ApiResponse<{ token: string }>) => {
         return response.data;

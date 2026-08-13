@@ -1,12 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { Patient } from "../../types";
-
+import { baseQuery } from "./baseQuery";
 export const patientApi = createApi({
   reducerPath: "patientApi",
   tagTypes: ["Patient"],
-  baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_URL,
-  }),
+  baseQuery,
   endpoints: (builder) => ({
     getPatients: builder.query<Patient[], void>({
       query: () => "patients",

@@ -22,6 +22,7 @@ export type AuthState = {
   token: string | null;
   isAuthenticated: boolean;
   user: User | null;
+  isInitialized: boolean;
 };
 
 export type CredentialsPayload = {

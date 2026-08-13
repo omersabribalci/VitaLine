@@ -1,10 +1,11 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ApiResponse, Appointment } from "../../types";
+import { baseQuery } from "./baseQuery";
 
 export const appointmentApi = createApi({
   reducerPath: "appointmentApi",
   tagTypes: ["Appointment"],
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL }),
+  baseQuery,
   endpoints: (builder) => ({
     newAppointment: builder.mutation({
       query: (newAppointment) => ({

@@ -7,8 +7,9 @@ const userFromStorage: User | null = JSON.parse(
 
 const initialState: AuthState = {
   token: null,
-  isAuthenticated: !!userFromStorage,
+  isAuthenticated: false,
   user: userFromStorage,
+  isInitialized: false,
 };
 
 export const authSlice = createSlice({
@@ -18,6 +19,7 @@ export const authSlice = createSlice({
     setCredentials: (state, action: PayloadAction<LoginData>) => {
       state.token = action.payload.token;
       state.isAuthenticated = true;
+      state.isInitialized = true;
       state.user = action.payload.user;
 
       if (action.payload.user) {
@@ -29,12 +31,15 @@ export const authSlice = createSlice({
     // F5 atıldıktan sonra arka planda token yenilenirse state'e basmak için ???
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
+      state.isAuthenticated = true;
+      state.isInitialized = true;
     },
 
     logOut: (state) => {
       state.token = null;
       state.isAuthenticated = false;
       state.user = null;
+      state.isInitialized = true;
 
       localStorage.removeItem("user");
     },
