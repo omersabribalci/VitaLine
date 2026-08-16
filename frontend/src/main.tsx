@@ -3,11 +3,9 @@ import "./index.css";
 import App from "./App.tsx";
 import { Provider as ReduxProvider } from "react-redux";
 import store from "./store/store.ts";
-import { StrictMode } from "react";
+
 createRoot(document.getElementById("root")!).render(
   <ReduxProvider store={store}>
-    <StrictMode>
-      <App />
-    </StrictMode>
+    <App />
   </ReduxProvider>,
 );

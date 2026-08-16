@@ -14,6 +14,7 @@ const {
   setRefreshCookie,
   hashToken,
   rotateRefreshToken,
+  REFRESH_GRACE_MS,
 } = require("../utils/tokens");
 const RefreshToken = require("../models/RefreshToken");
 
@@ -163,6 +164,41 @@ const refresh = async (req, res, next) => {
     // Sistem durumu "Güvenlik İhlali" olarak değerlendirir ve o kullanıcının veritabanındaki tüm aktif oturumlarını tek sorguyla (updateMany) iptal eder.
 
     if (doc.revokedAt) {
+      // --- ÖNCE: Grace period kontrolü (masum senaryo mu?) ---
+      const elapsed = Date.now() - doc.revokedAt.getTime();
+
+      if (elapsed <= REFRESH_GRACE_MS && doc.replacedBy) {
+        const currentDoc = await RefreshToken.findOne({
+          jti: doc.replacedBy,
+        }).populate("user");
+
+        if (currentDoc && !currentDoc.revokedAt) {
+          const accessToken = signAccessToken(currentDoc.user);
+
+          const currentRefreshToken = signRefreshToken(
+            currentDoc.user,
+            currentDoc.jti,
+          );
+          const newTokenHash = hashToken(currentRefreshToken);
+
+          currentDoc.tokenHash = newTokenHash;
+          await currentDoc.save();
+
+          setRefreshCookie(res, currentRefreshToken);
+
+          const plainUser = currentDoc.user.toObject();
+          delete plainUser.password;
+          return sendSuccessResponse(
+            res,
+            200,
+            { token: accessToken, user: plainUser },
+            "Token refreshed successfully!",
+          );
+        }
+      }
+
+      // --- Tolerans dışı ya da zincirde sorun var: GERÇEK güvenlik ihlali sayılır ---
+
       // TEHLİKE! İptal edilmiş token tekrar kullanılıyor. Kullanıcının tüm oturumlarını kapat!
       await RefreshToken.updateMany(
         { user: decoded.id, revokedAt: null }, // Kullanıcının tüm geçerli tokenları
@@ -190,10 +226,13 @@ const refresh = async (req, res, next) => {
 
     const result = await rotateRefreshToken(doc, doc.user, req, res);
 
+    const plainUser = doc.user.toObject();
+    delete plainUser.password;
+
     return sendSuccessResponse(
       res,
       200,
-      { token: result.accessToken },
+      { token: result.accessToken, user: plainUser },
       "Token refreshed successfully!",
     );
   } catch (err) {

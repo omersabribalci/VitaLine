@@ -4,6 +4,7 @@ const RefreshToken = require("../models/RefreshToken");
 
 const ACCESS_TTL = "15m";
 const REFRESH_TTL_SEC = 60 * 60 * 24 * 7; // 7 days
+const REFRESH_GRACE_MS = 10 * 1000; // 10 saniye tolerans
 
 // Node.js'in yerleşik crypto modülünü kullanarak token string'ini tek yönlü (SHA-256) hash'e çevirir.
 function hashToken(token) {
@@ -96,4 +97,5 @@ module.exports = {
   persistRefreshToken,
   setRefreshCookie,
   rotateRefreshToken,
+  REFRESH_GRACE_MS,
 };

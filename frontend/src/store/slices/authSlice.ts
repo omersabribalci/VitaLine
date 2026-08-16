@@ -9,7 +9,7 @@ const initialState: AuthState = {
   token: null,
   isAuthenticated: false,
   user: userFromStorage,
-  isInitialized: false,
+  authStatus: "idle",
 };
 
 export const authSlice = createSlice({
@@ -19,7 +19,7 @@ export const authSlice = createSlice({
     setCredentials: (state, action: PayloadAction<LoginData>) => {
       state.token = action.payload.token;
       state.isAuthenticated = true;
-      state.isInitialized = true;
+      state.authStatus = "authenticated";
       state.user = action.payload.user;
 
       if (action.payload.user) {
@@ -28,23 +28,33 @@ export const authSlice = createSlice({
       }
     },
 
-    // F5 atıldıktan sonra arka planda token yenilenirse state'e basmak için ???
+    // Sayfa yenilendiğinde, refresh başarılı olursa çağrılır.
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
       state.isAuthenticated = true;
-      state.isInitialized = true;
+      state.authStatus = "authenticated";
+    },
+
+    // Refresh başarısız olursa (cookie yok/geçersiz) çağrılır.
+    // logouttan farkı kavramsal => "hiç giriş yapılmamış olduğu anlaşıldı"
+    setUnauthenticated: (state) => {
+      state.token = null;
+      state.isAuthenticated = false;
+      state.authStatus = "unauthenticated";
+      state.user = null;
+      localStorage.removeItem("user");
     },
 
     logOut: (state) => {
       state.token = null;
       state.isAuthenticated = false;
       state.user = null;
-      state.isInitialized = true;
-
+      state.authStatus = "unauthenticated";
       localStorage.removeItem("user");
     },
   },
 });
 
-export const { setCredentials, setToken, logOut } = authSlice.actions;
+export const { setCredentials, setToken, setUnauthenticated, logOut } =
+  authSlice.actions;
 export default authSlice.reducer;

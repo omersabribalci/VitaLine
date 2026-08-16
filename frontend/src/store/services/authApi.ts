@@ -26,12 +26,12 @@ export const authApi = createApi({
         return response.data;
       },
     }),
-    refresh: builder.mutation<{ token: string }, void>({
+    refresh: builder.mutation<LoginData, void>({
       query: () => ({
         url: "auth/refresh",
         method: "POST",
       }),
-      transformResponse: (response: ApiResponse<{ token: string }>) => {
+      transformResponse: (response: ApiResponse<LoginData>) => {
         return response.data;
       },
     }),
