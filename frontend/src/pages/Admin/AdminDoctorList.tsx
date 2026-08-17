@@ -16,8 +16,6 @@ const AdminDoctorList = () => {
     isFetching,
   } = useGetDoctorsQuery();
 
-  console.log("Gelen Veri:", doctors);
-
   const navigate = useNavigate();
 
   if (isLoading) {

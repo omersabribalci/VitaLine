@@ -4,11 +4,12 @@ const Appointment = require("../models/Appointment");
 const sendSuccessResponse = require("../utils/sendSuccessResponse");
 const Doctor = require("../models/Doctor");
 const Patient = require("../models/Patient");
+const isIdValid = require("../utils/isIdValid");
 
 const getAppointments = async (req, res, next) => {
   // TODO patient ve doctor tüm appleri görmemeli!!
   try {
-    const filter = {};
+    const filter = { isDeleted: false };
 
     if (req.query.doctorId) {
       filter.doctorId = req.query.doctorId;
@@ -32,11 +33,12 @@ const getAppointmentById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return next(new AppError(`Invalid id format! ${id}`, 400));
-    }
+    isIdValid(id);
 
-    const appointment = await Appointment.findById(id).lean();
+    const appointment = await Appointment.findOne({
+      _id: id,
+      isDeleted: false,
+    }).lean();
 
     if (!appointment) {
       return next(
@@ -83,14 +85,16 @@ const updateAppointment = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return next(new AppError(`Invalid id format! -> ${id}`, 400));
-    }
+    isIdValid(id);
 
-    const appointment = await Appointment.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const appointment = await Appointment.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      req.body,
+      {
+        returnDocument: "after",
+        runValidators: true,
+      },
+    );
 
     if (!appointment) {
       return next(
@@ -113,11 +117,16 @@ const deleteAppointment = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return next(new AppError(`Invalid id format! -> ${id}`, 400));
-    }
+    isIdValid(id);
 
-    const appointment = await Appointment.findByIdAndDelete(id);
+    const appointment = await Appointment.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { isDeleted: true },
+      {
+        returnDocument: "after",
+        runValidators: true,
+      },
+    );
 
     if (!appointment) {
       return next(
@@ -128,7 +137,7 @@ const deleteAppointment = async (req, res, next) => {
     return sendSuccessResponse(
       res,
       200,
-      appointment,
+      null,
       "Appointment is deleted successfully!",
     );
   } catch (error) {

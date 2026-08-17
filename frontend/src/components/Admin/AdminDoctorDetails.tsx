@@ -16,6 +16,7 @@ const AdminDoctorDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteDoctor, { isLoading: isDeleting }] = useDeleteDoctorMutation();
   const {
     data: doctor,
     isLoading,
@@ -23,7 +24,6 @@ const AdminDoctorDetails = () => {
     refetch,
     isFetching,
   } = useGetDoctorByIdQuery(id);
-  const [deleteDoctor, { isLoading: isDeleting }] = useDeleteDoctorMutation();
 
   const handleDelete = async () => {
     await deleteDoctor(id);
@@ -67,7 +67,7 @@ const AdminDoctorDetails = () => {
 
       <div className="mt-6 flex gap-3">
         <Button
-          onClick={() => navigate(`/admin/editDoctor/${doctor.id}`)}
+          onClick={() => navigate(`/admin/editDoctor/${doctor._id}`)}
           variant="contained"
         >
           Edit

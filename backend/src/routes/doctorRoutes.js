@@ -5,19 +5,20 @@ const {
   getDoctors,
   getDoctorById,
   createDoctor,
+  updateDoctor,
+  deleteDoctor,
 } = require("../controllers/doctorController");
 
 const router = express.Router();
 
 router.use(verifyToken);
 
-router.get(
-  "/",
-  checkRole("admin", "doctor", "patient"),
-  getDoctors,
-  getDoctorById,
-);
-
+router.get("/", checkRole("admin", "doctor", "patient"), getDoctors);
 router.post("/", checkRole("admin"), createDoctor);
+
+router.get("/:id", checkRole("admin", "doctor", "patient"), getDoctorById);
+router.patch("/:id", checkRole("admin"), updateDoctor);
+
+router.delete("/:id", checkRole("admin"), deleteDoctor);
 
 module.exports = router;

@@ -17,7 +17,7 @@ export const doctorApi = createApi({
     getDoctorById: builder.query({
       query: (id) => `doctors/${id}`,
       providesTags: (_, __, id) => [{ type: "Doctor", id }],
-      transformResponse: (response: ApiResponse<Doctor[]>) => {
+      transformResponse: (response: ApiResponse<Doctor>) => {
         return response.data;
       },
     }),
@@ -25,6 +25,9 @@ export const doctorApi = createApi({
     getDoctorsBySpeciality: builder.query({
       query: (speciality) => `doctors?speciality=${speciality}`,
       providesTags: (_, __, speciality) => [{ type: "Doctor", id: speciality }],
+      transformResponse: (response: ApiResponse<Doctor[]>) => {
+        return response.data;
+      },
     }),
 
     addDoctor: builder.mutation({

@@ -25,12 +25,12 @@ const registerPatient = async (req, res, next) => {
     return next(new AppError("Passwords do not match!", 400));
   }
 
-  const session = await mongoose.startSession();
-
+  let session;
   let userWithoutPassword;
   let patient;
 
   try {
+    session = await mongoose.startSession();
     await session.withTransaction(async () => {
       // session kullanıldı çünkü patient ve user aynı anda oluşmalı.
       const { confirmPassword, ...rest } = req.body;
@@ -64,7 +64,9 @@ const registerPatient = async (req, res, next) => {
   } catch (error) {
     next(error);
   } finally {
-    session.endSession();
+    if (session) {
+      session.endSession();
+    }
   }
 };
 

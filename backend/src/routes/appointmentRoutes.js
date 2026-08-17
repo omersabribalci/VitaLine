@@ -13,14 +13,11 @@ const router = express.Router();
 
 router.use(verifyToken);
 
-router
-  .route("/")
-  .get(checkRole("admin", "doctor", "patient"), getAppointments)
-  .post(checkRole("admin", "patient"), createAppointment);
-router
-  .route("/:id")
-  .get(checkRole("admin", "doctor", "patient"), getAppointmentById)
-  .patch(checkRole("admin", "patient"), updateAppointment)
-  .delete(checkRole("admin"), deleteAppointment);
+router.get("/", checkRole("admin", "doctor", "patient"), getAppointments);
+router.post("/", checkRole("admin", "patient"), createAppointment);
+
+router.get("/:id", checkRole("admin", "doctor", "patient"), getAppointmentById);
+router.patch("/:id", checkRole("admin", "patient"), updateAppointment);
+router.delete("/:id", checkRole("admin"), deleteAppointment);
 
 module.exports = router;

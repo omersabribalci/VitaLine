@@ -31,9 +31,9 @@ const AdminEditDoctorForm = () => {
     if (doctor) {
       reset({
         title: doctor.title,
-        name: doctor.name,
-        email: doctor.email,
-        phone: doctor.phone,
+        name: doctor.userId.name,
+        email: doctor.userId.email,
+        phone: doctor.userId.phone,
         image: doctor.image,
         speciality: doctor.speciality,
       });
