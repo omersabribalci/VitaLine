@@ -8,7 +8,7 @@ const isIdValid = require("../utils/isIdValid");
 
 const getDoctors = async (req, res, next) => {
   try {
-    const filter = { isDeleted: false };
+    const filter = {};
 
     if (req.query.speciality) {
       filter.speciality = req.query.speciality;
@@ -28,9 +28,7 @@ const getDoctorById = async (req, res, next) => {
 
     isIdValid(id);
 
-    const filter = { _id: id, isDeleted: false };
-
-    const doctor = await Doctor.findOne(filter).populate("userId").lean();
+    const doctor = await Doctor.findById(id).populate("userId").lean();
 
     if (!doctor) {
       return next(
@@ -128,15 +126,11 @@ const updateDoctor = async (req, res, next) => {
         userData.password = await bcrypt.hash(password, 10);
       }
 
-      const doctor = await Doctor.findOneAndUpdate(
-        { _id: id, isDeleted: false },
-        doctorData,
-        {
-          returnDocument: "after",
-          runValidators: true,
-          session: session,
-        },
-      );
+      const doctor = await Doctor.findByIdAndUpdate(id, doctorData, {
+        returnDocument: "after",
+        runValidators: true,
+        session: session,
+      });
 
       if (!doctor) {
         throw new AppError(`Doctor does not exist with this ID -> ${id}`, 404);
@@ -176,8 +170,8 @@ const deleteDoctor = async (req, res, next) => {
     session = await mongoose.startSession();
 
     await session.withTransaction(async () => {
-      const doctor = await Doctor.findOneAndUpdate(
-        { _id: id, isDeleted: false },
+      const doctor = await Doctor.findByIdAndUpdate(
+        id,
         { isDeleted: true },
         {
           returnDocument: "after",
@@ -199,6 +193,10 @@ const deleteDoctor = async (req, res, next) => {
           session: session,
         },
       );
+
+      if (!user) {
+        throw new AppError(`User does not exist with this ID -> ${id}`, 404);
+      }
     });
 
     return sendSuccessResponse(res, 200, null, "Doctor deleted successfully!");

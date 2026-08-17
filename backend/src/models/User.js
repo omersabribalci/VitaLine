@@ -61,4 +61,22 @@ UserSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, 10);
 });
 
+// Deleted olanları gösterme/yok say, middleware
+
+UserSchema.pre("find", function () {
+  this.where({ isDeleted: false });
+});
+
+UserSchema.pre("findOne", function () {
+  this.where({ isDeleted: false });
+});
+
+UserSchema.pre("findOneAndUpdate", function () {
+  this.where({ isDeleted: false });
+});
+
+UserSchema.pre("findOneAndDelete", function () {
+  this.where({ isDeleted: false });
+});
+
 module.exports = mongoose.model("User", UserSchema);

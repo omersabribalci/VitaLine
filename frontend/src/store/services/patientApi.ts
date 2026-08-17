@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import type { Patient } from "../../types";
+import type { ApiResponse, Patient } from "../../types";
 import { baseQuery } from "./baseQuery";
 export const patientApi = createApi({
   reducerPath: "patientApi",
@@ -9,11 +9,17 @@ export const patientApi = createApi({
     getPatients: builder.query<Patient[], void>({
       query: () => "patients",
       providesTags: ["Patient"],
+      transformResponse: (response: ApiResponse<Patient[]>) => {
+        return response.data;
+      },
     }),
 
     getPatientById: builder.query({
       query: (id) => `patients/${id}`,
       providesTags: (_, __, id) => [{ type: "Patient", id }],
+      transformResponse: (response: ApiResponse<Patient>) => {
+        return response.data;
+      },
     }),
 
     updatePatient: builder.mutation({

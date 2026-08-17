@@ -72,11 +72,13 @@ const registerPatient = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   // TODO validation
+  // TODO Eğer hasta ise ve accountStatus disabled ise login engelle
 
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email }).select("+password").lean();
+
     if (!user) {
       return next(new AppError("Invalid credentials", 400));
     }
@@ -84,6 +86,14 @@ const login = async (req, res, next) => {
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return next(new AppError("Invalid credentials", 400));
+    }
+
+    if (user.role === "patient") {
+      const patient = await Patient.findOne({ userId: user._id });
+
+      if (patient.accountStatus === "disabled") {
+        return next(new AppError("Account is disabled", 400));
+      }
     }
 
     const accessToken = signAccessToken(user); // access token üretimi

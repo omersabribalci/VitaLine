@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const AppError = require("../utils/AppError");
 const Appointment = require("../models/Appointment");
 const sendSuccessResponse = require("../utils/sendSuccessResponse");
@@ -9,7 +8,7 @@ const isIdValid = require("../utils/isIdValid");
 const getAppointments = async (req, res, next) => {
   // TODO patient ve doctor tüm appleri görmemeli!!
   try {
-    const filter = { isDeleted: false };
+    const filter = {};
 
     if (req.query.doctorId) {
       filter.doctorId = req.query.doctorId;
@@ -20,6 +19,8 @@ const getAppointments = async (req, res, next) => {
     }
 
     const appointments = await Appointment.find(filter)
+      .populate({ path: "doctorId", populate: { path: "userId" } })
+      .populate({ path: "patientId", populate: { path: "userId" } })
       .sort({ dateAndTime: 1 })
       .lean();
 
@@ -35,10 +36,10 @@ const getAppointmentById = async (req, res, next) => {
 
     isIdValid(id);
 
-    const appointment = await Appointment.findOne({
-      _id: id,
-      isDeleted: false,
-    }).lean();
+    const appointment = await Appointment.findById(id)
+      .populate({ path: "doctorId", populate: { path: "userId" } })
+      .populate({ path: "patientId", populate: { path: "userId" } })
+      .lean();
 
     if (!appointment) {
       return next(
@@ -58,8 +59,8 @@ const createAppointment = async (req, res, next) => {
     const { doctorId, patientId } = req.body;
 
     const [doctor, patient] = await Promise.all([
-      Doctor.findById(req.body.doctorId),
-      Patient.findById(req.body.patientId),
+      Doctor.findById(doctorId),
+      Patient.findById(patientId),
     ]);
 
     if (!doctor) return next(new AppError("Doctor could not be found!", 400));
@@ -69,7 +70,7 @@ const createAppointment = async (req, res, next) => {
     //
 
     const appointment = await Appointment.create(req.body);
-
+    // todo populate ekle responsa
     return sendSuccessResponse(
       res,
       201,
@@ -87,21 +88,17 @@ const updateAppointment = async (req, res, next) => {
 
     isIdValid(id);
 
-    const appointment = await Appointment.findOneAndUpdate(
-      { _id: id, isDeleted: false },
-      req.body,
-      {
-        returnDocument: "after",
-        runValidators: true,
-      },
-    );
+    const appointment = await Appointment.findByIdAndUpdate(id, req.body, {
+      returnDocument: "after",
+      runValidators: true,
+    });
 
     if (!appointment) {
       return next(
         new AppError(`Appointment does not exist with this ID -> ${id}`, 404),
       );
     }
-
+    // todo populate ekle responsa
     return sendSuccessResponse(
       res,
       200,
@@ -119,8 +116,8 @@ const deleteAppointment = async (req, res, next) => {
 
     isIdValid(id);
 
-    const appointment = await Appointment.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+    const appointment = await Appointment.findByIdAndUpdate(
+      id,
       { isDeleted: true },
       {
         returnDocument: "after",

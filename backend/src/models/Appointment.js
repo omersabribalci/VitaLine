@@ -29,4 +29,22 @@ const AppointmentSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// Deleted olanları gösterme/yok say, middleware
+
+AppointmentSchema.pre("find", function () {
+  this.where({ isDeleted: false });
+});
+
+AppointmentSchema.pre("findOne", function () {
+  this.where({ isDeleted: false });
+});
+
+AppointmentSchema.pre("findOneAndUpdate", function () {
+  this.where({ isDeleted: false });
+});
+
+AppointmentSchema.pre("findOneAndDelete", function () {
+  this.where({ isDeleted: false });
+});
+
 module.exports = mongoose.model("Appointment", AppointmentSchema);

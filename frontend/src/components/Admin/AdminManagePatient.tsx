@@ -11,7 +11,7 @@ const AdminManagePatient = ({ patient }: { patient: Patient }) => {
   const handleChange = async () => {
     try {
       const payload = {
-        id: patient.id,
+        id: patient._id,
         accountStatus:
           patient.accountStatus === "enabled" ? "disabled" : "enabled",
       };

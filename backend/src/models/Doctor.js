@@ -33,4 +33,22 @@ const DoctorSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// Deleted olanları gösterme/yok say, middleware
+
+DoctorSchema.pre("find", function () {
+  this.where({ isDeleted: false });
+});
+
+DoctorSchema.pre("findOne", function () {
+  this.where({ isDeleted: false });
+});
+
+DoctorSchema.pre("findOneAndUpdate", function () {
+  this.where({ isDeleted: false });
+});
+
+DoctorSchema.pre("findOneAndDelete", function () {
+  this.where({ isDeleted: false });
+});
+
 module.exports = mongoose.model("Doctor", DoctorSchema);
