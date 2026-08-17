@@ -18,7 +18,12 @@ function createJti() {
 
 // Kullanıcının id ve email bilgisini alır, gizli anahtar (ACCESS_TOKEN_SECRET) ile imzalar. Ömrü 15 dakikadır.
 function signAccessToken(user) {
-  const payload = { id: user._id.toString(), email: user.email };
+  const payload = {
+    id: user._id.toString(),
+    email: user.email,
+    role: user.role,
+  };
+
   const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: ACCESS_TTL,
   });

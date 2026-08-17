@@ -12,7 +12,7 @@ const PatientDashboardLayout = () => {
         <div className="border basis-1/10 bg-myBlackBg/20 border-white/20 rounded-full">
           <Header />
         </div>
-        <div className="border basis-9/10 bg-myBlackBg/20 border-white/20 rounded-4xl">
+        <div className="border basis-9/10 bg-myBlackBg/20 border-white/20 rounded-4xl flex flex-col items-center">
           <Outlet />
         </div>
       </div>

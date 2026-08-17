@@ -96,7 +96,7 @@ export interface Appointment {
 }
 
 export type TableProps<
-  T extends { id: string | number } = { id: string | number },
+  T extends { _id: string | number } = { _id: string | number },
 > = {
   list?: T[];
   heads: Array<{ key: string; label: string }>;

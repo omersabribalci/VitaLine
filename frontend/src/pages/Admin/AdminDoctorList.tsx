@@ -16,6 +16,8 @@ const AdminDoctorList = () => {
     isFetching,
   } = useGetDoctorsQuery();
 
+  console.log("Gelen Veri:", doctors);
+
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -28,7 +30,7 @@ const AdminDoctorList = () => {
 
   if (doctors?.length === 0) {
     return (
-      <div className="bg-white p-6 rounded shadow m-4">
+      <div className="bg-cardBg min-w-2xl p-6 rounded shadow m-4">
         <p>There is no registered doctor.</p>
         <Button
           onClick={() => {

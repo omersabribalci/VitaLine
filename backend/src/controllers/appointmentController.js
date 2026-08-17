@@ -6,6 +6,7 @@ const Doctor = require("../models/Doctor");
 const Patient = require("../models/Patient");
 
 const getAppointments = async (req, res, next) => {
+  // TODO patient ve doctor tüm appleri görmemeli!!
   try {
     const filter = {};
 

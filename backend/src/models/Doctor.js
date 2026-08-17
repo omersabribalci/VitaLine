@@ -22,7 +22,8 @@ const DoctorSchema = new mongoose.Schema(
       required: [true, "Speciality is required."],
     },
     unavailableDates: {
-      type: [Date], // TODO
+      type: [Date],
+      default: [], // TODO
     },
     isDeleted: {
       type: Boolean,

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import TablePagination from "@mui/material/TablePagination";
 import type { TableProps } from "../../types";
 
-const Table = <T extends { id: string | number }>({
+const Table = <T extends { _id: string | number }>({
   list = [],
   heads,
   entityType,
@@ -100,9 +100,9 @@ const Table = <T extends { id: string | number }>({
           {paginatedList.map((item, rowIndex) => (
             <tr
               onClick={() => {
-                navigate(`${detailPath}/${entityType}/${item.id}`);
+                navigate(`${detailPath}/${entityType}/${item._id}`);
               }}
-              key={String((item as Record<string, unknown>).id)}
+              key={String((item as Record<string, unknown>)._id)}
               className={`cursor-pointer transition-colors hover:bg-gray-600 ${
                 rowIndex % 2 === 0 ? "bg-gray-800" : "bg-gray-700/40"
               }`}
