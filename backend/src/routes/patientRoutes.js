@@ -4,6 +4,7 @@ const {
   getPatients,
   getPatientById,
   updatePatient,
+  deletePatient,
 } = require("../controllers/patientController");
 const checkRole = require("../middleware/checkRole");
 
@@ -13,7 +14,10 @@ router.use(verifyToken);
 
 router.get("/", checkRole("admin", "doctor"), getPatients);
 
-router.get("/:id", checkRole("admin", "patient"), getPatientById);
+router.get("/:id", checkRole("admin", "doctor", "patient"), getPatientById);
 
 router.patch("/:id", checkRole("admin"), updatePatient);
+
+router.delete("/:id", checkRole("admin"), deletePatient);
+
 module.exports = router;

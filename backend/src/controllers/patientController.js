@@ -67,4 +67,52 @@ const updatePatient = async (req, res, next) => {
   }
 };
 
-module.exports = { getPatients, getPatientById, updatePatient };
+const deletePatient = async (req, res, next) => {
+  const { id } = req.params;
+  let session;
+  try {
+    isIdValid(id);
+
+    session = await mongoose.startSession();
+
+    await session.withTransaction(async () => {
+      const patient = await Patient.findByIdAndUpdate(
+        id,
+        { isDeleted: true },
+        {
+          returnDocument: "after",
+          runValidators: true,
+          session: session,
+        },
+      );
+
+      if (!patient) {
+        throw new AppError(`Patient does not exist with this ID -> ${id}`, 404);
+      }
+
+      const user = await User.findByIdAndUpdate(
+        patient.userId,
+        { isDeleted: true },
+        {
+          returnDocument: "after",
+          runValidators: true,
+          session: session,
+        },
+      );
+
+      if (!user) {
+        throw new AppError(`User does not exist with this ID -> ${id}`, 404);
+      }
+    });
+
+    return sendSuccessResponse(res, 200, null, "Patient deleted successfully!");
+  } catch (error) {
+    next(error);
+  } finally {
+    if (session) {
+      session.endSession();
+    }
+  }
+};
+
+module.exports = { getPatients, getPatientById, updatePatient, deletePatient };

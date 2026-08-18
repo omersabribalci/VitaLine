@@ -70,7 +70,12 @@ const createAppointment = async (req, res, next) => {
     //
 
     const appointment = await Appointment.create(req.body);
-    // todo populate ekle responsa
+
+    await appointment.populate([
+      { path: "doctorId", populate: { path: "userId" } },
+      { path: "patientId", populate: { path: "userId" } },
+    ]);
+
     return sendSuccessResponse(
       res,
       201,
@@ -98,7 +103,12 @@ const updateAppointment = async (req, res, next) => {
         new AppError(`Appointment does not exist with this ID -> ${id}`, 404),
       );
     }
-    // todo populate ekle responsa
+
+    await appointment.populate([
+      { path: "doctorId", populate: { path: "userId" } },
+      { path: "patientId", populate: { path: "userId" } },
+    ]);
+
     return sendSuccessResponse(
       res,
       200,
