@@ -1,23 +1,33 @@
-import { useSelector } from "react-redux";
 import { useGetAppointmentsByPatientIdQuery } from "../../store/services/appointmentApi";
 import Table from "../../components/UI/Table";
 import { appointmentsListHead } from "../../data/tableHeads";
 import Loading from "../../components/UI/Loading";
 import Error from "../../components/UI/Error";
-import type { RootState } from "../../store/store";
+import { useGetMyPatientProfileQuery } from "../../store/services/patientApi";
 
 const PatientAppointments = () => {
-  const { user } = useSelector((state: RootState) => state.auth);
+  const {
+    data: patient,
+    isLoading: isPatLoading,
+    error: patError,
+    refetch: patRefetch,
+    isFetching: isPatRefetching,
+  } = useGetMyPatientProfileQuery();
+
   const {
     data: appointments,
     error,
     isLoading,
     refetch,
     isFetching,
-  } = useGetAppointmentsByPatientIdQuery(user?._id);
+  } = useGetAppointmentsByPatientIdQuery(patient?._id, { skip: !patient?._id });
 
-  if (isLoading) {
+  if (isPatLoading || isLoading) {
     return <Loading />;
+  }
+
+  if (patError) {
+    return <Error refetch={patRefetch} isFetching={isPatRefetching} />;
   }
 
   if (error) {

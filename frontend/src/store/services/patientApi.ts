@@ -22,6 +22,14 @@ export const patientApi = createApi({
       },
     }),
 
+    getMyPatientProfile: builder.query<Patient, void>({
+      query: () => "patients/me",
+      providesTags: ["Patient"],
+      transformResponse: (response: ApiResponse<Patient>) => {
+        return response.data;
+      },
+    }),
+
     updatePatient: builder.mutation({
       query: ({ id, ...data }) => ({
         url: `patients/${id}`,
@@ -41,4 +49,5 @@ export const {
   useGetPatientsQuery,
   useGetPatientByIdQuery,
   useUpdatePatientMutation,
+  useGetMyPatientProfileQuery,
 } = patientApi;

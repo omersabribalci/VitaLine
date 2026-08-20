@@ -4,7 +4,10 @@ import { logOut } from "../../store/slices/authSlice";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Avatar from "@mui/material/Avatar";
 import type { RootState } from "../../store/store";
-import { useLogoutMutation } from "../../store/services/authApi";
+import { authApi, useLogoutMutation } from "../../store/services/authApi";
+import { doctorApi } from "../../store/services/doctorApi";
+import { patientApi } from "../../store/services/patientApi";
+import { appointmentApi } from "../../store/services/appointmentApi";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -18,6 +21,10 @@ const Header = () => {
       console.error("Backend logout failed:", err);
     } finally {
       dispatch(logOut());
+      dispatch(doctorApi.util.resetApiState());
+      dispatch(patientApi.util.resetApiState());
+      dispatch(appointmentApi.util.resetApiState());
+      dispatch(authApi.util.resetApiState());
     }
   };
 

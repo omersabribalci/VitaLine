@@ -33,6 +33,26 @@ const getPatientById = async (req, res, next) => {
   }
 };
 
+const getMyPatientProfile = async (req, res, next) => {
+  try {
+    const patient = await Patient.findOne({
+      userId: req.user.id,
+    })
+      .populate("userId")
+      .lean();
+
+    if (!patient) {
+      return next(
+        new AppError("Patient profile not found for this user.", 404),
+      );
+    }
+
+    return sendSuccessResponse(res, 200, patient);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const updatePatient = async (req, res, next) => {
   const { id } = req.params;
 
@@ -115,4 +135,10 @@ const deletePatient = async (req, res, next) => {
   }
 };
 
-module.exports = { getPatients, getPatientById, updatePatient, deletePatient };
+module.exports = {
+  getPatients,
+  getPatientById,
+  updatePatient,
+  deletePatient,
+  getMyPatientProfile,
+};

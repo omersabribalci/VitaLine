@@ -5,6 +5,7 @@ const {
   getPatientById,
   updatePatient,
   deletePatient,
+  getMyPatientProfile,
 } = require("../controllers/patientController");
 const checkRole = require("../middleware/checkRole");
 
@@ -13,6 +14,8 @@ const router = express.Router();
 router.use(verifyToken);
 
 router.get("/", checkRole("admin", "doctor"), getPatients);
+
+router.get("/me", checkRole("patient"), getMyPatientProfile);
 
 router.get("/:id", checkRole("admin", "doctor", "patient"), getPatientById);
 

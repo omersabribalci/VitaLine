@@ -20,7 +20,7 @@ router.post("/", checkRole("admin"), createDoctor);
 router.get("/me", checkRole("doctor"), getMyDoctorProfile);
 
 router.get("/:id", checkRole("admin", "doctor", "patient"), getDoctorById);
-router.patch("/:id", checkRole("admin"), updateDoctor);
+router.patch("/:id", checkRole("admin", "doctor"), updateDoctor);
 
 router.delete("/:id", checkRole("admin"), deleteDoctor);
 

@@ -1,20 +1,16 @@
-import { useGetPatientByIdQuery } from "../../store/services/patientApi";
+import { useGetMyPatientProfileQuery } from "../../store/services/patientApi";
 import Loading from "../../components/UI/Loading";
-import { useSelector } from "react-redux";
 import PatientDetails from "../../components/Patient/PatientDetails";
 import Error from "../../components/UI/Error";
-import type { RootState } from "../../store/store";
 
 const PatientOverview = () => {
-  const { user } = useSelector((state: RootState) => state.auth);
-
   const {
     data: patient,
     isLoading,
     error,
     refetch,
     isFetching,
-  } = useGetPatientByIdQuery(user?._id);
+  } = useGetMyPatientProfileQuery();
 
   if (isLoading) {
     return <Loading />;
@@ -23,6 +19,8 @@ const PatientOverview = () => {
   if (error) {
     return <Error refetch={refetch} isFetching={isFetching} />;
   }
+
+  if (!patient) return null;
 
   return (
     <div className="p-4 max-w-xl mx-auto">

@@ -7,7 +7,7 @@ const DoctorAppointmentCard = ({
   appointment: Appointment;
 }) => {
   return (
-    <div className="flex items-center justify-between py-3 px-4 bg-white/60 hover:bg-blue-50 rounded-full transition-all duration-200 hover:shadow-sm">
+    <div className="flex gap-2 items-center justify-between py-3 px-4 bg-white/60 hover:bg-blue-50 rounded-full transition-all duration-200 hover:shadow-sm">
       <span className="flex items-center gap-1 text-sm font-medium text-blue-700">
         <svg
           className="w-3 h-3"
@@ -26,7 +26,7 @@ const DoctorAppointmentCard = ({
         {format(new Date(appointment.dateAndTime), "HH:mm")}
       </span>
       <span className="text-sm font-semibold text-gray-800 group-hover:text-blue-900 transition-colors">
-        {appointment.patientName}
+        {appointment.patientId.userId.name}
       </span>
     </div>
   );

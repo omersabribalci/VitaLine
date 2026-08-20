@@ -1,25 +1,17 @@
-import { useSelector } from "react-redux";
-import { useGetDoctorByIdQuery } from "../../store/services/doctorApi";
+import { useGetMyDoctorProfileQuery } from "../../store/services/doctorApi";
 import Loading from "../../components/UI/Loading";
 import NotFound from "../../components/UI/NotFound";
 import DoctorSetHoliday from "../../components/Doctor/DoctorSetHoliday";
-import type { RootState } from "../../store/store";
 import Error from "../../components/UI/Error";
 
 const DoctorManagement = () => {
-  const { user } = useSelector((state: RootState) => state.auth);
-
-  if (!user?._id) {
-    return <NotFound role="Doctor" />;
-  }
-
   const {
     data: doctor,
     isLoading,
     error,
     refetch,
     isFetching,
-  } = useGetDoctorByIdQuery(id);
+  } = useGetMyDoctorProfileQuery();
 
   if (isLoading) return <Loading />;
   if (error) {
@@ -28,13 +20,14 @@ const DoctorManagement = () => {
       return <Error refetch={refetch} isFetching={isFetching} />;
     }
   }
+  if (!doctor) return null;
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-cardBg rounded-2xl shadow-xl mt-10">
       <h2 className="text-2xl font-bold mb-6 border-b pb-2">
         Doctor Management
       </h2>
-      <DoctorSetHoliday doctor={doctor} doctorId={doctorId} />
+      <DoctorSetHoliday doctor={doctor} doctorId={doctor._id} />
     </div>
   );
 };

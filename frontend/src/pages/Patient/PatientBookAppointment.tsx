@@ -14,8 +14,18 @@ import { useAppointmentForm } from "../../hooks/useAppointmentForm";
 import { appointmentTimes } from "../../data/appointmentConstants";
 import { toast } from "react-toastify";
 import type { BookAppointmentFormData, Doctor } from "../../types";
+import { useGetMyPatientProfileQuery } from "../../store/services/patientApi";
+import Error from "../../components/UI/Error";
 
 const PatientBookAppointment = () => {
+  const {
+    data: patient,
+    isLoading: isPatLoading,
+    error: patError,
+    refetch: patRefetch,
+    isFetching: isPatRefetching,
+  } = useGetMyPatientProfileQuery();
+
   const { control, handleSubmit, setValue } =
     useForm<BookAppointmentFormData>();
 
@@ -28,12 +38,14 @@ const PatientBookAppointment = () => {
     data: doctorsBySpeciality,
     isLoading,
     error,
+    refetch,
+    isFetching,
   } = useGetDoctorsBySpecialityQuery(speciality, { skip: !speciality });
 
   const selectedDoctor = doctorsBySpeciality?.find(
-    (doc: Doctor) => doc.name === doctorName,
+    (doc: Doctor) => doc.userId.name === doctorName,
   );
-  const selectedDoctorId = selectedDoctor?.id;
+  const selectedDoctorId = selectedDoctor?._id;
 
   const { data: appointmentsByDoctorId } = useGetAppointmentsByDoctorIdQuery(
     selectedDoctorId,
@@ -48,13 +60,11 @@ const PatientBookAppointment = () => {
   const onSubmit = useAppointmentForm(
     newAppointment,
     selectedDoctorId ?? "",
-    selectedDoctor,
-    doctorName ?? "",
-    speciality ?? "",
+    patient?._id,
   );
 
   const doctorNamesArray =
-    doctorsBySpeciality?.map((doc: Doctor) => doc.name) || [];
+    doctorsBySpeciality?.map((doc: Doctor) => doc.userId.name) || [];
 
   const handleFormSubmit = async (data: BookAppointmentFormData) => {
     const result = await onSubmit(data);
@@ -79,13 +89,20 @@ const PatientBookAppointment = () => {
     setValue("time", null);
   };
 
-  if (isLoading)
+  if (isPatLoading || isLoading)
     return (
       <div className="p-4 mt-4 max-w-xl mx-auto flex flex-col gap-4 bg-cardBg rounded-2xl shadow-xl">
         <Loading />
       </div>
     );
-  if (error) return <div>Error</div>;
+
+  if (patError) {
+    return <Error refetch={patRefetch} isFetching={isPatRefetching} />;
+  }
+
+  if (error) {
+    return <Error refetch={refetch} isFetching={isFetching} />;
+  }
 
   return (
     <form
