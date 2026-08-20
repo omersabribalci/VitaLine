@@ -1,10 +1,10 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ApiResponse, Doctor } from "../../types";
-import { baseQuery } from "./baseQuery";
+import { baseQueryWithReAuth } from "./baseQueryWithReAuth";
 export const doctorApi = createApi({
   reducerPath: "doctorApi",
   tagTypes: ["Doctor"],
-  baseQuery,
+  baseQuery: baseQueryWithReAuth,
   endpoints: (builder) => ({
     getDoctors: builder.query<Doctor[], void>({
       query: () => "doctors",

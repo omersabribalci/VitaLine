@@ -118,6 +118,14 @@ const updateDoctor = async (req, res, next) => {
 
   try {
     isIdValid(id);
+
+    if (req.user.role === "doctor") {
+      const targetDoctor = await Doctor.findById(id);
+      if (!targetDoctor || targetDoctor.userId.toString() !== req.user.id) {
+        return next(new AppError("You can only update your own profile.", 403));
+      }
+    }
+
     let resData;
 
     session = await mongoose.startSession();

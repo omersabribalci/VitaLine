@@ -1,7 +1,9 @@
+const mongoose = require("mongoose");
 const Patient = require("../models/Patient");
 const AppError = require("../utils/AppError");
 const isIdValid = require("../utils/isIdValid");
 const sendSuccessResponse = require("../utils/sendSuccessResponse");
+const User = require("../models/User");
 
 const getPatients = async (req, res, next) => {
   try {

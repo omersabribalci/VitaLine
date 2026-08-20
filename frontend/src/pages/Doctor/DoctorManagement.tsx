@@ -14,12 +14,14 @@ const DoctorManagement = () => {
   } = useGetMyDoctorProfileQuery();
 
   if (isLoading) return <Loading />;
+
   if (error) {
     if ("status" in error) {
       if (error.status === 404) return <NotFound role="Doctor" />;
       return <Error refetch={refetch} isFetching={isFetching} />;
     }
   }
+
   if (!doctor) return null;
 
   return (

@@ -15,7 +15,8 @@ const DoctorSetHoliday = ({
   doctor: Doctor;
   doctorId: string;
 }) => {
-  const [updateDoctor, { isLoading: isUpdating }] = useUpdateDoctorMutation();
+  const [updateDoctor, { isLoading: isUpdating, error }] =
+    useUpdateDoctorMutation();
   const [showCancelHolidayDialog, setShowCancelHolidayDialog] = useState(false);
 
   const {
@@ -44,8 +45,6 @@ const DoctorSetHoliday = ({
 
   const onSubmit = async (data: DoctorSetHolidayFormData) => {
     try {
-      console.log(data);
-
       const id = doctorId;
       const payload = {
         id,
@@ -143,7 +142,9 @@ const DoctorSetHoliday = ({
           )}
         </div>
       </div>
-      <span className="w-full border-t border-white/0"></span>
+      <span className="text-red-500 text-xs font-medium w-full border-t border-white/0">
+        {error && "Updating Error"}
+      </span>
       <div className="flex flex-row gap-2">
         <Button
           type="submit"

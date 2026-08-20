@@ -10,12 +10,18 @@ const getAppointments = async (req, res, next) => {
   try {
     const filter = {};
 
-    if (req.query.doctorId) {
-      filter.doctorId = req.query.doctorId;
-    }
-
-    if (req.query.patientId) {
-      filter.patientId = req.query.patientId;
+    if (req.user.role === "patient") {
+      const patient = await Patient.findOne({ userId: req.user.id });
+      if (!patient)
+        return next(new AppError("Patient profile not found.", 404));
+      filter.patientId = patient?._id;
+    } else if (req.user.role === "doctor") {
+      const doctor = await Doctor.findOne({ userId: req.user.id });
+      if (!doctor) return next(new AppError("Doctor profile not found.", 404));
+      filter.doctorId = doctor?._id;
+    } else {
+      if (req.query.doctorId) filter.doctorId = req.query.doctorId;
+      if (req.query.patientId) filter.patientId = req.query.patientId;
     }
 
     const appointments = await Appointment.find(filter)

@@ -1,11 +1,11 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ApiResponse, Appointment } from "../../types";
-import { baseQuery } from "./baseQuery";
+import { baseQueryWithReAuth } from "./baseQueryWithReAuth";
 
 export const appointmentApi = createApi({
   reducerPath: "appointmentApi",
   tagTypes: ["Appointment"],
-  baseQuery,
+  baseQuery: baseQueryWithReAuth,
   endpoints: (builder) => ({
     newAppointment: builder.mutation({
       query: (newAppointment) => ({

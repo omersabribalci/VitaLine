@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const DateRangeSchema = require("./DateRange");
 
 const DoctorSchema = new mongoose.Schema(
   {
@@ -22,8 +23,8 @@ const DoctorSchema = new mongoose.Schema(
       required: [true, "Speciality is required."],
     },
     unavailableDates: {
-      type: [Date],
-      default: [], // TODO
+      type: [DateRangeSchema],
+      default: [],
     },
     isDeleted: {
       type: Boolean,
