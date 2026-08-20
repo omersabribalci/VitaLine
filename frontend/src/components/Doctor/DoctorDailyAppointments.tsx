@@ -33,6 +33,8 @@ const DoctorDailyAppointments = ({ id }: { id: string }) => {
     return <Error refetch={refetch} isFetching={isFetching} />;
   }
 
+  if (!appointments) return null;
+
   const filteredAppointments = appointments?.filter((app: Appointment) => {
     const date = format(new Date(app.dateAndTime), "dd,MM,yyyy");
     const formattedSelectedDate = format(selectedDate, "dd,MM,yyyy");
@@ -68,7 +70,7 @@ const DoctorDailyAppointments = ({ id }: { id: string }) => {
       {sortedAppointmentsByTime?.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {sortedAppointmentsByTime.map((app: Appointment) => (
-            <DoctorAppointmentCard key={app.id} appointment={app} />
+            <DoctorAppointmentCard key={app._id} appointment={app} />
           ))}
         </div>
       ) : (

@@ -14,16 +14,20 @@ export const useDisableDateFunction = (selectedDoctor: Doctor | undefined) => {
       if (selectedDoctor?.unavailableDates) {
         const currentDateStr = format(date, DATE_FORMAT);
 
-        return selectedDoctor.unavailableDates.some((range: { start: string; end: string }) => {
-          if (!range.start || !range.end) {
-            return false;
-          }
+        return selectedDoctor.unavailableDates.some(
+          (range: { start: string; end: string }) => {
+            if (!range.start || !range.end) {
+              return false;
+            }
 
-          const startDateStr = format(parseISO(range.start), DATE_FORMAT);
-          const endDateStr = format(parseISO(range.end), DATE_FORMAT);
+            const startDateStr = format(parseISO(range.start), DATE_FORMAT);
+            const endDateStr = format(parseISO(range.end), DATE_FORMAT);
 
-          return currentDateStr >= startDateStr && currentDateStr < endDateStr;
-        });
+            return (
+              currentDateStr >= startDateStr && currentDateStr < endDateStr
+            );
+          },
+        );
       }
 
       return false;

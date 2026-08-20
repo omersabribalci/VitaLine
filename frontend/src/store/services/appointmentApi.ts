@@ -27,16 +27,25 @@ export const appointmentApi = createApi({
     getAppointmentsByDoctorId: builder.query({
       query: (doctorId) => `appointments?doctorId=${doctorId}`,
       providesTags: (_, __, id) => [{ type: "Appointment", id }],
+      transformResponse: (response: ApiResponse<Appointment[]>) => {
+        return response.data;
+      },
     }),
 
     getAppointmentsByPatientId: builder.query({
       query: (patientId) => `appointments?patientId=${patientId}`,
       providesTags: (_, __, id) => [{ type: "Appointment", id }],
+      transformResponse: (response: ApiResponse<Appointment[]>) => {
+        return response.data;
+      },
     }),
 
     getAppointmentById: builder.query({
       query: (id) => `appointments/${id}`,
       providesTags: (_, __, id) => [{ type: "Appointment", id }],
+      transformResponse: (response: ApiResponse<Appointment>) => {
+        return response.data;
+      },
     }),
 
     updateAppointment: builder.mutation({

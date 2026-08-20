@@ -90,7 +90,7 @@ export type AppointmentStatus = "scheduled" | "completed" | "cancelled";
 export interface Appointment {
   _id: string;
   doctorId: Doctor;
-  patientId: string;
+  patientId: Patient;
   dateAndTime: string;
   status: AppointmentStatus;
 }

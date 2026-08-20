@@ -22,6 +22,14 @@ export const doctorApi = createApi({
       },
     }),
 
+    getMyDoctorProfile: builder.query<Doctor, void>({
+      query: () => "doctors/me",
+      providesTags: ["Doctor"],
+      transformResponse: (response: ApiResponse<Doctor>) => {
+        return response.data;
+      },
+    }),
+
     getDoctorsBySpeciality: builder.query({
       query: (speciality) => `doctors?speciality=${speciality}`,
       providesTags: (_, __, speciality) => [{ type: "Doctor", id: speciality }],
@@ -69,4 +77,5 @@ export const {
   useAddDoctorMutation,
   useUpdateDoctorMutation,
   useDeleteDoctorMutation,
+  useGetMyDoctorProfileQuery,
 } = doctorApi;

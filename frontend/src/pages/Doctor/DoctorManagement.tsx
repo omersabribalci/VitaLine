@@ -19,7 +19,7 @@ const DoctorManagement = () => {
     error,
     refetch,
     isFetching,
-  } = useGetDoctorByIdQuery(user._id);
+  } = useGetDoctorByIdQuery(id);
 
   if (isLoading) return <Loading />;
   if (error) {

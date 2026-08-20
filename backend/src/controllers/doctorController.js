@@ -42,6 +42,22 @@ const getDoctorById = async (req, res, next) => {
   }
 };
 
+const getMyDoctorProfile = async (req, res, next) => {
+  try {
+    const doctor = await Doctor.findOne({ userId: req.user.id })
+      .populate("userId")
+      .lean();
+
+    if (!doctor) {
+      return next(new AppError("Doctor profile not found for this user.", 404));
+    }
+
+    return sendSuccessResponse(res, 200, doctor);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createDoctor = async (req, res, next) => {
   let session;
   let userWithoutPassword;
@@ -214,4 +230,5 @@ module.exports = {
   createDoctor,
   updateDoctor,
   deleteDoctor,
+  getMyDoctorProfile,
 };

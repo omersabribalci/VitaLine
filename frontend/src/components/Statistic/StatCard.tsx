@@ -2,7 +2,7 @@ import type { StatCardProps } from "../../types";
 
 const StatCard = <T,>({ icon, parameter, title }: StatCardProps<T>) => {
   return (
-    <div className="card flex items-center gap-4">
+    <div className="card min-w-62.5 flex items-center gap-4">
       <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-blue-100 text-blue-600">
         {icon}
       </div>
