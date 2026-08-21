@@ -16,6 +16,7 @@ const UserSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      maxLength: [255, "Email can be max 255 character"],
       match: [
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         "Please fill a valid email address",
@@ -24,7 +25,8 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: [8, "Password must be at least 8 characters"],
+      minLength: [8, "Password must be at least 8 characters"],
+      maxLength: [20, "Password must be max 20 characters"],
       match: [
         /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/,
         "Password must contain upper, lower, and number",
@@ -39,6 +41,8 @@ const UserSchema = new mongoose.Schema(
     phone: {
       type: String,
       trim: true,
+      minLength: [11, "Phone number should be 11 character!"],
+      maxLength: [11, "Phone number should be 11 character!"],
       required: [true, "Phone number is required."],
     },
     isDeleted: {

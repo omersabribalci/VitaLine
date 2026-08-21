@@ -8,6 +8,7 @@ const morganMiddleware = require("./middleware/morgan");
 const errorHandler = require("./middleware/errorHandler");
 const { corsOptions } = require("./config/corsOptions");
 const notFound = require("./middleware/notFound");
+const { globalLimiter } = require("./middleware/ratelimiter");
 const app = express();
 const cookieParser = require("cookie-parser");
 
@@ -17,6 +18,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morganMiddleware);
 app.use(cookieParser());
+app.use(globalLimiter);
 
 app.use("/api/auth", authRouter);
 app.use("/api/appointments", appointmentRouter);

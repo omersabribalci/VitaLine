@@ -8,6 +8,7 @@ const {
   getMyPatientProfile,
 } = require("../controllers/patientController");
 const checkRole = require("../middleware/checkRole");
+const patientValidator = require("../validators/patientValidator");
 
 const router = express.Router();
 
@@ -19,7 +20,12 @@ router.get("/me", checkRole("patient"), getMyPatientProfile);
 
 router.get("/:id", checkRole("admin", "doctor", "patient"), getPatientById);
 
-router.patch("/:id", checkRole("admin"), updatePatient);
+router.patch(
+  "/:id",
+  checkRole("admin"),
+  patientValidator.update,
+  updatePatient,
+);
 
 router.delete("/:id", checkRole("admin"), deletePatient);
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const verifyToken = require("../middleware/auth");
 const checkRole = require("../middleware/checkRole");
+const doctorValidator = require("../validators/doctorValidator");
 const {
   getDoctors,
   getDoctorById,
@@ -15,12 +16,17 @@ const router = express.Router();
 router.use(verifyToken);
 
 router.get("/", checkRole("admin", "doctor", "patient"), getDoctors);
-router.post("/", checkRole("admin"), createDoctor);
+router.post("/", checkRole("admin"), doctorValidator.create, createDoctor);
 
 router.get("/me", checkRole("doctor"), getMyDoctorProfile);
 
 router.get("/:id", checkRole("admin", "doctor", "patient"), getDoctorById);
-router.patch("/:id", checkRole("admin", "doctor"), updateDoctor);
+router.patch(
+  "/:id",
+  checkRole("admin", "doctor"),
+  doctorValidator.update,
+  updateDoctor,
+);
 
 router.delete("/:id", checkRole("admin"), deleteDoctor);
 
