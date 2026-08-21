@@ -99,14 +99,14 @@ export type TableProps<
   T extends { _id: string | number } = { _id: string | number },
 > = {
   list?: T[];
-  heads: Array<{ key: string; label: string }>;
-  entityType: string;
-  detailPath?: string;
+  columns: TableColumn<T>[];
+  onRowClick?: (item: T) => void;
+  emptyMessage?: string;
 };
 
-export type TableHeads = {
+export type TableColumn<T> = {
   label: string;
-  key: string;
+  render: (item: T) => React.ReactNode;
 };
 
 export type StatCardProps<T> = {

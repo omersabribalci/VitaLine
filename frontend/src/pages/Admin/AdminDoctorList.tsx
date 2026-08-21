@@ -1,5 +1,5 @@
 import Table from "../../components/UI/Table";
-import { doctorsListHeads } from "../../data/tableHeads";
+import { doctorColumns } from "../../data/tableColumns";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router";
@@ -59,7 +59,11 @@ const AdminDoctorList = () => {
         Add New Doctor
       </Button>
 
-      <Table list={doctors} heads={doctorsListHeads} entityType="doctors" />
+      <Table
+        list={doctors}
+        columns={doctorColumns}
+        onRowClick={(doctor) => navigate(`/admin/doctors/${doctor._id}`)}
+      />
     </div>
   );
 };

@@ -1,11 +1,13 @@
 import Table from "../../components/UI/Table";
-import { appointmentsListHeadforDoctors } from "../../data/tableHeads";
+import { doctorAppointmentColumns } from "../../data/tableColumns";
 import { useGetAppointmentsByDoctorIdQuery } from "../../store/services/appointmentApi";
 import Loading from "../../components/UI/Loading";
 import Error from "../../components/UI/Error";
 import { useGetMyDoctorProfileQuery } from "../../store/services/doctorApi";
+import { useNavigate } from "react-router";
 
 const DoctorAppointments = () => {
+  const navigate = useNavigate();
   const {
     data: doctor,
     isLoading: isDocLoading,
@@ -40,9 +42,10 @@ const DoctorAppointments = () => {
     <div className="p-4">
       <Table
         list={appointments}
-        heads={appointmentsListHeadforDoctors}
-        entityType="appointments"
-        detailPath="/doctor"
+        columns={doctorAppointmentColumns}
+        onRowClick={(appointment) =>
+          navigate(`/doctor/appointments/${appointment._id}`)
+        }
       />
     </div>
   );
