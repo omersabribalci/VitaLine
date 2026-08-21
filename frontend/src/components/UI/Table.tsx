@@ -3,6 +3,28 @@ import { useNavigate } from "react-router";
 import TablePagination from "@mui/material/TablePagination";
 import type { TableProps } from "../../types";
 
+const getNestedValue = (value: unknown, path: string): unknown => {
+  return path.split(".").reduce<unknown>((current, key) => {
+    if (current && typeof current === "object") {
+      return (current as Record<string, unknown>)[key];
+    }
+
+    return undefined;
+  }, value);
+};
+
+const getSortableValue = (value: unknown): string | number => {
+  if (value instanceof Date) {
+    return value.getTime();
+  }
+
+  if (typeof value === "string" || typeof value === "number") {
+    return value;
+  }
+
+  return "";
+};
+
 const Table = <T extends { _id: string | number }>({
   list = [],
   heads,
@@ -47,16 +69,12 @@ const Table = <T extends { _id: string | number }>({
     if (!sortConfig.key) return 0;
 
     const keyStr = String(sortConfig.key);
-    const valA = (a as Record<string, unknown>)[keyStr];
-    const valB = (b as Record<string, unknown>)[keyStr];
+    const valA = getSortableValue(getNestedValue(a, keyStr));
+    const valB = getSortableValue(getNestedValue(b, keyStr));
 
-    if (
-      (typeof valA === "string" || typeof valA === "number") &&
-      (typeof valB === "string" || typeof valB === "number")
-    ) {
-      if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
-      if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
-    }
+    if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+    if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+
     return 0;
   });
 
@@ -109,13 +127,18 @@ const Table = <T extends { _id: string | number }>({
             >
               {heads.map((head, colIndex) => {
                 const keyStr = String(head.key);
-                const cellData = (item as Record<string, unknown>)[keyStr];
+                const cellData = getNestedValue(item, keyStr);
 
                 let cellValue: React.ReactNode;
                 if (keyStr === "dateAndTime" && typeof cellData === "string") {
                   cellValue = formatDateTime(cellData);
+                } else if (
+                  typeof cellData === "string" ||
+                  typeof cellData === "number"
+                ) {
+                  cellValue = cellData;
                 } else {
-                  cellValue = cellData as React.ReactNode;
+                  cellValue = "-";
                 }
 
                 return (
