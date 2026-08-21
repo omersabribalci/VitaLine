@@ -1,14 +1,25 @@
 const AppError = require("../utils/AppError");
 
 const getOrigins = () => {
-  // TODO gerçek domain
   if (process.env.NODE_ENV === "production") {
-    return ["https://gercek-domain.com "];
+    return (process.env.CORS_ORIGIN || "")
+      .split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean);
   }
 
-  if (process.env.CORS_ORIGIN) {
-    return process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim());
-  }
+  const configuredOrigins = (process.env.CORS_ORIGIN || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  return [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:5000",
+    "http://127.0.0.1:5000",
+    ...configuredOrigins,
+  ];
 };
 
 const allowedOrigins = new Set(getOrigins());
@@ -27,7 +38,7 @@ const corsOptions = {
     return callback(error);
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   maxAge: 86400,
 };
