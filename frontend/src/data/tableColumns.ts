@@ -28,15 +28,18 @@ export const patientColumns: TableColumn<Patient>[] = [
 export const appointmentColumns: TableColumn<Appointment>[] = [
   {
     label: "Patient",
-    render: (appointment) => appointment.patientId.userId.name,
+    render: (appointment) =>
+      appointment.patientId?.userId?.name ?? "Unknown patient",
   },
   {
     label: "Doctor",
-    render: (appointment) => appointment.doctorId.userId.name,
+    render: (appointment) =>
+      appointment.doctorId?.userId?.name ?? "Unknown doctor",
   },
   {
     label: "Speciality",
-    render: (appointment) => appointment.doctorId.speciality,
+    render: (appointment) =>
+      appointment.doctorId?.speciality ?? "Unknown speciality",
   },
   {
     label: "Date",
@@ -48,7 +51,8 @@ export const appointmentColumns: TableColumn<Appointment>[] = [
 export const doctorAppointmentColumns: TableColumn<Appointment>[] = [
   {
     label: "Patient",
-    render: (appointment) => appointment.patientId.userId.name,
+    render: (appointment) =>
+      appointment.patientId?.userId?.name ?? "Unknown patient",
   },
   {
     label: "Date",

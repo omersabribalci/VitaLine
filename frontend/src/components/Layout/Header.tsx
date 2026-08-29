@@ -5,6 +5,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import Avatar from "@mui/material/Avatar";
 import { useLogoutMutation } from "../../store/services/authApi";
 import { resetAllApiCaches } from "../../store/resetAllApiCaches";
+import { toast } from "react-toastify";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const Header = () => {
   const dispatch = useAppDispatch();
@@ -15,7 +17,7 @@ const Header = () => {
     try {
       await logoutApi().unwrap();
     } catch (err) {
-      console.error("Backend logout failed:", err);
+      toast.error(extractErrorMessage(err, "Unable to sign out from the server."));
     } finally {
       dispatch(logOut());
       resetAllApiCaches(dispatch);
@@ -29,10 +31,7 @@ const Header = () => {
       </h1>
 
       <div className="flex flex-row items-center gap-2 pr-2">
-        <Avatar
-          //src={user?.image ?? undefined}
-          className="w-10 h-10 rounded-full object-cover"
-        />
+        <Avatar className="w-10 h-10 rounded-full object-cover" />
         <span>{user?.name}</span>
       </div>
       <Button

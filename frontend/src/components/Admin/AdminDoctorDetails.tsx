@@ -11,6 +11,8 @@ import Loading from "../UI/Loading";
 import DoctorDetails from "../Doctor/DoctorDetails";
 import NotFound from "../UI/NotFound";
 import ConfirmationDialog from "../UI/ConfirmationDialog";
+import { toast } from "react-toastify";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const AdminDoctorDetails = () => {
   const { id } = useParams();
@@ -30,8 +32,8 @@ const AdminDoctorDetails = () => {
       await deleteDoctor(id).unwrap();
       setShowDeleteDialog(false);
       navigate("/admin/doctors");
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      toast.error(extractErrorMessage(err, "Unable to remove doctor."));
     }
   };
 

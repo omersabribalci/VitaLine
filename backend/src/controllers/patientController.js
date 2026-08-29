@@ -4,6 +4,7 @@ const AppError = require("../utils/AppError");
 const isIdValid = require("../utils/isIdValid");
 const sendSuccessResponse = require("../utils/sendSuccessResponse");
 const User = require("../models/User");
+const Appointment = require("../models/Appointment");
 
 const getPatients = async (req, res, next) => {
   try {
@@ -125,6 +126,12 @@ const deletePatient = async (req, res, next) => {
       if (!user) {
         throw new AppError(`User does not exist with this ID -> ${id}`, 404);
       }
+
+      await Appointment.updateMany(
+        { patientId: patient._id },
+        { $set: { isDeleted: true } },
+        { session: session },
+      );
     });
 
     return sendSuccessResponse(res, 200, null, "Patient deleted successfully!");

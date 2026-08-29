@@ -11,7 +11,8 @@ import Loading from "../UI/Loading";
 import Error from "../UI/Error";
 import NotFound from "../UI/NotFound";
 import ConfirmationDialog from "../UI/ConfirmationDialog";
-import type { ApiError } from "../../types";
+import { toast } from "react-toastify";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const PatientAppointmentDetails = () => {
   const { id } = useParams();
@@ -34,8 +35,7 @@ const PatientAppointmentDetails = () => {
       await updateAppointment({ id, status: "cancelled" }).unwrap();
       setShowCancelDialog(false);
     } catch (err) {
-      const error = err as ApiError;
-      console.error("Updating error:", error.data.message);
+      toast.error(extractErrorMessage(err, "Unable to cancel appointment."));
     }
   };
 

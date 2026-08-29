@@ -6,7 +6,8 @@ import Button from "@mui/material/Button";
 import { useSignupMutation } from "../store/services/authApi";
 import bgImage from "../assets/register-bg.jpg";
 import { toast } from "react-toastify";
-import type { ApiError, RegisterFormData } from "../types";
+import type { RegisterFormData } from "../types";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
 
 const RegisterPage = () => {
   const [signup, { isLoading: isSigningIn, error }] = useSignupMutation();
@@ -25,26 +26,14 @@ const RegisterPage = () => {
       toast.success("Account created successfully 🎉");
       reset();
       navigate("/login");
-    } catch (err) {
-      const error = err as ApiError;
-      console.error("Register error:", error.data.message);
+    } catch {
+      return;
     }
   };
 
   const registerInputs = getRegisterInputs(watch);
 
-  let errMsg = "";
-
-  if (error) {
-    if ("status" in error) {
-      // FetchBaseQueryError
-      errMsg =
-        (error.data as { message?: string })?.message || "Register failed";
-    } else {
-      // SerializedError
-      errMsg = error.message || "Unexpected error";
-    }
-  }
+  const errMsg = extractErrorMessage(error, "Register failed");
 
   return (
     <div

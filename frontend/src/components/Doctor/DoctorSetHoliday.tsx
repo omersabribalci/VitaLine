@@ -6,7 +6,8 @@ import CustomDatePicker from "../UI/CustomDatePicker";
 import Button from "@mui/material/Button";
 import ConfirmationDialog from "../UI/ConfirmationDialog";
 import { toast } from "react-toastify";
-import type { ApiError, Doctor, DoctorSetHolidayFormData } from "../../types";
+import type { Doctor, DoctorSetHolidayFormData } from "../../types";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const DoctorSetHoliday = ({
   doctor,
@@ -57,8 +58,7 @@ const DoctorSetHoliday = ({
       await updateDoctor(payload).unwrap();
       toast.success("Doctor holiday added successfully!");
     } catch (err) {
-      const error = err as ApiError;
-      console.error("Updating error:", error.data.message);
+      toast.error(extractErrorMessage(err, "Unable to add doctor holiday."));
     }
   };
 
@@ -73,8 +73,7 @@ const DoctorSetHoliday = ({
       toast.success("Doctor holiday removed successfully!");
       setShowCancelHolidayDialog(false);
     } catch (err) {
-      const error = err as ApiError;
-      console.error("Cancel Holiday error:", error.data.message);
+      toast.error(extractErrorMessage(err, "Unable to remove doctor holiday."));
     }
   };
 

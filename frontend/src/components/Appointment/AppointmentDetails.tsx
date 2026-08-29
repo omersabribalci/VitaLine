@@ -18,7 +18,7 @@ const AppointmentDetails = ({ appointment }: { appointment: Appointment }) => {
             <div>
               <div className="text-xs text-gray-700">Patient Name</div>
               <div className="text-gray-900 font-medium">
-                {appointment.patientId.userId.name}
+                {appointment.patientId?.userId?.name ?? "Unknown patient"}
               </div>
             </div>
           </div>
@@ -30,13 +30,15 @@ const AppointmentDetails = ({ appointment }: { appointment: Appointment }) => {
             <div>
               <div className="text-xs text-gray-700">Doctor Name</div>
               <div className="text-gray-900 font-medium">
-                {appointment.doctorId.title} {appointment.doctorId.userId.name}
+                {appointment.doctorId
+                  ? `${appointment.doctorId.title} ${appointment.doctorId.userId?.name ?? "Unknown doctor"}`
+                  : "Unknown doctor"}
               </div>
             </div>
             <div>
               <div className="text-xs text-gray-700">Speciality</div>
               <div className="text-gray-900 font-semibold">
-                {appointment.doctorId.speciality}
+                {appointment.doctorId?.speciality ?? "Unknown speciality"}
               </div>
             </div>
           </div>

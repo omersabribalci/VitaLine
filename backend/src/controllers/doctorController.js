@@ -3,6 +3,7 @@ const Doctor = require("../models/Doctor");
 const sendSuccessResponse = require("../utils/sendSuccessResponse");
 const AppError = require("../utils/AppError");
 const User = require("../models/User");
+const Appointment = require("../models/Appointment");
 const bcrypt = require("bcryptjs");
 const isIdValid = require("../utils/isIdValid");
 
@@ -221,6 +222,12 @@ const deleteDoctor = async (req, res, next) => {
       if (!user) {
         throw new AppError(`User does not exist with this ID -> ${id}`, 404);
       }
+
+      await Appointment.updateMany(
+        { doctorId: doctor._id },
+        { $set: { isDeleted: true } },
+        { session: session },
+      );
     });
 
     return sendSuccessResponse(res, 200, null, "Doctor deleted successfully!");

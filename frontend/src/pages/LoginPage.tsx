@@ -8,7 +8,8 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setCredentials } from "../store/slices/authSlice";
 import "./LoginPage.css";
 import { toast } from "react-toastify";
-import type { ApiError, LoginFormData } from "../types";
+import type { LoginFormData } from "../types";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
 
 const LoginPage = () => {
   const [login, { isLoading: isLoggingIn, error }] = useLoginMutation();
@@ -38,9 +39,8 @@ const LoginPage = () => {
       } else if (res.user.role === "patient") {
         navigate("/patient", { replace: true });
       }
-    } catch (err) {
-      const error = err as ApiError;
-      console.error("Login error:", error.data.message);
+    } catch {
+      return;
     }
   };
 
@@ -50,17 +50,7 @@ const LoginPage = () => {
     if (user?.role === "patient") return <Navigate to="/patient" replace />;
   }
 
-  let errMsg = "";
-
-  if (error) {
-    if ("status" in error) {
-      // FetchBaseQueryError
-      errMsg = (error.data as { message?: string })?.message || "Login failed";
-    } else {
-      // SerializedError
-      errMsg = error.message || "Unexpected error";
-    }
-  }
+  const errMsg = extractErrorMessage(error, "Login failed");
 
   return (
     <div className="h-screen flex flex-row w-full ">
@@ -97,11 +87,8 @@ const LoginPage = () => {
             Log In
           </Button>
           <div className="flex flex-row w-full justify-between gap-2 mt-6 text-sm">
-            <span className="text-white/70 hover:underline cursor-pointer">
-              Forgot Password?
-            </span>
             <Link
-              className="text-primary font-medium hover:underline cursor-pointer"
+              className="ml-auto text-primary font-medium hover:underline cursor-pointer"
               to="/register"
             >
               Sign Up

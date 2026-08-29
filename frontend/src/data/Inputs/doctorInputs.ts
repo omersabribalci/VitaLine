@@ -87,8 +87,8 @@ export const editDoctorInputs = [
     placeholder: "New password (optional)",
     name: "password",
     rules: {
-      validate: (value: string) =>
-        !value.trim() || validatePasswordStrength(value),
+      validate: (value: string | undefined) =>
+        !value?.trim() || validatePasswordStrength(value),
     },
   },
 ];

@@ -12,7 +12,8 @@ import {
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import Loading from "../UI/Loading";
-import type { ApiError, EditDoctorFormData } from "../../types";
+import type { EditDoctorFormData } from "../../types";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const AdminEditDoctorForm = () => {
   const [updateDoctor, { isLoading: isUpdating }] = useUpdateDoctorMutation();
@@ -55,8 +56,7 @@ const AdminEditDoctorForm = () => {
       toast.success("Doctor profile updated successfully!");
       navigate(`/admin/doctors/${id}`);
     } catch (err) {
-      const error = err as ApiError;
-      console.error("Updating error:", error.data.message);
+      toast.error(extractErrorMessage(err, "Unable to update doctor profile."));
     }
   };
 

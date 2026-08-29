@@ -6,7 +6,8 @@ import Button from "@mui/material/Button";
 import { useAddDoctorMutation } from "../../store/services/doctorApi";
 import { addDoctorInputs } from "../../data/Inputs/doctorInputs";
 import { toast } from "react-toastify";
-import type { AddDoctorFormData, ApiError } from "../../types";
+import type { AddDoctorFormData } from "../../types";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const AdminAddDoctorForm = () => {
   const [addDoctor, { isLoading: isAdding, error }] = useAddDoctorMutation();
@@ -30,23 +31,12 @@ const AdminAddDoctorForm = () => {
       toast.success("Doctor registration completed ✅");
       reset();
       navigate("/admin/doctors");
-    } catch (err) {
-      const error = err as ApiError;
-      console.error("Adding error:", error.data.message);
+    } catch {
+      return;
     }
   };
 
-  let errMsg = "";
-
-  if (error) {
-    if ("status" in error) {
-      // FetchBaseQueryError
-      errMsg = (error.data as { message?: string })?.message || "Adding failed";
-    } else {
-      // SerializedError
-      errMsg = error.message || "Unexpected error";
-    }
-  }
+  const errMsg = extractErrorMessage(error, "Adding failed");
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-cardBg rounded-2xl shadow-xl mt-8">

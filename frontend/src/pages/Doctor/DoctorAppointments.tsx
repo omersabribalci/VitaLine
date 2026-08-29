@@ -12,7 +12,7 @@ const DoctorAppointments = () => {
     data: doctor,
     isLoading: isDocLoading,
     error: docError,
-    refetch: docRefecth,
+    refetch: docRefetch,
     isFetching: isDocFetching,
   } = useGetMyDoctorProfileQuery();
 
@@ -29,7 +29,7 @@ const DoctorAppointments = () => {
   }
 
   if (docError) {
-    return <Error refetch={docRefecth} isFetching={isDocFetching} />;
+    return <Error refetch={docRefetch} isFetching={isDocFetching} />;
   }
 
   if (error) {

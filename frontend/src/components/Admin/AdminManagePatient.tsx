@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import Loading from "../UI/Loading";
 import Error from "../UI/Error";
 import type { Patient } from "../../types";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const AdminManagePatient = ({ patient }: { patient: Patient }) => {
   const [updatePatient, { isLoading, error }] = useUpdatePatientMutation();
@@ -19,7 +20,7 @@ const AdminManagePatient = ({ patient }: { patient: Patient }) => {
       await updatePatient(payload).unwrap();
       toast.success(`Patient account status updated successfully!`);
     } catch (err) {
-      console.log(err);
+      toast.error(extractErrorMessage(err, "Unable to update patient status."));
     }
   };
 

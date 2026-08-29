@@ -6,11 +6,52 @@ import MedicationIcon from "@mui/icons-material/Medication";
 import PersonalInjuryIcon from "@mui/icons-material/PersonalInjury";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import { PieChart } from "@mui/x-charts/PieChart";
+import Loading from "../../components/UI/Loading";
+import Error from "../../components/UI/Error";
 
 const AdminOverview = () => {
-  const { data: doctors } = useGetDoctorsQuery();
-  const { data: patients } = useGetPatientsQuery();
-  const { data: appointments } = useGetAllAppointmentsQuery();
+  const {
+    data: doctors,
+    isLoading: isDoctorsLoading,
+    error: doctorsError,
+    refetch: refetchDoctors,
+    isFetching: isDoctorsFetching,
+  } = useGetDoctorsQuery();
+  const {
+    data: patients,
+    isLoading: isPatientsLoading,
+    error: patientsError,
+    refetch: refetchPatients,
+    isFetching: isPatientsFetching,
+  } = useGetPatientsQuery();
+  const {
+    data: appointments,
+    isLoading: isAppointmentsLoading,
+    error: appointmentsError,
+    refetch: refetchAppointments,
+    isFetching: isAppointmentsFetching,
+  } = useGetAllAppointmentsQuery();
+
+  if (isDoctorsLoading || isPatientsLoading || isAppointmentsLoading) {
+    return <Loading />;
+  }
+
+  if (doctorsError) {
+    return <Error refetch={refetchDoctors} isFetching={isDoctorsFetching} />;
+  }
+
+  if (patientsError) {
+    return <Error refetch={refetchPatients} isFetching={isPatientsFetching} />;
+  }
+
+  if (appointmentsError) {
+    return (
+      <Error
+        refetch={refetchAppointments}
+        isFetching={isAppointmentsFetching}
+      />
+    );
+  }
 
   const completedAppointments = appointments?.filter(
     (app) => app.status === "completed",

@@ -3,6 +3,7 @@ import type { FC, ReactNode } from "react";
 import type {
   Control,
   FieldErrors,
+  FieldValues,
   RegisterOptions,
   UseFormRegister,
   UseFormSetValue,
@@ -237,13 +238,13 @@ export type CheckboxProps = {
   property: string;
 };
 
-export interface FormInputProps {
+export interface FormInputProps<TFieldValues extends FieldValues> {
   type: string;
   placeholder: string;
   name: string;
-  rules?: RegisterOptions<any>;
-  register: UseFormRegister<any>;
-  errors?: FieldErrors<any>;
+  rules?: RegisterOptions<TFieldValues>;
+  register: UseFormRegister<TFieldValues>;
+  errors?: FieldErrors<TFieldValues>;
 }
 
 export interface ApiResponse<T> {

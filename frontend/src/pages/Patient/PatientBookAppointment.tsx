@@ -17,6 +17,7 @@ import type { BookAppointmentFormData, Doctor } from "../../types";
 import { useGetMyPatientProfileQuery } from "../../store/services/patientApi";
 import Error from "../../components/UI/Error";
 import { useNavigate } from "react-router";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const PatientBookAppointment = () => {
   const navigate = useNavigate();
@@ -73,6 +74,10 @@ const PatientBookAppointment = () => {
     if (result.success) {
       toast.success("Appointment booked successfully!");
       navigate("/patient");
+    } else {
+      toast.error(
+        extractErrorMessage(result.error, "Unable to book appointment."),
+      );
     }
   };
 
@@ -120,6 +125,29 @@ const PatientBookAppointment = () => {
         onDoctorChange={handleDoctorChange}
         doctorNamesArray={doctorNamesArray}
       />
+
+      {selectedDoctor && (
+        <div className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 p-3">
+          {selectedDoctor.image ? (
+            <img
+              src={selectedDoctor.image}
+              alt={`${selectedDoctor.title} ${selectedDoctor.userId.name}`}
+              className="h-12 w-12 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-200 font-semibold text-blue-800">
+              {selectedDoctor.userId.name.charAt(0)}
+            </div>
+          )}
+          <div>
+            <p className="text-xs font-medium text-blue-700">Selected doctor</p>
+            <p className="font-semibold text-gray-900">
+              {selectedDoctor.title} {selectedDoctor.userId.name}
+            </p>
+            <p className="text-sm text-gray-600">{selectedDoctor.speciality}</p>
+          </div>
+        </div>
+      )}
 
       {selectedDoctor && (
         <DateTimeSelector

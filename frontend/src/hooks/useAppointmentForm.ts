@@ -18,9 +18,8 @@ export const useAppointmentForm = (
 
         await newAppointmentMutation(appointmentObject).unwrap();
         return { success: true };
-      } catch (err) {
-        console.error("Randevu alınırken bir hata oluştu.", err);
-        return { success: false, error: err };
+      } catch (error) {
+        return { success: false, error };
       }
     },
     [newAppointmentMutation, selectedDoctorId, patientId],
