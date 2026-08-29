@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router";
-import { addDoctorInputs } from "../../data/Inputs/addDoctorInputs";
+import { editDoctorInputs } from "../../data/Inputs/doctorInputs";
 import FormInput from "../Form/FormInput";
 import { useForm } from "react-hook-form";
 import { specialities } from "../../data/specialities";
@@ -18,7 +18,9 @@ const AdminEditDoctorForm = () => {
   const [updateDoctor, { isLoading: isUpdating }] = useUpdateDoctorMutation();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { data: doctor, isLoading: isFetching } = useGetDoctorByIdQuery(id);
+  const { data: doctor, isLoading: isFetching } = useGetDoctorByIdQuery(id!, {
+    skip: !id,
+  });
 
   const {
     register,
@@ -42,7 +44,14 @@ const AdminEditDoctorForm = () => {
 
   const onSubmit = async (data: EditDoctorFormData) => {
     try {
-      await updateDoctor({ id, ...data }).unwrap();
+      const { password, ...doctorData } = data;
+      const trimmedPassword = password?.trim();
+
+      await updateDoctor({
+        id,
+        ...doctorData,
+        ...(trimmedPassword ? { password: trimmedPassword } : {}),
+      }).unwrap();
       toast.success("Doctor profile updated successfully!");
       navigate(`/admin/doctors/${id}`);
     } catch (err) {
@@ -59,7 +68,7 @@ const AdminEditDoctorForm = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
-          {addDoctorInputs.map((input) => (
+          {editDoctorInputs.map((input) => (
             <FormInput
               key={input.name}
               {...input}

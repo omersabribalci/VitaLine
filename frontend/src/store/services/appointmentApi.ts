@@ -13,12 +13,16 @@ export const appointmentApi = createApi({
         method: "POST",
         body: newAppointment,
       }),
-      invalidatesTags: ["Appointment"],
+      invalidatesTags: (_, __, { doctorId, patientId }) => [
+        { type: "Appointment", id: "LIST" },
+        { type: "Appointment", id: doctorId },
+        { type: "Appointment", id: patientId },
+      ],
     }),
 
     getAllAppointments: builder.query<Appointment[], void>({
       query: () => "appointments",
-      providesTags: ["Appointment"],
+      providesTags: [{ type: "Appointment", id: "LIST" }],
       transformResponse: (response: ApiResponse<Appointment[]>) => {
         return response.data;
       },

@@ -1,13 +1,12 @@
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../store/hooks";
 import NavigationLink from "./NavigationLink";
 import adminNavigation from "../../data/Navigation/adminNavigation";
 import doctorNavigation from "../../data/Navigation/doctorNavigation";
 import patientNavigation from "../../data/Navigation/patientNavigation";
 import icon from "../../assets/icon.png";
-import type { RootState } from "../../store/store";
 
 const SideBar = () => {
-  const { user } = useSelector((state: RootState) => state.auth);
+  const { user } = useAppSelector((state) => state.auth);
 
   const navigation =
     user?.role === "admin"

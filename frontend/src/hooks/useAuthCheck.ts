@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../store/hooks";
 import { useRefreshMutation } from "../store/services/authApi";
 import { setCredentials, setUnauthenticated } from "../store/slices/authSlice";
 
 export const useAuthCheck = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [refresh] = useRefreshMutation();
   const hasChecked = useRef(false);
 

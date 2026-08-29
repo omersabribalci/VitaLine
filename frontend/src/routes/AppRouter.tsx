@@ -52,39 +52,39 @@ const router = createBrowserRouter([
             element: <AdminDashboardLayout />,
             children: [
               {
-                path: "/admin",
+                index: true,
                 element: <AdminOverview />,
               },
               {
-                path: "/admin/doctors",
+                path: "doctors",
                 element: <AdminDoctorList />,
               },
               {
-                path: "/admin/addNewDoctor",
+                path: "addNewDoctor",
                 element: <AdminAddDoctorForm />,
               },
               {
-                path: "/admin/editDoctor/:id",
+                path: "editDoctor/:id",
                 element: <AdminEditDoctorForm />,
               },
               {
-                path: "/admin/doctors/:id",
+                path: "doctors/:id",
                 element: <AdminDoctorDetails />,
               },
               {
-                path: "/admin/patients",
+                path: "patients",
                 element: <AdminPatientList />,
               },
               {
-                path: "/admin/patients/:id",
+                path: "patients/:id",
                 element: <AdminPatientDetails />,
               },
               {
-                path: "/admin/appointments",
+                path: "appointments",
                 element: <AdminAppointments />,
               },
               {
-                path: "/admin/appointments/:id",
+                path: "appointments/:id",
                 element: <AdminAppointmentsDetails />,
               },
             ],
@@ -100,19 +100,19 @@ const router = createBrowserRouter([
             element: <DoctorDashboardLayout />,
             children: [
               {
-                path: "/doctor",
+                index: true,
                 element: <DoctorOverview />,
               },
               {
-                path: "/doctor/management",
+                path: "management",
                 element: <DoctorManagement />,
               },
               {
-                path: "/doctor/appointments",
+                path: "appointments",
                 element: <DoctorAppointments />,
               },
               {
-                path: "/doctor/appointments/:id",
+                path: "appointments/:id",
                 element: <DoctorAppointmentDetails />,
               },
             ],
@@ -128,19 +128,19 @@ const router = createBrowserRouter([
             element: <PatientDashboardLayout />,
             children: [
               {
-                path: "/patient",
+                index: true,
                 element: <PatientOverview />,
               },
               {
-                path: "/patient/bookAppointment",
+                path: "bookAppointment",
                 element: <PatientBookAppointment />,
               },
               {
-                path: "/patient/appointments",
+                path: "appointments",
                 element: <PatientAppointments />,
               },
               {
-                path: "/patient/appointments/:id",
+                path: "appointments/:id",
                 element: <PatientAppointmentDetails />,
               },
             ],

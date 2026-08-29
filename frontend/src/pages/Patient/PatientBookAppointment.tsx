@@ -16,8 +16,10 @@ import { toast } from "react-toastify";
 import type { BookAppointmentFormData, Doctor } from "../../types";
 import { useGetMyPatientProfileQuery } from "../../store/services/patientApi";
 import Error from "../../components/UI/Error";
+import { useNavigate } from "react-router";
 
 const PatientBookAppointment = () => {
+  const navigate = useNavigate();
   const {
     data: patient,
     isLoading: isPatLoading,
@@ -70,11 +72,7 @@ const PatientBookAppointment = () => {
     const result = await onSubmit(data);
     if (result.success) {
       toast.success("Appointment booked successfully!");
-
-      setValue("speciality", "");
-      setValue("doctorName", "");
-      setValue("date", null);
-      setValue("time", null);
+      navigate("/patient");
     }
   };
 

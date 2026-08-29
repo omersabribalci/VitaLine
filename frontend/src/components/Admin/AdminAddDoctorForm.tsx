@@ -4,7 +4,7 @@ import FormInput from "../Form/FormInput";
 import { specialities } from "../../data/specialities";
 import Button from "@mui/material/Button";
 import { useAddDoctorMutation } from "../../store/services/doctorApi";
-import { addDoctorInputs } from "../../data/Inputs/addDoctorInputs";
+import { addDoctorInputs } from "../../data/Inputs/doctorInputs";
 import { toast } from "react-toastify";
 import type { AddDoctorFormData, ApiError } from "../../types";
 

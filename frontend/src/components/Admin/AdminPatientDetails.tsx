@@ -17,7 +17,7 @@ const AdminPatientDetails = () => {
     error,
     refetch,
     isFetching,
-  } = useGetPatientByIdQuery(id);
+  } = useGetPatientByIdQuery(id!, { skip: !id });
 
   const navigate = useNavigate();
 

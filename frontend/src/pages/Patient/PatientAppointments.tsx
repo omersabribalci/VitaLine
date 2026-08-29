@@ -36,6 +36,14 @@ const PatientAppointments = () => {
     return <Error refetch={refetch} isFetching={isFetching} />;
   }
 
+  if (appointments?.length === 0) {
+    return (
+      <div className="bg-cardBg p-6 rounded shadow m-4">
+        <p>You have no scheduled appointments.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4">
       <Table

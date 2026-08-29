@@ -16,7 +16,7 @@ const AdminAppointmentsDetails = () => {
     error,
     refetch,
     isFetching,
-  } = useGetAppointmentByIdQuery(id);
+  } = useGetAppointmentByIdQuery(id!, { skip: !id });
 
   if (isLoading) {
     return <Loading />;

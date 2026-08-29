@@ -24,7 +24,7 @@ const PatientAppointmentDetails = () => {
     error,
     refetch,
     isFetching,
-  } = useGetAppointmentByIdQuery(id);
+  } = useGetAppointmentByIdQuery(id!, { skip: !id });
 
   const [updateAppointment, { isLoading: isCancelling }] =
     useUpdateAppointmentMutation();

@@ -22,10 +22,9 @@ const DoctorSetHoliday = ({
   const {
     control,
     handleSubmit,
-    formState: { errors },
     reset,
     getValues,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm<DoctorSetHolidayFormData>({
     mode: "onSubmit",
   });

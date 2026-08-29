@@ -23,12 +23,16 @@ const AdminDoctorDetails = () => {
     error,
     refetch,
     isFetching,
-  } = useGetDoctorByIdQuery(id);
+  } = useGetDoctorByIdQuery(id!, { skip: !id });
 
   const handleDelete = async () => {
-    await deleteDoctor(id);
-    setShowDeleteDialog(false);
-    navigate("/admin/doctors");
+    try {
+      await deleteDoctor(id).unwrap();
+      setShowDeleteDialog(false);
+      navigate("/admin/doctors");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   if (isLoading) {

@@ -4,19 +4,16 @@ import { Link, Navigate, useNavigate } from "react-router";
 import { loginInputs } from "../data/Inputs/loginInputs";
 import Button from "@mui/material/Button";
 import { useLoginMutation } from "../store/services/authApi";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setCredentials } from "../store/slices/authSlice";
 import "./LoginPage.css";
 import { toast } from "react-toastify";
-import type { RootState } from "../store/store";
 import type { ApiError, LoginFormData } from "../types";
 
 const LoginPage = () => {
   const [login, { isLoading: isLoggingIn, error }] = useLoginMutation();
-  const { isAuthenticated, user } = useSelector(
-    (state: RootState) => state.auth,
-  );
-  const dispatch = useDispatch();
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const {
     register,

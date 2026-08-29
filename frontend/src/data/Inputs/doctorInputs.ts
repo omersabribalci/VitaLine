@@ -1,4 +1,18 @@
-export const addDoctorInputs = [
+const validatePasswordStrength = (value: string) => {
+  const trimmedValue = value.trim();
+
+  if (trimmedValue.length < 8) {
+    return "Password must be at least 8 characters";
+  }
+
+  const strongRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/;
+  return (
+    strongRegex.test(trimmedValue) ||
+    "Password must contain upper, lower, and number"
+  );
+};
+
+const doctorInputs = [
   {
     type: "text",
     placeholder: "Title",
@@ -51,23 +65,30 @@ export const addDoctorInputs = [
       required: "Image is required",
     },
   },
+];
+
+export const addDoctorInputs = [
+  ...doctorInputs,
   {
     type: "password",
     placeholder: "Password",
     name: "password",
     rules: {
       required: "Password is required!",
-      validate: (value: string) => {
-        const trimmedValue = value.trim();
-        if (trimmedValue.length < 8) {
-          return "Password must be at least 8 characters";
-        }
-        const strongRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/;
-        return (
-          strongRegex.test(trimmedValue) ||
-          "Password must contain upper, lower, and number"
-        );
-      },
+      validate: validatePasswordStrength,
+    },
+  },
+];
+
+export const editDoctorInputs = [
+  ...doctorInputs,
+  {
+    type: "password",
+    placeholder: "New password (optional)",
+    name: "password",
+    rules: {
+      validate: (value: string) =>
+        !value.trim() || validatePasswordStrength(value),
     },
   },
 ];
