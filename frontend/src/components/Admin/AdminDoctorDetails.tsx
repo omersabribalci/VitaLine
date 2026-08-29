@@ -31,6 +31,7 @@ const AdminDoctorDetails = () => {
     try {
       await deleteDoctor(id).unwrap();
       setShowDeleteDialog(false);
+      toast.success("Doctor removed successfully!");
       navigate("/admin/doctors");
     } catch (err) {
       toast.error(extractErrorMessage(err, "Unable to remove doctor."));

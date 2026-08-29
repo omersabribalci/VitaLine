@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import Loading from "../UI/Loading";
 import type { EditDoctorFormData } from "../../types";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import { doctorTitles } from "../../data/doctorTitles";
 
 const AdminEditDoctorForm = () => {
   const [updateDoctor, { isLoading: isUpdating }] = useUpdateDoctorMutation();
@@ -68,6 +69,28 @@ const AdminEditDoctorForm = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
+          <div>
+            <select
+              {...register("title", {
+                required: "Title is required",
+              })}
+              className="bg-white border border-[#cfd8dc] rounded-md py-2 px-3 w-full placeholder:font-light focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 transition-colors"
+            >
+              <option value="" disabled>
+                Select title
+              </option>
+              {doctorTitles.map((title) => (
+                <option key={title} value={title}>
+                  {title}
+                </option>
+              ))}
+            </select>
+            {errors.title && (
+              <p className="text-xs text-red-600 mt-1">
+                {errors.title.message}
+              </p>
+            )}
+          </div>
           {editDoctorInputs.map((input) => (
             <FormInput
               key={input.name}

@@ -15,14 +15,6 @@ const validatePasswordStrength = (value: string) => {
 const doctorInputs = [
   {
     type: "text",
-    placeholder: "Title",
-    name: "title",
-    rules: {
-      required: "Title is required.",
-    },
-  },
-  {
-    type: "text",
     placeholder: "Name",
     name: "name",
     rules: {

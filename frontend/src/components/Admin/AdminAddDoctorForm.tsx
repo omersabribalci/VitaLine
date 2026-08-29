@@ -8,6 +8,7 @@ import { addDoctorInputs } from "../../data/Inputs/doctorInputs";
 import { toast } from "react-toastify";
 import type { AddDoctorFormData } from "../../types";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import { doctorTitles } from "../../data/doctorTitles";
 
 const AdminAddDoctorForm = () => {
   const [addDoctor, { isLoading: isAdding, error }] = useAddDoctorMutation();
@@ -48,6 +49,29 @@ const AdminAddDoctorForm = () => {
         autoComplete="off"
       >
         <div className="grid grid-cols-2 gap-4">
+          <div>
+            <select
+              {...register("title", {
+                required: "Title is required",
+              })}
+              className="bg-white border border-[#cfd8dc] rounded-md py-2 px-3 w-full placeholder:font-light focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 transition-colors"
+              defaultValue=""
+            >
+              <option value="" disabled>
+                Select title
+              </option>
+              {doctorTitles.map((title) => (
+                <option key={title} value={title}>
+                  {title}
+                </option>
+              ))}
+            </select>
+            {errors.title && (
+              <p className="text-xs text-red-600 mt-1">
+                {errors.title.message}
+              </p>
+            )}
+          </div>
           {addDoctorInputs.map((input) => (
             <FormInput
               key={input.name}

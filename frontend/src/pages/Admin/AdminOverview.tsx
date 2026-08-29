@@ -8,6 +8,7 @@ import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import { PieChart } from "@mui/x-charts/PieChart";
 import Loading from "../../components/UI/Loading";
 import Error from "../../components/UI/Error";
+import NoAppointments from "../../components/Statistic/NoAppointments";
 
 const AdminOverview = () => {
   const {
@@ -86,38 +87,42 @@ const AdminOverview = () => {
       </div>
       <div className="flex flex-col items-center gap-4 mt-5 bg-white/20 p-5 rounded-4xl">
         <h2 className="text-xl font-bold">Appointment Statistics</h2>
-        <PieChart
-          series={[
-            {
-              data: [
-                {
-                  id: 0,
-                  value: completedAppointments?.length ?? 0,
-                  label: "Completed",
-                  color: "green",
-                },
-                {
-                  id: 1,
-                  value: canceledAppointments?.length ?? 0,
-                  label: "Canceled",
-                  color: "red",
-                },
-                {
-                  id: 2,
-                  value: scheduledAppointments?.length ?? 0,
-                  label: "Scheduled",
-                  color: "blue",
-                },
-              ],
-              innerRadius: 30,
-              outerRadius: 100,
-              cornerRadius: 5,
-              arcLabel: "value",
-            },
-          ]}
-          width={200}
-          height={200}
-        />
+        {appointments?.length ? (
+          <PieChart
+            series={[
+              {
+                data: [
+                  {
+                    id: 0,
+                    value: completedAppointments?.length ?? 0,
+                    label: "Completed",
+                    color: "green",
+                  },
+                  {
+                    id: 1,
+                    value: canceledAppointments?.length ?? 0,
+                    label: "Canceled",
+                    color: "red",
+                  },
+                  {
+                    id: 2,
+                    value: scheduledAppointments?.length ?? 0,
+                    label: "Scheduled",
+                    color: "blue",
+                  },
+                ],
+                innerRadius: 30,
+                outerRadius: 100,
+                cornerRadius: 5,
+                arcLabel: "value",
+              },
+            ]}
+            width={200}
+            height={200}
+          />
+        ) : (
+          <NoAppointments />
+        )}
       </div>
     </main>
   );
