@@ -23,7 +23,7 @@ const PatientOverview = () => {
   if (!patient) return null;
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
+    <div className="mx-auto w-full max-w-2xl">
       <PatientDetails patient={patient} />
     </div>
   );

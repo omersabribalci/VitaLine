@@ -35,10 +35,10 @@ export default function ResponsiveGrid({
                     bgcolor: "#f0f0f0a7", // hover için hafif koyulaşma
                   },
                   "&.Mui-selected": {
-                    background: "linear-gradient(135deg, #4385ef, #6cc6f0)", // pastel mavi gradient
-                    color: "#333", // koyu gri yazı rengi
-                    boxShadow: "0 3px 8px rgba(0,0,0,0.2)", // yumuşak gölge
-                    transform: "scale(1.03)", // hafif büyüme
+                    background: "linear-gradient(135deg, #4385ef, #6cc6f0)",
+                    color: "#333",
+                    boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
+                    transform: "scale(1.03)",
                   },
                 }}
                 value={time}

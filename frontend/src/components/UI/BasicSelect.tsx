@@ -13,8 +13,8 @@ export default function BasicSelect({
   className,
 }: BasicSelectProps) {
   return (
-    <Box className={className}>
-      <FormControl size="small" variant="outlined" sx={{ width: "250px" }}>
+    <Box className={className} sx={{ width: "100%" }}>
+      <FormControl size="small" variant="outlined" sx={{ width: "100%" }}>
         <InputLabel id="demo-simple-select-label">{label}</InputLabel>
         <Select
           labelId="demo-simple-select-label"

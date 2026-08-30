@@ -38,21 +38,27 @@ const PatientAppointments = () => {
 
   if (appointments?.length === 0) {
     return (
-      <div className="bg-cardBg p-6 rounded shadow m-4">
-        <p>You have no scheduled appointments.</p>
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="rounded-2xl border border-white/20 bg-cardBg/80 p-6 shadow-sm">
+          <p className="text-sm text-slate-700">
+            You have no scheduled appointments.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-4">
-      <Table
-        list={appointments}
-        columns={appointmentColumns}
-        onRowClick={(appointment) =>
-          navigate(`/patient/appointments/${appointment._id}`)
-        }
-      />
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
+      <div className="w-full overflow-x-auto rounded-2xl border border-white/20 bg-cardBg/60 shadow-sm">
+        <Table
+          list={appointments}
+          columns={appointmentColumns}
+          onRowClick={(appointment) =>
+            navigate(`/patient/appointments/${appointment._id}`)
+          }
+        />
+      </div>
     </div>
   );
 };

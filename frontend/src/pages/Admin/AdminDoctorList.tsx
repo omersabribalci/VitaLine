@@ -28,7 +28,7 @@ const AdminDoctorList = () => {
 
   if (doctors?.length === 0) {
     return (
-      <div className="bg-cardBg min-w-2xl p-6 rounded shadow m-4">
+      <div className="w-full max-w-6xl mx-auto bg-cardBg p-4 sm:p-6 rounded-2xl shadow-md">
         <p>There is no registered doctor.</p>
         <Button
           onClick={() => {
@@ -46,7 +46,7 @@ const AdminDoctorList = () => {
   }
 
   return (
-    <div className="p-4 flex flex-col gap-4 min-w-6xl">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
       <Button
         onClick={() => {
           navigate("/admin/addNewDoctor");
@@ -59,11 +59,13 @@ const AdminDoctorList = () => {
         Add New Doctor
       </Button>
 
-      <Table
-        list={doctors}
-        columns={doctorColumns}
-        onRowClick={(doctor) => navigate(`/admin/doctors/${doctor._id}`)}
-      />
+      <div className="w-full overflow-x-auto rounded-2xl border border-white/20 bg-cardBg/60 shadow-sm">
+        <Table
+          list={doctors}
+          columns={doctorColumns}
+          onRowClick={(doctor) => navigate(`/admin/doctors/${doctor._id}`)}
+        />
+      </div>
     </div>
   );
 };

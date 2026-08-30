@@ -85,7 +85,7 @@ const DoctorSetHoliday = ({
         Please pick the days you won’t be available for appointments. (End date
         will be first working day.)
       </p>
-      <div className="flex flex-row gap-4">
+      <div className="grid w-full max-w-xl grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
         <div>
           <Controller
             name="startDate"

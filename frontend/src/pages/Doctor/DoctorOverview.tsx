@@ -24,7 +24,7 @@ const DoctorOverview = () => {
   if (!doctor) return null;
 
   return (
-    <div className="mx-auto p-4 max-w-4xl">
+    <div className="w-full max-w-[1280px] mx-auto space-y-4 sm:space-y-5">
       <DoctorDetails doctor={doctor} />
       <DoctorDailyAppointments id={doctor._id} />
     </div>

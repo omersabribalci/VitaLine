@@ -25,11 +25,13 @@ const DoctorManagement = () => {
   if (!doctor) return null;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-cardBg rounded-2xl shadow-xl mt-10">
-      <h2 className="text-2xl font-bold mb-6 border-b pb-2">
-        Doctor Management
-      </h2>
-      <DoctorSetHoliday doctor={doctor} doctorId={doctor._id} />
+    <div className="w-full max-w-6xl mx-auto">
+      <div className="bg-cardBg border border-white/20 rounded-2xl shadow-sm p-5 sm:p-6">
+        <h2 className="text-2xl font-bold mb-6 border-b border-white/20 pb-2 text-slate-800">
+          Doctor Management
+        </h2>
+        <DoctorSetHoliday doctor={doctor} doctorId={doctor._id} />
+      </div>
     </div>
   );
 };

@@ -13,7 +13,7 @@ export const SpecialityDoctorSelector = ({
 }: SpecialityDoctorSelectorProps) => {
   return (
     <>
-      <div className="flex flex-row gap-4 justify-between flex-wrap">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-start">
         <Controller
           name="speciality"
           control={control}
@@ -21,6 +21,7 @@ export const SpecialityDoctorSelector = ({
           render={({ field }) => (
             <BasicSelect
               {...field}
+              className="w-full"
               onChange={(e) => {
                 field.onChange(e);
                 onSpecialityChange();
@@ -41,7 +42,7 @@ export const SpecialityDoctorSelector = ({
               render={({ field }) => (
                 <BasicSelect
                   {...field}
-                  className="mx-auto"
+                  className="w-full"
                   onChange={(e) => {
                     field.onChange(e);
                     onDoctorChange();

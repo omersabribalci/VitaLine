@@ -67,8 +67,8 @@ const AdminOverview = () => {
   );
 
   return (
-    <main className="p-4 max-w-5xl mx-auto">
-      <div className="flex flex-row flex-wrap justify-between gap-10 bg-white/20 p-5 rounded-4xl">
+    <main className="w-full max-w-6xl mx-auto space-y-5">
+      <div className="flex flex-row flex-wrap justify-between gap-4 sm:gap-5 lg:gap-6 bg-white/20 p-4 sm:p-5 rounded-4xl">
         <StatCard
           title="Registered Doctor"
           parameter={doctors}
@@ -85,7 +85,8 @@ const AdminOverview = () => {
           icon={<BookmarksIcon fontSize="large" />}
         />
       </div>
-      <div className="flex flex-col items-center gap-4 mt-5 bg-white/20 p-5 rounded-4xl">
+
+      <div className="flex flex-col items-center gap-4 bg-white/20 p-4 sm:p-5 rounded-4xl">
         <h2 className="text-xl font-bold">Appointment Statistics</h2>
         {appointments?.length ? (
           <PieChart

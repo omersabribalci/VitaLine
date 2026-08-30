@@ -95,7 +95,7 @@ const PatientBookAppointment = () => {
 
   if (isPatLoading || isLoading)
     return (
-      <div className="p-4 mt-4 max-w-xl mx-auto flex flex-col gap-4 bg-cardBg rounded-2xl shadow-xl">
+      <div className="mx-auto mt-4 flex w-full max-w-3xl flex-col gap-4 rounded-2xl bg-cardBg p-4 shadow-xl">
         <Loading />
       </div>
     );
@@ -109,58 +109,71 @@ const PatientBookAppointment = () => {
   }
 
   return (
-    <form
-      className="p-4 mt-4 max-w-xl mx-auto flex flex-col gap-4 bg-cardBg rounded-2xl shadow-xl"
-      onSubmit={handleSubmit(handleFormSubmit)}
-    >
-      <h2 className="text-2xl">Book an Appointment</h2>
-      <hr className="border-t" />
+    <div className="mx-auto w-full max-w-3xl">
+      <form
+        className="mx-auto flex w-full flex-col gap-4 rounded-2xl border border-white/20 bg-cardBg p-4 shadow-sm sm:p-5"
+        onSubmit={handleSubmit(handleFormSubmit)}
+      >
+        <h2 className="text-2xl font-semibold text-slate-800">
+          Book an Appointment
+        </h2>
+        <hr className="border-t border-white/20" />
 
-      <SpecialityDoctorSelector
-        control={control}
-        specialities={specialities}
-        speciality={speciality}
-        doctorsBySpeciality={doctorsBySpeciality}
-        isLoading={isLoading}
-        onSpecialityChange={handleSpecialityChange}
-        onDoctorChange={handleDoctorChange}
-        doctorNamesArray={doctorNamesArray}
-      />
-
-      {selectedDoctor && (
-        <div className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 p-3">
-          <Avatar
-            src={selectedDoctor.userId.image || undefined}
-            alt={`${selectedDoctor.title} ${selectedDoctor.userId.name}`}
-            sx={{ width: 48, height: 48, bgcolor: "#dbeafe", color: "#1d4ed8" }}
-          >
-            {!selectedDoctor.userId.image &&
-              selectedDoctor.userId.name.charAt(0).toUpperCase()}
-          </Avatar>
-          <div>
-            <p className="text-xs font-medium text-blue-700">Selected doctor</p>
-            <p className="font-semibold text-gray-900">
-              {selectedDoctor.title} {selectedDoctor.userId.name}
-            </p>
-            <p className="text-sm text-gray-600">{selectedDoctor.speciality}</p>
-          </div>
-        </div>
-      )}
-
-      {selectedDoctor && (
-        <DateTimeSelector
+        <SpecialityDoctorSelector
           control={control}
-          date={date}
-          time={time}
-          setValue={setValue}
-          appointmentTimes={appointmentTimes}
-          isTimeBooked={isTimeBooked}
-          disableDateFunction={disableDateFunction}
-          selectedDoctor={selectedDoctor}
-          isAdding={isAdding}
+          specialities={specialities}
+          speciality={speciality}
+          doctorsBySpeciality={doctorsBySpeciality}
+          isLoading={isLoading}
+          onSpecialityChange={handleSpecialityChange}
+          onDoctorChange={handleDoctorChange}
+          doctorNamesArray={doctorNamesArray}
         />
-      )}
-    </form>
+
+        {selectedDoctor && (
+          <div className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 p-3">
+            <Avatar
+              src={selectedDoctor.userId.image || undefined}
+              alt={`${selectedDoctor.title} ${selectedDoctor.userId.name}`}
+              sx={{
+                width: 48,
+                height: 48,
+                bgcolor: "#dbeafe",
+                color: "#1d4ed8",
+              }}
+            >
+              {!selectedDoctor.userId.image &&
+                selectedDoctor.userId.name.charAt(0).toUpperCase()}
+            </Avatar>
+            <div>
+              <p className="text-xs font-medium text-blue-700">
+                Selected doctor
+              </p>
+              <p className="font-semibold text-gray-900">
+                {selectedDoctor.title} {selectedDoctor.userId.name}
+              </p>
+              <p className="text-sm text-gray-600">
+                {selectedDoctor.speciality}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {selectedDoctor && (
+          <DateTimeSelector
+            control={control}
+            date={date}
+            time={time}
+            setValue={setValue}
+            appointmentTimes={appointmentTimes}
+            isTimeBooked={isTimeBooked}
+            disableDateFunction={disableDateFunction}
+            selectedDoctor={selectedDoctor}
+            isAdding={isAdding}
+          />
+        )}
+      </form>
+    </div>
   );
 };
 
