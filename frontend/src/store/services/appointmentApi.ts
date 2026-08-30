@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import type { ApiResponse, Appointment } from "../../types";
+import type { ApiResponse, Appointment, AvailabilityResponse } from "../../types";
 import { baseQueryWithReAuth } from "./baseQueryWithReAuth";
 
 export const appointmentApi = createApi({
@@ -60,6 +60,18 @@ export const appointmentApi = createApi({
       }),
       invalidatesTags: (_, __, { id }) => [{ type: "Appointment", id }],
     }),
+    getAvailability: builder.query<
+      AvailabilityResponse,
+      { doctorId: string; date: string }
+    >({
+      query: ({ doctorId, date }) =>
+        `appointments/availability?doctorId=${doctorId}&date=${date}`,
+      providesTags: (_, __, { doctorId }) => [
+        { type: "Appointment", id: doctorId },
+      ],
+      transformResponse: (response: ApiResponse<AvailabilityResponse>) =>
+        response.data,
+    }),
   }),
 });
 
@@ -70,4 +82,5 @@ export const {
   useGetAllAppointmentsQuery,
   useGetAppointmentByIdQuery,
   useUpdateAppointmentMutation,
+  useGetAvailabilityQuery,
 } = appointmentApi;

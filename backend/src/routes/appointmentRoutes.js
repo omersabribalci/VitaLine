@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getAppointments,
   getAppointmentById,
+  getAvailability,
   createAppointment,
   updateAppointment,
   deleteAppointment,
@@ -15,6 +16,8 @@ const router = express.Router();
 router.use(verifyToken);
 
 router.get("/", checkRole("admin", "doctor", "patient"), getAppointments);
+// /availability must come before /:id to avoid route shadowing
+router.get("/availability", checkRole("admin", "doctor", "patient"), getAvailability);
 router.post(
   "/",
   checkRole("admin", "patient"),

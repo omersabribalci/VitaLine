@@ -4,6 +4,7 @@ const authRouter = require("./routes/authRoutes");
 const appointmentRouter = require("./routes/appointmentRoutes");
 const doctorRouter = require("./routes/doctorRoutes");
 const patientRouter = require("./routes/patientRoutes");
+const bookingPolicyRouter = require("./routes/bookingPolicyRoutes");
 const morganMiddleware = require("./middleware/morgan");
 const errorHandler = require("./middleware/errorHandler");
 const { corsOptions } = require("./config/corsOptions");
@@ -29,6 +30,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/appointments", appointmentRouter);
 app.use("/api/doctors", doctorRouter);
 app.use("/api/patients", patientRouter);
+app.use("/api/booking-policy", bookingPolicyRouter);
 
 app.use(notFound);
 

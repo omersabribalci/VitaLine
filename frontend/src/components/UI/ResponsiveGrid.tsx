@@ -8,7 +8,6 @@ export default function ResponsiveGrid({
   array,
   onChange,
   value,
-  isTimeBooked,
 }: ResponsiveGridProps) {
   return (
     <Box sx={{ flexGrow: 1, marginTop: 2 }}>
@@ -26,7 +25,6 @@ export default function ResponsiveGrid({
           {array.map((time, index) => (
             <Grid key={index}>
               <ToggleButton
-                disabled={isTimeBooked(time)}
                 sx={{
                   bgcolor: "#fafafab8", // çok açık gri arka plan
                   transition: "all 0.3s ease",

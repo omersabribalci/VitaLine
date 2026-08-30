@@ -4,6 +4,7 @@ import { doctorApi } from "./services/doctorApi.ts";
 import { patientApi } from "./services/patientApi.ts";
 import { authApi } from "./services/authApi.ts";
 import { appointmentApi } from "./services/appointmentApi.ts";
+import { bookingPolicyApi } from "./services/bookingPolicyApi.ts";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     [doctorApi.reducerPath]: doctorApi.reducer,
     [patientApi.reducerPath]: patientApi.reducer,
     [appointmentApi.reducerPath]: appointmentApi.reducer,
+    [bookingPolicyApi.reducerPath]: bookingPolicyApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -19,6 +21,7 @@ const store = configureStore({
       doctorApi.middleware,
       patientApi.middleware,
       appointmentApi.middleware,
+      bookingPolicyApi.middleware,
     ),
 });
 export type RootState = ReturnType<typeof store.getState>;

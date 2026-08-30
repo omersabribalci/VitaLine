@@ -1,18 +1,16 @@
 import { specialities } from "../../data/specialities";
 import { useGetDoctorsBySpecialityQuery } from "../../store/services/doctorApi";
 import {
-  useGetAppointmentsByDoctorIdQuery,
   useNewAppointmentMutation,
+  useGetAvailabilityQuery,
 } from "../../store/services/appointmentApi";
 import Loading from "../../components/UI/Loading";
 import { useForm, useWatch } from "react-hook-form";
 import SpecialityDoctorSelector from "../../components/Patient/SpecialityDoctorSelector";
 import DateTimeSelector from "../../components/Patient/DateTimeSelector";
-import { useDisableDateFunction } from "../../hooks/useDisableDateFunction";
-import { useTimeBooking } from "../../hooks/useTimeBooking";
 import { useAppointmentForm } from "../../hooks/useAppointmentForm";
-import { appointmentTimes } from "../../data/appointmentConstants";
 import { toast } from "react-toastify";
+import { format } from "date-fns";
 import type { BookAppointmentFormData, Doctor } from "../../types";
 import { useGetMyPatientProfileQuery } from "../../store/services/patientApi";
 import Error from "../../components/UI/Error";
@@ -22,6 +20,7 @@ import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const PatientBookAppointment = () => {
   const navigate = useNavigate();
+
   const {
     data: patient,
     isLoading: isPatLoading,
@@ -51,15 +50,17 @@ const PatientBookAppointment = () => {
   );
   const selectedDoctorId = selectedDoctor?._id;
 
-  const { data: appointmentsByDoctorId } = useGetAppointmentsByDoctorIdQuery(
-    selectedDoctorId,
-    { skip: !selectedDoctorId },
-  );
+  // Tarih "YYYY-MM-DD" string olarak formatla (availability query için)
+  // new Date(date) kullanmak timezone kaymasına neden oluyor; doğrudan local date'i formatlamak doğru sonuç verir.
+  const dateString = date ? format(date, "yyyy-MM-dd") : null;
+
+  const { data: availabilityData, isLoading: isAvailabilityLoading } =
+    useGetAvailabilityQuery(
+      { doctorId: selectedDoctorId!, date: dateString! },
+      { skip: !selectedDoctorId || !dateString },
+    );
 
   const [newAppointment, { isLoading: isAdding }] = useNewAppointmentMutation();
-
-  const disableDateFunction = useDisableDateFunction(selectedDoctor);
-  const isTimeBooked = useTimeBooking(appointmentsByDoctorId, date);
 
   const onSubmit = useAppointmentForm(
     newAppointment,
@@ -165,10 +166,8 @@ const PatientBookAppointment = () => {
             date={date}
             time={time}
             setValue={setValue}
-            appointmentTimes={appointmentTimes}
-            isTimeBooked={isTimeBooked}
-            disableDateFunction={disableDateFunction}
-            selectedDoctor={selectedDoctor}
+            availableSlots={availabilityData?.availableSlots ?? []}
+            isAvailabilityLoading={isAvailabilityLoading}
             isAdding={isAdding}
           />
         )}

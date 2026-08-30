@@ -2,8 +2,10 @@ import { Controller } from "react-hook-form";
 import CustomDatePicker from "../UI/CustomDatePicker";
 import ResponsiveGrid from "../UI/ResponsiveGrid";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import { addDays } from "date-fns";
-import { MAX_BOOKING_DAYS } from "../../data/appointmentConstants";
 import type { DateTimeSelectorProps } from "../../types";
 
 export const DateTimeSelector = ({
@@ -11,9 +13,8 @@ export const DateTimeSelector = ({
   date,
   time,
   setValue,
-  appointmentTimes,
-  isTimeBooked,
-  disableDateFunction,
+  availableSlots,
+  isAvailabilityLoading,
   isAdding,
 }: DateTimeSelectorProps) => {
   return (
@@ -30,26 +31,41 @@ export const DateTimeSelector = ({
               setValue("time", null);
             }}
             value={value}
-            maxDate={addDays(new Date(), MAX_BOOKING_DAYS)}
-            shouldDisableDate={disableDateFunction}
+            // maxDate backend'den gelen policy yoksa 30 gün default
+            maxDate={addDays(new Date(), 30)}
+            disablePast
           />
         )}
       />
 
       {date && (
-        <Controller
-          name="time"
-          control={control}
-          defaultValue={null}
-          render={({ field }) => (
-            <ResponsiveGrid
-              {...field}
-              className="max-w-md mx-auto mt-3"
-              array={appointmentTimes}
-              isTimeBooked={isTimeBooked}
+        <Box sx={{ minHeight: 80 }}>
+          {isAvailabilityLoading ? (
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2, color: "text.secondary" }}
+            >
+              <CircularProgress size={18} />
+              <Typography variant="body2">Loading available slots...</Typography>
+            </Box>
+          ) : availableSlots.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+              No available slots for this day.
+            </Typography>
+          ) : (
+            <Controller
+              name="time"
+              control={control}
+              defaultValue={null}
+              render={({ field }) => (
+                <ResponsiveGrid
+                  {...field}
+                  className="max-w-md mx-auto mt-3"
+                  array={availableSlots}
+                />
+              )}
             />
           )}
-        />
+        </Box>
       )}
 
       {date && time && (

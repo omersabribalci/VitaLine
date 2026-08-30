@@ -9,6 +9,7 @@ import AdminOverview from "../pages/Admin/AdminOverview";
 import AdminDoctorList from "../pages/Admin/AdminDoctorList";
 import AdminPatientList from "../pages/Admin/AdminPatientList";
 import AdminAppointments from "../pages/Admin/AdminAppointments";
+import AdminManagement from "../pages/Admin/AdminManagement";
 import AdminDashboardLayout from "../layouts/AdminDashboardLayout";
 import DoctorDashboardLayout from "../layouts/DoctorDashboardLayout";
 import DoctorAppointments from "../pages/Doctor/DoctorAppointments";
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
               {
                 path: "appointments/:id",
                 element: <AdminAppointmentsDetails />,
+              },
+              {
+                path: "management",
+                element: <AdminManagement />,
               },
             ],
           },

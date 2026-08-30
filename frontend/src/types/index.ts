@@ -96,6 +96,24 @@ export interface Appointment {
   status: AppointmentStatus;
 }
 
+export type BookingPolicyForm = {
+  slotDurationMinutes: number;
+  bookingWindowDays: number;
+  defaultStartHour: string;
+  defaultEndHour: string;
+  defaultWorkDays: number[];
+  lunchBreakStart: string | null;
+  lunchBreakEnd: string | null;
+};
+
+export type AvailabilityPolicy = BookingPolicyForm;
+
+export type AvailabilityResponse = {
+  date: string;
+  availableSlots: string[];
+  policy: AvailabilityPolicy | null;
+};
+
 export type TableProps<
   T extends { _id: string | number } = { _id: string | number },
 > = {
@@ -193,10 +211,9 @@ export type CustomDatePickerProps = {
 };
 
 export type ResponsiveGridProps = {
-  array: string[]; // zaman slotları
+  array: string[]; // sadece müsait slotlar (backend filtreli)
   value: string | null; // seçili değer
   onChange: ToggleButtonGroupProps["onChange"];
-  isTimeBooked: (time: string) => boolean; // slot dolu mu kontrolü
   className?: string;
 };
 
@@ -223,11 +240,9 @@ export type DateTimeSelectorProps = {
   date: Date | null;
   time: string | null;
   setValue: UseFormSetValue<BookAppointmentFormData>;
-  appointmentTimes: string[];
-  isTimeBooked: (time: string) => boolean;
-  disableDateFunction: (day: Date) => boolean;
+  availableSlots: string[];
+  isAvailabilityLoading: boolean;
   isAdding: boolean;
-  selectedDoctor: Doctor;
 };
 
 export interface FormInputProps<TFieldValues extends FieldValues> {

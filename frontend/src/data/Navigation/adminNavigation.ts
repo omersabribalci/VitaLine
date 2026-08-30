@@ -24,6 +24,11 @@ const adminNavigation = [
     link: "/admin/appointments",
     icon: BookmarksIcon,
   },
+  {
+    title: "Management",
+    link: "/admin/management",
+    icon: BookmarksIcon,
+  },
 ];
 
 export default adminNavigation;
