@@ -15,7 +15,7 @@ const DoctorDashboardLayout = () => {
         </div>
 
         <div className="border bg-myBlackBg/20 border-white/20 rounded-4xl flex-1 overflow-hidden">
-          <div className="w-full max-w-[1280px] mx-auto px-3 py-4 sm:px-4 sm:py-5 lg:px-6 lg:py-6">
+          <div className="w-full max-w-7xl mx-auto px-3 py-4 sm:px-4 sm:py-5 lg:px-6 lg:py-6">
             <Outlet />
           </div>
         </div>
