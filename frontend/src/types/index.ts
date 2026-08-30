@@ -16,6 +16,7 @@ export type User = {
   name: string;
   email: string;
   phone: string;
+  image?: string;
   role: Role;
 };
 
@@ -77,7 +78,6 @@ export interface Doctor {
   userId: User;
   title: DoctorTitle;
   speciality: string;
-  image: string;
   unavailableDates: dateRange[];
 }
 

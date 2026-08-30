@@ -116,6 +116,7 @@ const login = async (req, res, next) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      image: user.image || "",
       role: user.role,
     };
 
@@ -199,10 +200,20 @@ const refresh = async (req, res, next) => {
 
           const plainUser = currentDoc.user.toObject();
           delete plainUser.password;
+
+          const userData = {
+            _id: plainUser._id,
+            name: plainUser.name,
+            email: plainUser.email,
+            phone: plainUser.phone,
+            image: plainUser.image || "",
+            role: plainUser.role,
+          };
+
           return sendSuccessResponse(
             res,
             200,
-            { token: accessToken, user: plainUser },
+            { token: accessToken, user: userData },
             "Token refreshed successfully!",
           );
         }
@@ -240,10 +251,19 @@ const refresh = async (req, res, next) => {
     const plainUser = doc.user.toObject();
     delete plainUser.password;
 
+    const userData = {
+      _id: plainUser._id,
+      name: plainUser.name,
+      email: plainUser.email,
+      phone: plainUser.phone,
+      image: plainUser.image || "",
+      role: plainUser.role,
+    };
+
     return sendSuccessResponse(
       res,
       200,
-      { token: result.accessToken, user: plainUser },
+      { token: result.accessToken, user: userData },
       "Token refreshed successfully!",
     );
   } catch (err) {

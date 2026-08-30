@@ -76,6 +76,7 @@ const options = {
               example: "ada@example.com",
             },
             phone: { type: "string", example: "01234567890" },
+            image: { type: "string", example: "profile-image.jpg" },
             role: { type: "string", enum: ["admin", "doctor", "patient"] },
           },
         },
@@ -103,7 +104,6 @@ const options = {
                 "Prof. Dr.",
               ],
             },
-            image: { type: "string", example: "doctor-image.jpg" },
             speciality: { type: "string", example: "Cardiology" },
             unavailableDates: {
               type: "array",

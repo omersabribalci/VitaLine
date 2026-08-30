@@ -14,10 +14,6 @@ const DoctorSchema = new mongoose.Schema(
       required: [true, "Title is required."],
       trim: true,
     },
-    image: {
-      type: String,
-      required: [true, "Image is required."],
-    },
     speciality: {
       type: String,
       required: [true, "Speciality is required."],

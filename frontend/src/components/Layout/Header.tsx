@@ -17,7 +17,9 @@ const Header = () => {
     try {
       await logoutApi().unwrap();
     } catch (err) {
-      toast.error(extractErrorMessage(err, "Unable to sign out from the server."));
+      toast.error(
+        extractErrorMessage(err, "Unable to sign out from the server."),
+      );
     } finally {
       dispatch(logOut());
       resetAllApiCaches(dispatch);
@@ -31,7 +33,13 @@ const Header = () => {
       </h1>
 
       <div className="flex flex-row items-center gap-2 pr-2">
-        <Avatar className="w-10 h-10 rounded-full object-cover" />
+        <Avatar
+          src={user?.image || undefined}
+          alt={user?.name || "User"}
+          sx={{ width: 40, height: 40, bgcolor: "#dbeafe", color: "#1d4ed8" }}
+        >
+          {!user?.image && user?.name?.charAt(0)?.toUpperCase()}
+        </Avatar>
         <span>{user?.name}</span>
       </div>
       <Button

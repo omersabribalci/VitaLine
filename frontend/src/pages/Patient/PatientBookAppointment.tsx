@@ -17,6 +17,7 @@ import type { BookAppointmentFormData, Doctor } from "../../types";
 import { useGetMyPatientProfileQuery } from "../../store/services/patientApi";
 import Error from "../../components/UI/Error";
 import { useNavigate } from "react-router";
+import Avatar from "@mui/material/Avatar";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const PatientBookAppointment = () => {
@@ -128,17 +129,14 @@ const PatientBookAppointment = () => {
 
       {selectedDoctor && (
         <div className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 p-3">
-          {selectedDoctor.image ? (
-            <img
-              src={selectedDoctor.image}
-              alt={`${selectedDoctor.title} ${selectedDoctor.userId.name}`}
-              className="h-12 w-12 rounded-full object-cover"
-            />
-          ) : (
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-200 font-semibold text-blue-800">
-              {selectedDoctor.userId.name.charAt(0)}
-            </div>
-          )}
+          <Avatar
+            src={selectedDoctor.userId.image || undefined}
+            alt={`${selectedDoctor.title} ${selectedDoctor.userId.name}`}
+            sx={{ width: 48, height: 48, bgcolor: "#dbeafe", color: "#1d4ed8" }}
+          >
+            {!selectedDoctor.userId.image &&
+              selectedDoctor.userId.name.charAt(0).toUpperCase()}
+          </Avatar>
           <div>
             <p className="text-xs font-medium text-blue-700">Selected doctor</p>
             <p className="font-semibold text-gray-900">

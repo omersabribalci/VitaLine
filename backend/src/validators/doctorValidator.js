@@ -36,13 +36,15 @@ const requiredUserFields = [
     .withMessage("Phone number should be 11 characters!")
     .isNumeric()
     .withMessage("Phone number must contain only numbers!"),
+
+  body("image").trim().notEmpty().withMessage("Image is required!"),
 ];
 
 const password = body("password")
   .notEmpty()
   .withMessage("Password is required!")
-  .isLength({ min: 8, max: 20 })
-  .withMessage("Password must be 8-20 characters!")
+  .isLength({ min: 8 })
+  .withMessage("Password must be at least 8 characters!")
   .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/)
   .withMessage("Password must contain upper, lower, and number!");
 
@@ -68,6 +70,8 @@ const optionalUserFields = [
     .withMessage("Phone number should be 11 characters!")
     .isNumeric()
     .withMessage("Phone number must contain only numbers!"),
+
+  body("image").optional().trim().notEmpty().withMessage("Image is required!"),
 ];
 
 const validateUnavailableDateRanges = (ranges) => {
@@ -104,12 +108,6 @@ const doctorFields = (optional = false) => [
     .isIn(titles)
     .withMessage("Please select a valid title!"),
 
-  body("image")
-    .optional({ values: "undefined" })
-    .trim()
-    .notEmpty()
-    .withMessage("Image is required!"),
-
   body("speciality")
     .optional({ values: "undefined" })
     .trim()
@@ -141,7 +139,6 @@ const create = [
     .withMessage("Title is required!")
     .isIn(titles)
     .withMessage("Please select a valid title!"),
-  body("image").trim().notEmpty().withMessage("Image is required!"),
   body("speciality").trim().notEmpty().withMessage("Speciality is required!"),
   password,
   ...doctorFields(),
@@ -152,8 +149,8 @@ const update = [
   ...optionalUserFields,
   body("password")
     .optional()
-    .isLength({ min: 8, max: 20 })
-    .withMessage("Password must be 8-20 characters!")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters!")
     .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/)
     .withMessage("Password must contain upper, lower, and number!"),
   ...doctorFields(true),

@@ -76,6 +76,7 @@ const createDoctor = async (req, res, next) => {
         email: email,
         phone: phone,
         password: password,
+        image: image || "",
         role: "doctor",
       };
 
@@ -84,7 +85,6 @@ const createDoctor = async (req, res, next) => {
       const doctorObj = {
         userId: user[0]._id,
         title: title,
-        image: image,
         speciality: speciality,
       };
 
@@ -142,8 +142,12 @@ const updateDoctor = async (req, res, next) => {
         unavailableDates, // Doctor alanları
       } = req.body;
 
-      const doctorData = { title, image, speciality, unavailableDates };
+      const doctorData = { title, speciality, unavailableDates };
       const userData = { name, email, phone };
+
+      if (typeof image !== "undefined") {
+        userData.image = image;
+      }
 
       let { password } = req.body;
 

@@ -4,7 +4,7 @@ const User = require("../models/User");
 
 require("dotenv").config();
 
-const createAdminUser = async (name, email, password, phone) => {
+const createAdminUser = async (name, email, password, phone, image) => {
   try {
     await connectDatabase();
 
@@ -14,6 +14,7 @@ const createAdminUser = async (name, email, password, phone) => {
       password: password,
       role: "admin",
       phone: phone,
+      image: image,
     };
 
     const admin = await User.create(adminUser);
@@ -30,4 +31,5 @@ createAdminUser(
   "omer@vitaline.com",
   "Testadmin123",
   "12345678910",
+  "https://randomuser.me/api/portraits/lego/5.jpg",
 );

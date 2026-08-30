@@ -26,7 +26,6 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minLength: [8, "Password must be at least 8 characters"],
-      maxLength: [20, "Password must be max 20 characters"],
       match: [
         /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/,
         "Password must contain upper, lower, and number",
@@ -44,6 +43,11 @@ const UserSchema = new mongoose.Schema(
       minLength: [11, "Phone number should be 11 character!"],
       maxLength: [11, "Phone number should be 11 character!"],
       required: [true, "Phone number is required."],
+    },
+    image: {
+      type: String,
+      trim: true,
+      default: "",
     },
     isDeleted: {
       type: Boolean,

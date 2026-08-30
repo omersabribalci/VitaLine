@@ -30,16 +30,16 @@ const register = [
   body("password")
     .notEmpty()
     .withMessage("Password is required!")
-    .isLength({ min: 8, max: 20 })
-    .withMessage("Password must be 8-20 characters!")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters!")
     .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/)
     .withMessage("Password must contain upper, lower, and number!"),
 
   body("confirmPassword")
     .notEmpty()
     .withMessage("Confirm password is required!")
-    .isLength({ min: 8, max: 20 })
-    .withMessage("Password must be 8-20 characters!")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters!")
     .custom((value, { req }) => {
       if (value !== req.body.password) {
         throw new Error("Passwords do not match!");
@@ -63,8 +63,8 @@ const login = [
   body("password")
     .notEmpty()
     .withMessage("Password is required!")
-    .isLength({ min: 8, max: 20 })
-    .withMessage("Password must be 8-20 characters!")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters!")
     .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/)
     .withMessage("Password must contain upper, lower, and number!"),
 

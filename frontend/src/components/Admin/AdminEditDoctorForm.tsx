@@ -39,7 +39,7 @@ const AdminEditDoctorForm = () => {
         name: doctor.userId.name,
         email: doctor.userId.email,
         phone: doctor.userId.phone,
-        image: doctor.image,
+        image: doctor.userId.image ?? "",
         speciality: doctor.speciality,
       });
     }
