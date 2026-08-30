@@ -1,5 +1,6 @@
 import type { FormInputProps } from "../../types";
 import type { FieldValues, Path } from "react-hook-form";
+import FormError from "./FormError";
 
 const FormInput = <TFieldValues extends FieldValues>({
   type,
@@ -21,9 +22,7 @@ const FormInput = <TFieldValues extends FieldValues>({
         autoComplete="on"
       />
       {errors?.[fieldName] && (
-        <div className="text-red-500 text-xs font-medium mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
-          {errors[fieldName]?.message as string}
-        </div>
+        <FormError message={errors[fieldName]?.message as string} />
       )}
     </div>
   );

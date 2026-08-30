@@ -8,6 +8,7 @@ import ConfirmationDialog from "../UI/ConfirmationDialog";
 import { toast } from "react-toastify";
 import type { Doctor, DoctorSetHolidayFormData } from "../../types";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import FormError from "../Form/FormError";
 
 const DoctorSetHoliday = ({
   doctor,
@@ -100,8 +101,8 @@ const DoctorSetHoliday = ({
             )}
           />
           {errors?.startDate && (
-            <div className="text-red-500 text-xs font-medium mt-1 ml-1">
-              {errors.startDate.message}
+            <div className="mt-1 ml-1">
+              <FormError message={errors.startDate.message} />
             </div>
           )}
         </div>
@@ -134,15 +135,15 @@ const DoctorSetHoliday = ({
             )}
           />
           {errors?.endDate && (
-            <div className="text-red-500 text-xs font-medium mt-1 ml-1">
-              {errors.endDate.message}
+            <div className="mt-1 ml-1">
+              <FormError message={errors.endDate.message} />
             </div>
           )}
         </div>
       </div>
-      <span className="text-red-500 text-xs font-medium w-full border-t border-white/0">
-        {error && "Updating Error"}
-      </span>
+      <div className="w-full">
+        {error && <FormError message="Updating Error" />}
+      </div>
       <div className="flex flex-row gap-2">
         <Button
           type="submit"

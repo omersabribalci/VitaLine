@@ -230,14 +230,6 @@ export type DateTimeSelectorProps = {
   selectedDoctor: Doctor;
 };
 
-export type CheckboxProps = {
-  value: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  register: UseFormRegister<any>;
-  label?: string;
-  property: string;
-};
-
 export interface FormInputProps<TFieldValues extends FieldValues> {
   type: string;
   placeholder: string;

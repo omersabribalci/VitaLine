@@ -70,6 +70,33 @@ const optionalUserFields = [
     .withMessage("Phone number must contain only numbers!"),
 ];
 
+const validateUnavailableDateRanges = (ranges) => {
+  if (!Array.isArray(ranges)) {
+    return true;
+  }
+
+  for (const range of ranges) {
+    if (!range || typeof range !== "object") {
+      throw new AppError("Invalid unavailable date range!", 400);
+    }
+
+    const { start, end } = range;
+
+    if ((!start && end) || (start && !end)) {
+      throw new AppError(
+        "Both start and end dates are required for each unavailable date range!",
+        400,
+      );
+    }
+
+    if (start && end && new Date(end) <= new Date(start)) {
+      throw new AppError("End date must be later than start date!", 400);
+    }
+  }
+
+  return true;
+};
+
 const doctorFields = (optional = false) => [
   body("title")
     .optional({ values: "undefined" })
@@ -93,24 +120,15 @@ const doctorFields = (optional = false) => [
     .optional({ values: "undefined" })
     .isArray()
     .withMessage("Unavailable dates must be an array!")
-    .custom((ranges) => {
-      for (const range of ranges) {
-        if (
-          range.start &&
-          range.end &&
-          new Date(range.end) <= new Date(range.start)
-        ) {
-          throw new AppError("End date must be later than start date!", 400);
-        }
-      }
-      return true;
-    }),
+    .custom(validateUnavailableDateRanges),
 
   body("unavailableDates.*.start")
+    .optional({ values: "undefined" })
     .isISO8601()
     .withMessage("Start date must be a valid date!"),
 
   body("unavailableDates.*.end")
+    .optional({ values: "undefined" })
     .isISO8601()
     .withMessage("End date must be a valid date!"),
 ];

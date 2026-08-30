@@ -10,6 +10,7 @@ import "./LoginPage.css";
 import { toast } from "react-toastify";
 import type { LoginFormData } from "../types";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
+import FormError from "../components/Form/FormError";
 
 const LoginPage = () => {
   const [login, { isLoading: isLoggingIn, error }] = useLoginMutation();
@@ -68,7 +69,9 @@ const LoginPage = () => {
               errors={errors}
             />
           ))}
-          {error && <div className="text-red-500 mb-4 text-xs">{errMsg}</div>}
+          {error && (
+            <FormError message={errMsg} className="mb-4" variant="dark" />
+          )}
           <Button
             sx={{
               borderRadius: "0.5rem",

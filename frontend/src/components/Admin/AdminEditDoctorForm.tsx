@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router";
 import { editDoctorInputs } from "../../data/Inputs/doctorInputs";
 import FormInput from "../Form/FormInput";
+import FormSelect from "../Form/FormSelect";
 import { useForm } from "react-hook-form";
 import { specialities } from "../../data/specialities";
 import Button from "@mui/material/Button";
@@ -69,28 +70,14 @@ const AdminEditDoctorForm = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <select
-              {...register("title", {
-                required: "Title is required",
-              })}
-              className="bg-white border border-[#cfd8dc] rounded-md py-2 px-3 w-full placeholder:font-light focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 transition-colors"
-            >
-              <option value="" disabled>
-                Select title
-              </option>
-              {doctorTitles.map((title) => (
-                <option key={title} value={title}>
-                  {title}
-                </option>
-              ))}
-            </select>
-            {errors.title && (
-              <p className="text-xs text-red-600 mt-1">
-                {errors.title.message}
-              </p>
-            )}
-          </div>
+          <FormSelect
+            label="Select title"
+            name="title"
+            options={doctorTitles}
+            register={register}
+            rules={{ required: "Title is required" }}
+            errors={errors}
+          />
           {editDoctorInputs.map((input) => (
             <FormInput
               key={input.name}
@@ -99,28 +86,14 @@ const AdminEditDoctorForm = () => {
               errors={errors}
             />
           ))}
-          <div>
-            <select
-              {...register("speciality", {
-                required: "Speciality is required",
-              })}
-              className="bg-white border border-[#cfd8dc] rounded-md py-2 px-3 w-full placeholder:font-light focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 transition-colors"
-            >
-              <option value="" disabled>
-                Select speciality
-              </option>
-              {specialities.map((spec) => (
-                <option key={spec} value={spec}>
-                  {spec}
-                </option>
-              ))}
-            </select>
-            {errors.speciality && (
-              <p className="text-xs text-red-600 mt-1">
-                {errors.speciality.message}
-              </p>
-            )}
-          </div>
+          <FormSelect
+            label="Select speciality"
+            name="speciality"
+            options={specialities}
+            register={register}
+            rules={{ required: "Speciality is required" }}
+            errors={errors}
+          />
         </div>
 
         <div className="flex items-center gap-3 pt-4">
