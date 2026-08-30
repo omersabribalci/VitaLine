@@ -27,7 +27,7 @@ const Header = () => {
   };
 
   return (
-    <header className="p-4 flex flex-row items-center justify-between">
+    <header className="flex min-w-[300px] flex-row items-center justify-between p-4">
       <h1 className="hidden md:block text-2xl text-gray-800 font-semibold flex-1">
         Hello, {user?.name}
       </h1>

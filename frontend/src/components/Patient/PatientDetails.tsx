@@ -2,7 +2,7 @@ import type { Patient } from "../../types";
 
 const PatientDetails = ({ patient }: { patient: Patient }) => {
   return (
-    <div className="w-full rounded-2xl bg-cardBg p-5 shadow-xl sm:p-6">
+    <div className="w-full rounded-2xl bg-cardBg p-5 shadow-xl sm:p-6 min-w-xs">
       <div className="flex-1">
         <h1 className="text-2xl font-semibold">{patient.userId.name}</h1>
 

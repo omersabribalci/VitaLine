@@ -33,7 +33,7 @@ const AdminManagePatient = ({ patient }: { patient: Patient }) => {
   }
 
   return (
-    <div className="bg-cardBg rounded-2xl shadow-xl p-6 flex flex-col gap-6 min-w-xs">
+    <div className="bg-cardBg rounded-2xl shadow-xl p-4 flex flex-col gap-6 min-w-xs">
       <h2>Manage Patient</h2>
       <div className="flex flex-row items-center gap-4">
         <span>Disable account</span>

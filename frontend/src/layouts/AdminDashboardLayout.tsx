@@ -9,7 +9,7 @@ const AdminDashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col lg:flex-row">
+    <div className="relative flex min-h-screen w-full min-w-[360px] flex-col lg:flex-row">
       <div
         className={`fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-200 lg:static lg:w-auto lg:translate-x-0 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
@@ -29,8 +29,8 @@ const AdminDashboardLayout = () => {
         />
       )}
 
-      <div className="flex h-screen w-full flex-col gap-2 overflow-hidden px-3 sm:px-4 lg:basis-9/10 lg:px-5">
-        <div className="flex items-center justify-between gap-3 rounded-full border border-white/20 bg-myBlackBg/20 px-2 py-2">
+      <div className="flex h-screen w-full min-w-[320px] flex-col gap-2 overflow-hidden px-3 sm:px-4 lg:basis-9/10 lg:px-5">
+        <div className="flex min-w-[300px] items-center justify-between gap-3 rounded-full border border-white/20 bg-myBlackBg/20 px-2 py-2">
           {!isSidebarOpen && (
             <IconButton
               onClick={() => setIsSidebarOpen(true)}
