@@ -16,8 +16,13 @@ const router = express.Router();
 router.use(verifyToken);
 
 router.get("/", checkRole("admin", "doctor", "patient"), getAppointments);
-// /availability must come before /:id to avoid route shadowing
-router.get("/availability", checkRole("admin", "doctor", "patient"), getAvailability);
+
+router.get(
+  "/availability",
+  checkRole("admin", "doctor", "patient"),
+  appointmentValidator.availability,
+  getAvailability,
+);
 router.post(
   "/",
   checkRole("admin", "patient"),

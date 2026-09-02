@@ -128,8 +128,8 @@ const deletePatient = async (req, res, next) => {
       }
 
       await Appointment.updateMany(
-        { patientId: patient._id },
-        { $set: { isDeleted: true } },
+        { patientId: patient._id, status: "scheduled" },
+        { $set: { status: "cancelled" } },
         { session: session },
       );
     });

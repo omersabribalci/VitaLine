@@ -24,6 +24,7 @@ export default function ResponsiveGrid({
         >
           {array.map((time, index) => (
             <Grid key={index}>
+              {/* TODO: Set disabled from the backend-provided slot availability. */}
               <ToggleButton
                 sx={{
                   bgcolor: "#fafafab8", // çok açık gri arka plan

@@ -1,8 +1,22 @@
-const { body } = require("express-validator");
+const { body, query } = require("express-validator");
 const validate = require("../middleware/validate");
 
 const objectId = (field, label) =>
   body(field).isMongoId().withMessage(`${label} must be a valid ID!`);
+
+const availability = [
+  query("doctorId")
+    .notEmpty()
+    .withMessage("Doctor ID is required!")
+    .isMongoId()
+    .withMessage("Doctor ID must be a valid ID!"),
+  query("date")
+    .notEmpty()
+    .withMessage("Date is required!")
+    .isISO8601()
+    .withMessage("Date must be a valid date in YYYY-MM-DD format!"),
+  validate,
+];
 
 const create = [
   objectId("doctorId", "Doctor ID"),
@@ -37,4 +51,4 @@ const update = [
   validate,
 ];
 
-module.exports = { create, update };
+module.exports = { create, update, availability };

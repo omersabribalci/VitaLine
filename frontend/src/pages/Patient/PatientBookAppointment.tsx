@@ -50,11 +50,13 @@ const PatientBookAppointment = () => {
   );
   const selectedDoctorId = selectedDoctor?._id;
 
+  // TODO: Remove frontend date validation; date availability must come from the backend.
   // Tarih "YYYY-MM-DD" string olarak formatla (availability query için)
   // new Date(date) kullanmak timezone kaymasına neden oluyor; doğrudan local date'i formatlamak doğru sonuç verir.
   const dateString = date ? format(date, "yyyy-MM-dd") : null;
 
   const { data: availabilityData, isLoading: isAvailabilityLoading } =
+    // TODO: Use the backend availability response as the single source of truth.
     useGetAvailabilityQuery(
       { doctorId: selectedDoctorId!, date: dateString! },
       { skip: !selectedDoctorId || !dateString },
@@ -166,6 +168,7 @@ const PatientBookAppointment = () => {
             date={date}
             time={time}
             setValue={setValue}
+            // TODO: Map backend slot objects and pass availability state for disabling.
             availableSlots={availabilityData?.availableSlots ?? []}
             isAvailabilityLoading={isAvailabilityLoading}
             isAdding={isAdding}

@@ -31,6 +31,7 @@ export const DateTimeSelector = ({
               setValue("time", null);
             }}
             value={value}
+            // TODO: Remove disablePast and maxDate; date rules must be controlled by the backend.
             // maxDate backend'den gelen policy yoksa 30 gün default
             maxDate={addDays(new Date(), 30)}
             disablePast
@@ -42,10 +43,18 @@ export const DateTimeSelector = ({
         <Box sx={{ minHeight: 80 }}>
           {isAvailabilityLoading ? (
             <Box
-              sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2, color: "text.secondary" }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                mt: 2,
+                color: "text.secondary",
+              }}
             >
               <CircularProgress size={18} />
-              <Typography variant="body2">Loading available slots...</Typography>
+              <Typography variant="body2">
+                Loading available slots...
+              </Typography>
             </Box>
           ) : availableSlots.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
@@ -60,6 +69,7 @@ export const DateTimeSelector = ({
                 <ResponsiveGrid
                   {...field}
                   className="max-w-md mx-auto mt-3"
+                  // TODO: Disable slots according to the backend isAvailable value.
                   array={availableSlots}
                 />
               )}
@@ -69,6 +79,7 @@ export const DateTimeSelector = ({
       )}
 
       {date && time && (
+        // TODO: Enable submit only when the selected slot is available according to the backend.
         <Button
           type="submit"
           variant="contained"

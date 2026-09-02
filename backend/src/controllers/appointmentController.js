@@ -6,21 +6,17 @@ const Doctor = require("../models/Doctor");
 const Patient = require("../models/Patient");
 const isIdValid = require("../utils/isIdValid");
 const {
-  generateDaySlots,
-  toDateString,
-  toTimeString,
+  isDateAvailableForBooking,
+  generateSlotsForDay,
 } = require("../utils/appointmentHelpers");
 const {
-  assertDateInFuture,
-  assertWithinBookingWindow,
-  assertIsWorkDay,
-  assertWithinWorkingHours,
-  assertSlotAligned,
-  assertNotInLunchBreak,
-  assertDoctorAvailable,
+  validateAppointmentSlot,
   assertNoDoctorConflict,
   assertNoPatientConflict,
 } = require("../utils/appointmentValidation");
+const { parseISO } = require("date-fns/parseISO");
+const { startOfDay } = require("date-fns/startOfDay");
+const { endOfDay } = require("date-fns/endOfDay");
 
 const getAppointments = async (req, res, next) => {
   try {
@@ -28,11 +24,13 @@ const getAppointments = async (req, res, next) => {
 
     if (req.user.role === "patient") {
       const patient = await Patient.findOne({ userId: req.user.id });
+
       if (!patient)
         return next(new AppError("Patient profile not found.", 404));
       filter.patientId = patient?._id;
     } else if (req.user.role === "doctor") {
       const doctor = await Doctor.findOne({ userId: req.user.id });
+
       if (!doctor) return next(new AppError("Doctor profile not found.", 404));
       filter.doctorId = doctor?._id;
     } else {
@@ -73,106 +71,43 @@ const getAppointmentById = async (req, res, next) => {
   }
 };
 
-const buildAvailableSlots = async (doctor, policy, requestedDay, date) => {
-  const allSlots = generateDaySlots(policy);
-
-  const dayStart = new Date(date);
-  dayStart.setHours(0, 0, 0, 0);
-  const dayEnd = new Date(date);
-  dayEnd.setHours(23, 59, 59, 999);
-
-  const bookedAppointments = await Appointment.find({
-    doctorId: doctor._id,
-    dateAndTime: { $gte: dayStart, $lte: dayEnd },
-    status: { $ne: "cancelled" },
-  }).lean();
-
-  const bookedTimes = new Set(
-    bookedAppointments.map((app) => toTimeString(new Date(app.dateAndTime))),
-  );
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const isToday = requestedDay.getTime() === today.getTime();
-  const now = new Date();
-
-  return allSlots.filter((slot) => {
-    if (bookedTimes.has(slot)) return false;
-    if (isToday) {
-      const [h, m] = slot.split(":").map(Number);
-      const slotDate = new Date();
-      slotDate.setHours(h, m, 0, 0);
-      if (slotDate <= now) return false;
-    }
-    return true;
-  });
-};
-
 const getAvailability = async (req, res, next) => {
   try {
     const { doctorId, date } = req.query;
 
-    if (!doctorId) return next(new AppError("doctorId is required.", 400));
-    if (!date) return next(new AppError("date is required (YYYY-MM-DD).", 400));
-
-    isIdValid(doctorId);
-
-    const requestedDate = new Date(`${date}T00:00:00`);
-    if (isNaN(requestedDate.getTime())) {
-      return next(
-        new AppError("date must be a valid date in YYYY-MM-DD format.", 400),
-      );
-    }
-
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) return next(new AppError("Doctor not found.", 404));
-
     const policy = await BookingPolicy.getPolicy();
+    const targetDate = parseISO(date);
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const requestedDay = new Date(`${date}T00:00:00`);
-    requestedDay.setHours(0, 0, 0, 0);
-    const maxDate = new Date(today);
-    maxDate.setDate(maxDate.getDate() + policy.bookingWindowDays);
-
-    const emptyResponse = { date, availableSlots: [], policy: null };
-
-    if (requestedDay < today || requestedDay > maxDate) {
-      return sendSuccessResponse(res, 200, emptyResponse);
+    if (!isDateAvailableForBooking(targetDate, policy, doctor)) {
+      return sendSuccessResponse(res, 200, {
+        date,
+        doctorId,
+        slots: [],
+      });
     }
 
-    if (!policy.defaultWorkDays.includes(requestedDay.getDay())) {
-      return sendSuccessResponse(res, 200, emptyResponse);
-    }
+    const existingAppointments = await Appointment.find({
+      doctorId: doctorId,
+      dateAndTime: {
+        $gte: startOfDay(targetDate),
+        $lte: endOfDay(targetDate),
+      },
+      status: { $ne: "cancelled" },
+    }).lean();
 
-    const dateStr = toDateString(requestedDay);
-    const isUnavailable = doctor.unavailableDates.some((range) => {
-      const rangeStart = toDateString(new Date(range.start));
-      const rangeEnd = toDateString(new Date(range.end));
-      return dateStr >= rangeStart && dateStr < rangeEnd;
-    });
-
-    if (isUnavailable) {
-      return sendSuccessResponse(res, 200, emptyResponse);
-    }
-
-    const availableSlots = await buildAvailableSlots(
-      doctor,
+    const slots = generateSlotsForDay(
       policy,
-      requestedDay,
+      targetDate,
       date,
+      existingAppointments,
     );
 
     return sendSuccessResponse(res, 200, {
       date,
-      availableSlots,
-      policy: {
-        slotDurationMinutes: policy.slotDurationMinutes,
-        startHour: policy.defaultStartHour,
-        endHour: policy.defaultEndHour,
-        bookingWindowDays: policy.bookingWindowDays,
-      },
+      doctorId,
+      slots,
     });
   } catch (error) {
     next(error);
@@ -194,13 +129,7 @@ const createAppointment = async (req, res, next) => {
     const policy = await BookingPolicy.getPolicy();
     const appointmentDate = new Date(dateAndTime);
 
-    assertDateInFuture(appointmentDate);
-    assertWithinBookingWindow(appointmentDate, policy);
-    assertIsWorkDay(appointmentDate, policy);
-    assertWithinWorkingHours(appointmentDate, policy);
-    assertSlotAligned(appointmentDate, policy);
-    assertNotInLunchBreak(appointmentDate, policy);
-    assertDoctorAvailable(appointmentDate, doctor);
+    validateAppointmentSlot(appointmentDate, policy, doctor);
     await assertNoDoctorConflict(doctorId, appointmentDate);
     await assertNoPatientConflict(patientId, appointmentDate);
 

@@ -110,6 +110,7 @@ export type AvailabilityPolicy = BookingPolicyForm;
 
 export type AvailabilityResponse = {
   date: string;
+  // TODO: Change this type to match backend slots: { time: string; isAvailable: boolean }[].
   availableSlots: string[];
   policy: AvailabilityPolicy | null;
 };
