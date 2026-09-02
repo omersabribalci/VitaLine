@@ -1,13 +1,29 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ApiResponse, Doctor } from "../../types";
 import { baseQueryWithReAuth } from "./baseQueryWithReAuth";
+
+export type DoctorListQuery = {
+  search?: string;
+  speciality?: string;
+  sort?: "name";
+};
+
 export const doctorApi = createApi({
   reducerPath: "doctorApi",
   tagTypes: ["Doctor"],
   baseQuery: baseQueryWithReAuth,
   endpoints: (builder) => ({
-    getDoctors: builder.query<Doctor[], void>({
-      query: () => "doctors",
+    getDoctors: builder.query<Doctor[], DoctorListQuery | void>({
+      query: (params) => {
+        const query = new URLSearchParams();
+
+        if (params?.search) query.set("search", params.search);
+        if (params?.speciality) query.set("speciality", params.speciality);
+        if (params?.sort) query.set("sort", params.sort);
+
+        const queryString = query.toString();
+        return queryString ? `doctors?${queryString}` : "doctors";
+      },
       providesTags: ["Doctor"],
       transformResponse: (response: ApiResponse<Doctor[]>) => {
         return response.data;

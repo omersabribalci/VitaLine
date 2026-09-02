@@ -7,15 +7,37 @@ const Appointment = require("../models/Appointment");
 const bcrypt = require("bcryptjs");
 const isIdValid = require("../utils/isIdValid");
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 const getDoctors = async (req, res, next) => {
   try {
     const filter = {};
+    const { search, speciality, sort = "name" } = req.query;
 
-    if (req.query.speciality) {
-      filter.speciality = req.query.speciality;
+    if (speciality) {
+      filter.speciality = speciality;
+    }
+
+    if (search) {
+      const matchingUsers = await User.find({
+        name: {
+          $regex: escapeRegex(search.trim()),
+          $options: "i",
+        },
+      })
+        .select("_id")
+        .lean();
+
+      filter.userId = { $in: matchingUsers.map((user) => user._id) };
     }
 
     const doctors = await Doctor.find(filter).populate("userId").lean();
+
+    if (sort === "name") {
+      doctors.sort((first, second) =>
+        first.userId.name.localeCompare(second.userId.name),
+      );
+    }
 
     return sendSuccessResponse(res, 200, doctors);
   } catch (error) {

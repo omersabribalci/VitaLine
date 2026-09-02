@@ -101,6 +101,26 @@ export interface Appointment {
   status: AppointmentStatus;
 }
 
+export type AdminStatistics = {
+  doctorCount: number;
+  patientCount: number;
+  appointmentCount: number;
+  statusCounts: {
+    completed: number;
+    cancelled: number;
+    scheduled: number;
+  };
+  appointmentsByDoctor: Array<{
+    doctorId: string;
+    doctorName: string;
+    count: number;
+  }>;
+  appointmentsBySpeciality: Array<{
+    speciality: string;
+    count: number;
+  }>;
+};
+
 export type BookingPolicyForm = {
   slotDurationMinutes: number;
   bookingWindowDays: number;
@@ -140,7 +160,7 @@ export type TableColumn<T> = {
 
 export type StatCardProps<T> = {
   icon: React.ReactNode;
-  parameter: T[] | undefined;
+  parameter: T[] | number | undefined;
   title: string;
 };
 

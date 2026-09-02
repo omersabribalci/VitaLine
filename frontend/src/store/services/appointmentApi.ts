@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import type {
   ApiResponse,
+  AdminStatistics,
   Appointment,
   AvailabilityResponse,
 } from "../../types";
@@ -11,6 +12,12 @@ export const appointmentApi = createApi({
   tagTypes: ["Appointment"],
   baseQuery: baseQueryWithReAuth,
   endpoints: (builder) => ({
+    getAdminStatistics: builder.query<AdminStatistics, void>({
+      query: () => "appointments/statistics",
+      providesTags: [{ type: "Appointment", id: "STATISTICS" }],
+      transformResponse: (response: ApiResponse<AdminStatistics>) =>
+        response.data,
+    }),
     newAppointment: builder.mutation({
       query: (newAppointment) => ({
         url: "appointments",
@@ -81,6 +88,7 @@ export const appointmentApi = createApi({
 });
 
 export const {
+  useGetAdminStatisticsQuery,
   useNewAppointmentMutation,
   useGetAppointmentsByDoctorIdQuery,
   useGetAppointmentsByPatientIdQuery,

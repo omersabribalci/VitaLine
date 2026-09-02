@@ -1,6 +1,7 @@
 const { body } = require("express-validator");
 const validate = require("../middleware/validate");
 const AppError = require("../utils/AppError");
+const specialities = require("../utils/doctorSpecialities");
 
 const titles = [
   "Dr.",
@@ -117,7 +118,9 @@ const doctorFields = (optional = false) => [
     .optional({ values: "undefined" })
     .trim()
     .notEmpty()
-    .withMessage("Speciality is required!"),
+    .withMessage("Speciality is required!")
+    .isIn(specialities)
+    .withMessage("Please select a valid speciality!"),
 
   body("unavailableDates")
     .optional({ values: "undefined" })
@@ -145,7 +148,12 @@ const create = [
     .withMessage("Title is required!")
     .isIn(titles)
     .withMessage("Please select a valid title!"),
-  body("speciality").trim().notEmpty().withMessage("Speciality is required!"),
+  body("speciality")
+    .trim()
+    .notEmpty()
+    .withMessage("Speciality is required!")
+    .isIn(specialities)
+    .withMessage("Please select a valid speciality!"),
   password,
   ...doctorFields(),
   validate,

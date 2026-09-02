@@ -1,5 +1,5 @@
-// TODO: Replace this duplicated static list with data from the shared admin-managed Speciality API.
-export const specialities = [
+// TODO: Replace this duplicated static list with a shared, admin-managed Speciality model/API.
+module.exports = [
   "Psychiatry",
   "Cardiology",
   "Neurology",

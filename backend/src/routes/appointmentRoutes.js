@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   getAppointments,
+  getAdminStatistics,
   getAppointmentById,
   getAvailability,
   createAppointment,
@@ -16,6 +17,7 @@ const router = express.Router();
 router.use(verifyToken);
 
 router.get("/", checkRole("admin", "doctor", "patient"), getAppointments);
+router.get("/statistics", checkRole("admin"), getAdminStatistics);
 
 router.get(
   "/availability",
