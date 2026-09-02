@@ -20,6 +20,7 @@ const options = {
       { name: "Appointments", description: "Appointment operations" },
       { name: "Doctors", description: "Doctor operations" },
       { name: "Patients", description: "Patient operations" },
+      { name: "Booking Policy", description: "Clinic booking rules" },
     ],
     components: {
       securitySchemes: {
@@ -132,6 +133,22 @@ const options = {
             },
           },
         },
+        BookingPolicy: {
+          type: "object",
+          properties: {
+            appointmentDurationMinutes: { type: "integer", example: 30 },
+            bookingWindowDays: { type: "integer", example: 14 },
+            workingTimeStart: { type: "string", example: "09:00" },
+            workingTimeEnd: { type: "string", example: "17:00" },
+            workingDays: {
+              type: "array",
+              items: { type: "integer" },
+              example: [1, 2, 3, 4, 5],
+            },
+            lunchBreakStart: { type: "string", example: "12:00" },
+            lunchBreakEnd: { type: "string", example: "13:00" },
+          },
+        },
       },
     },
     paths: {
@@ -196,7 +213,11 @@ const options = {
         get: {
           tags: ["Doctors"],
           summary: "List doctors",
-          parameters: [{ $ref: "#/components/parameters/Speciality" }],
+          parameters: [
+            { $ref: "#/components/parameters/Speciality" },
+            { $ref: "#/components/parameters/Search" },
+            { $ref: "#/components/parameters/Sort" },
+          ],
           responses: {
             200: { description: "Doctors returned successfully" },
             401: { $ref: "#/components/responses/Unauthorized" },
@@ -377,6 +398,52 @@ const options = {
           },
         },
       },
+      "/appointments/statistics": {
+        get: {
+          tags: ["Appointments"],
+          summary: "Get appointment statistics (Admin)",
+          responses: {
+            200: { description: "Statistics returned successfully" },
+          },
+        },
+      },
+      "/appointments/availability": {
+        get: {
+          tags: ["Appointments"],
+          summary: "Get available slots for a doctor on a specific date",
+          parameters: [
+            { name: "doctorId", in: "query", required: true, schema: { type: "string" } },
+            { name: "date", in: "query", required: true, schema: { type: "string", format: "date" } },
+          ],
+          responses: {
+            200: { description: "Availability returned successfully" },
+          },
+        },
+      },
+      "/booking-policy": {
+        get: {
+          tags: ["Booking Policy"],
+          summary: "Get the current booking policy",
+          responses: {
+            200: { description: "Policy returned successfully" },
+          },
+        },
+        patch: {
+          tags: ["Booking Policy"],
+          summary: "Update booking policy",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/BookingPolicy" },
+              },
+            },
+          },
+          responses: {
+            200: { description: "Policy updated successfully" },
+          },
+        },
+      },
     },
   },
   apis: [],
@@ -502,6 +569,16 @@ options.definition.components.parameters = {
   },
   Speciality: {
     name: "speciality",
+    in: "query",
+    schema: { type: "string" },
+  },
+  Search: {
+    name: "search",
+    in: "query",
+    schema: { type: "string" },
+  },
+  Sort: {
+    name: "sort",
     in: "query",
     schema: { type: "string" },
   },
