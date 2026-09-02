@@ -1,6 +1,7 @@
 const BookingPolicy = require("../models/BookingPolicy");
 const AppError = require("../utils/AppError");
 const sendSuccessResponse = require("../utils/sendSuccessResponse");
+const { startAppointmentStatusJob } = require("../jobs/appointmentStatusJob");
 
 const getPolicy = async (req, res, next) => {
   try {
@@ -40,6 +41,7 @@ const updatePolicy = async (req, res, next) => {
     Object.assign(policy, updates);
 
     await policy.save({ runValidators: true });
+    await startAppointmentStatusJob();
 
     return sendSuccessResponse(
       res,
