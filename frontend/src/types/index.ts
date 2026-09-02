@@ -122,11 +122,11 @@ export type AdminStatistics = {
 };
 
 export type BookingPolicyForm = {
-  slotDurationMinutes: number;
+  appointmentDurationMinutes: number;
   bookingWindowDays: number;
-  defaultStartHour: string;
-  defaultEndHour: string;
-  defaultWorkDays: number[];
+  workingTimeStart: string;
+  workingTimeEnd: string;
+  workingDays: number[];
   lunchBreakStart: string | null;
   lunchBreakEnd: string | null;
 };
@@ -221,13 +221,13 @@ export type ConfirmationDialogProps = {
   confirmText?: string;
   cancelText?: string;
   confirmColor?:
-  | "inherit"
-  | "primary"
-  | "secondary"
-  | "success"
-  | "error"
-  | "info"
-  | "warning";
+    | "inherit"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "error"
+    | "info"
+    | "warning";
   isLoading?: boolean;
 };
 

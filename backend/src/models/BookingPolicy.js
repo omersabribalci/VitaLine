@@ -29,6 +29,12 @@ const BookingPolicySchema = new mongoose.Schema(
         /^([01]\d|2[0-3]):[0-5]\d$/,
         "Working time end hour must be in HH:mm format.",
       ],
+      validate: {
+        validator: function (value) {
+          return this.workingTimeStart < value;
+        },
+        message: "Working end time must be later than working start time.",
+      },
     },
     workingDays: {
       type: [Number],
@@ -55,6 +61,15 @@ const BookingPolicySchema = new mongoose.Schema(
         /^([01]\d|2[0-3]):[0-5]\d$/,
         "Lunch break end must be in HH:mm format.",
       ],
+      validate: {
+        validator: function (value) {
+          if (!value) return true;
+          if (!this.lunchBreakStart) return false;
+          return this.lunchBreakStart < value;
+        },
+        message:
+          "Lunch break end time must be later than lunch break start time.",
+      },
     },
   },
   { timestamps: true },

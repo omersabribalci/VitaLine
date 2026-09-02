@@ -5,11 +5,12 @@ import SideBar from "../components/Layout/SideBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
 
-const DoctorDashboardLayout = () => {
+const DashboardLayout = ({ headerMinWidth = "min-w-75" }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="relative flex min-h-screen w-full min-w-90 flex-col lg:flex-row">
+      {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-200 lg:static lg:w-auto lg:translate-x-0 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
@@ -20,6 +21,7 @@ const DoctorDashboardLayout = () => {
         </div>
       </div>
 
+      {/* Backdrop for mobile */}
       {isSidebarOpen && (
         <button
           type="button"
@@ -29,8 +31,11 @@ const DoctorDashboardLayout = () => {
         />
       )}
 
+      {/* Main Content Area */}
       <div className="flex h-screen w-full min-w-[320px] flex-col gap-2 overflow-hidden px-3 sm:px-4 lg:basis-9/10 lg:px-5">
-        <div className="flex min-w-75 items-center justify-between gap-3 rounded-full border border-white/20 bg-myBlackBg/20 px-2 py-2">
+        <div
+          className={`flex ${headerMinWidth} items-center justify-between gap-3 rounded-full border border-white/20 bg-myBlackBg/20 px-2 py-2`}
+        >
           {!isSidebarOpen && (
             <IconButton
               onClick={() => setIsSidebarOpen(true)}
@@ -61,4 +66,4 @@ const DoctorDashboardLayout = () => {
   );
 };
 
-export default DoctorDashboardLayout;
+export default DashboardLayout;

@@ -56,7 +56,7 @@ const AdminManagement = () => {
       <BookingPolicyFormSection
         key={
           policy
-            ? `${policy.slotDurationMinutes}-${policy.bookingWindowDays}-${policy.defaultStartHour}-${policy.defaultEndHour}`
+            ? `${policy.appointmentDurationMinutes}-${policy.bookingWindowDays}-${policy.workingTimeStart}-${policy.workingTimeEnd}`
             : "loading"
         }
         policy={policy ?? null}

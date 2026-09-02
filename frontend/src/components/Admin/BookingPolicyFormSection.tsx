@@ -2,11 +2,7 @@ import { Box, Button, Chip, Stack, TextField, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import type { AvailabilityPolicy, BookingPolicyForm } from "../../types";
-import {
-  defaultBookingPolicyForm,
-  normalizeBookingPolicyForm,
-  weekDays,
-} from "../../utils/bookingPolicyUtils";
+import { weekDays } from "../../utils/bookingPolicyUtils";
 
 type BookingPolicyFormSectionProps = {
   policy?: AvailabilityPolicy | null;
@@ -25,8 +21,8 @@ const BookingPolicyFormSection = ({
   isUpdating,
   onSubmit,
 }: BookingPolicyFormSectionProps) => {
-  const [formData, setFormData] = useState<BookingPolicyForm>(() =>
-    normalizeBookingPolicyForm(policy ?? defaultBookingPolicyForm),
+  const [formData, setFormData] = useState<BookingPolicyForm>(
+    policy as BookingPolicyForm,
   );
 
   const handleChange = (
@@ -38,11 +34,11 @@ const BookingPolicyFormSection = ({
 
   const handleWorkDayToggle = (day: number) => {
     setFormData((prev) => {
-      const nextDays = prev.defaultWorkDays.includes(day)
-        ? prev.defaultWorkDays.filter((item) => item !== day)
-        : [...prev.defaultWorkDays, day].sort((a, b) => a - b);
+      const nextDays = prev.workingDays.includes(day)
+        ? prev.workingDays.filter((item) => item !== day)
+        : [...prev.workingDays, day].sort((a, b) => a - b);
 
-      return { ...prev, defaultWorkDays: nextDays };
+      return { ...prev, workingDays: nextDays };
     });
   };
 
@@ -61,9 +57,9 @@ const BookingPolicyFormSection = ({
         <TextField
           label="Slot duration (minutes)"
           type="number"
-          value={formData.slotDurationMinutes}
+          value={formData.appointmentDurationMinutes}
           onChange={(e) =>
-            handleChange("slotDurationMinutes", Number(e.target.value))
+            handleChange("appointmentDurationMinutes", Number(e.target.value))
           }
           fullWidth
         />
@@ -82,15 +78,15 @@ const BookingPolicyFormSection = ({
         <TextField
           label="Start time"
           type="time"
-          value={formData.defaultStartHour}
-          onChange={(e) => handleChange("defaultStartHour", e.target.value)}
+          value={formData.workingTimeStart}
+          onChange={(e) => handleChange("workingTimeStart", e.target.value)}
           fullWidth
         />
         <TextField
           label="End time"
           type="time"
-          value={formData.defaultEndHour}
-          onChange={(e) => handleChange("defaultEndHour", e.target.value)}
+          value={formData.workingTimeEnd}
+          onChange={(e) => handleChange("workingTimeEnd", e.target.value)}
           fullWidth
         />
       </FormFieldRow>
@@ -122,7 +118,7 @@ const BookingPolicyFormSection = ({
         </Typography>
         <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
           {weekDays.map((day) => {
-            const selected = formData.defaultWorkDays.includes(day.value);
+            const selected = formData.workingDays.includes(day.value);
             return (
               <Chip
                 key={day.value}

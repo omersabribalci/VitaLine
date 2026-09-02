@@ -143,7 +143,7 @@ const PatientBookAppointment = () => {
         />
 
         {selectedDoctor && (
-          <div className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 p-3">
+          <div className="flex items-center gap-3 rounded-xl bg-blue-50/30 p-3">
             <Avatar
               src={selectedDoctor.userId.image || undefined}
               alt={`${selectedDoctor.title} ${selectedDoctor.userId.name}`}
