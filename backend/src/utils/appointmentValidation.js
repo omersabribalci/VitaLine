@@ -59,12 +59,18 @@ const validateAppointmentSlot = (appointmentDate, policy, doctor) => {
 
 // Doktor Çakışma Kontrolü
 
-const assertNoDoctorConflict = async (doctorId, appointmentDate) => {
-  const conflict = await Appointment.findOne({
+const assertNoDoctorConflict = async (doctorId, appointmentDate, excludeAppointmentId = null) => {
+  const query = {
     doctorId,
     dateAndTime: appointmentDate,
     status: { $ne: "cancelled" },
-  }).lean();
+  };
+
+  if (excludeAppointmentId) {
+    query._id = { $ne: excludeAppointmentId };
+  }
+
+  const conflict = await Appointment.findOne(query).lean();
 
   if (conflict) {
     throw new AppError(
@@ -80,22 +86,32 @@ const assertNoPatientConflict = async (
   patientId,
   doctorId,
   appointmentDate,
+  excludeAppointmentId = null
 ) => {
+  const sameDoctorQuery = {
+    doctorId,
+    patientId,
+    dateAndTime: {
+      $gte: startOfDay(appointmentDate),
+      $lte: endOfDay(appointmentDate),
+    },
+    status: { $ne: "cancelled" },
+  };
+
+  const sameTimeQuery = {
+    patientId,
+    dateAndTime: appointmentDate,
+    status: { $ne: "cancelled" },
+  };
+
+  if (excludeAppointmentId) {
+    sameDoctorQuery._id = { $ne: excludeAppointmentId };
+    sameTimeQuery._id = { $ne: excludeAppointmentId };
+  }
+
   const [sameDoctorConflict, sameTimeConflict] = await Promise.all([
-    Appointment.findOne({
-      doctorId,
-      patientId,
-      dateAndTime: {
-        $gte: startOfDay(appointmentDate),
-        $lte: endOfDay(appointmentDate),
-      },
-      status: { $ne: "cancelled" },
-    }).lean(),
-    Appointment.findOne({
-      patientId,
-      dateAndTime: appointmentDate,
-      status: { $ne: "cancelled" },
-    }).lean(),
+    Appointment.findOne(sameDoctorQuery).lean(),
+    Appointment.findOne(sameTimeQuery).lean(),
   ]);
 
   if (sameDoctorConflict) {

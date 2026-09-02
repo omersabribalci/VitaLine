@@ -287,27 +287,38 @@ const updateAppointment = async (req, res, next) => {
       }
     }
 
-    const allowedFields = ["doctorId", "patientId", "dateAndTime", "status"];
-    const updateData = Object.fromEntries(
-      Object.entries(req.body).filter(([field]) =>
-        allowedFields.includes(field),
-      ),
-    );
+    const newDateAndTime = req.body.dateAndTime ?? appointment.dateAndTime;
+    const newDoctorId = req.body.doctorId ?? appointment.doctorId;
+    const newPatientId = req.body.patientId ?? appointment.patientId;
+    const newStatus = req.body.status ?? appointment.status;
 
-    if (Object.keys(updateData).length === 0) {
-      return next(new AppError("No valid fields provided to update.", 400));
+    if (newStatus !== "cancelled") {
+      const doctor = await Doctor.findById(newDoctorId);
+      if (!doctor) {
+        return next(new AppError("Doctor not found", 404));
+      }
+
+      const patient = await Patient.findById(newPatientId);
+      if (!patient) {
+        return next(new AppError("Patient not found", 404));
+      }
+
+      const policy = await BookingPolicy.getPolicy();
+      const appointmentDate = new Date(newDateAndTime);
+
+      validateAppointmentSlot(appointmentDate, policy, doctor);
+      await assertNoDoctorConflict(newDoctorId, appointmentDate, appointment._id);
+      await assertNoPatientConflict(newPatientId, newDoctorId, appointmentDate, appointment._id);
     }
 
-    const updatedAppointment = await Appointment.findByIdAndUpdate(
-      id,
-      updateData,
-      {
-        returnDocument: "after",
-        runValidators: true,
-      },
-    );
+    appointment.doctorId = newDoctorId;
+    appointment.patientId = newPatientId;
+    appointment.dateAndTime = newDateAndTime;
+    appointment.status = newStatus;
 
-    await updatedAppointment.populate([
+    await appointment.save();
+
+    await appointment.populate([
       { path: "doctorId", populate: { path: "userId" } },
       { path: "patientId", populate: { path: "userId" } },
     ]);
@@ -315,7 +326,7 @@ const updateAppointment = async (req, res, next) => {
     return sendSuccessResponse(
       res,
       200,
-      updatedAppointment,
+      appointment,
       "Appointment updated successfully!",
     );
   } catch (error) {

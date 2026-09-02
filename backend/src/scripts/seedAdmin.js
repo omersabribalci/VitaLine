@@ -4,7 +4,8 @@ const User = require("../models/User");
 
 require("dotenv").config();
 
-const createAdminUser = async (name, email, password, phone, image) => {
+const createAdminUser = async (adminData) => {
+  const { name, email, password, phone, image } = adminData;
   try {
     await connectDatabase();
 
@@ -26,10 +27,12 @@ const createAdminUser = async (name, email, password, phone, image) => {
   }
 };
 
-createAdminUser(
-  "Ömer S. Balci",
-  "omer@vitaline.com",
-  "Testadmin123",
-  "12345678910",
-  "https://randomuser.me/api/portraits/lego/5.jpg",
-);
+const adminData = {
+  name: process.env.ADMIN_NAME,
+  email: process.env.ADMIN_EMAIL,
+  password: process.env.ADMIN_PASSWORD,
+  phone: process.env.ADMIN_PHONE,
+  image: process.env.ADMIN_IMAGE,
+};
+
+createAdminUser(adminData);
