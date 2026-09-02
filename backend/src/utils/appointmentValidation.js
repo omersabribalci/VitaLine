@@ -1,11 +1,20 @@
 const AppError = require("./AppError");
 const Appointment = require("../models/Appointment");
-const { format, parse, differenceInMinutes } = require("date-fns");
-const { startOfDay, endOfDay } = require("date-fns");
-const { checkDateRules } = require("./appointmentHelpers");
+const {
+  format,
+  parse,
+  differenceInMinutes,
+  addMinutes,
+  startOfDay,
+  endOfDay,
+} = require("date-fns");
+const {
+  checkDateRules,
+  isWithinWorkingHours,
+  isDuringLunchBreak,
+} = require("./appointmentHelpers");
 
 // Randevu oluşturulurken tüm kuralları ve çakışmaları denetler.
-
 const validateAppointmentSlot = (appointmentDate, policy, doctor) => {
   // 1. Ortak Gün Kontrolleri (Geçmiş, Pencere, Çalışma Günü, Doktor İzni)
   const errorMsg = checkDateRules(appointmentDate, policy, doctor);
@@ -13,33 +22,32 @@ const validateAppointmentSlot = (appointmentDate, policy, doctor) => {
     throw new AppError(errorMsg, 400);
   }
 
-  // 2. Mesai Saatleri Kontrolü
-  const timeString = format(appointmentDate, "HH:mm");
+  // Randevunun bitiş zamanını hesapla
+  const appointmentEndDate = addMinutes(
+    appointmentDate,
+    policy.appointmentDurationMinutes,
+  );
 
-  if (
-    timeString < policy.workingTimeStart ||
-    timeString >= policy.workingTimeEnd
-  ) {
+  const timeString = format(appointmentDate, "HH:mm");
+  const endTimeString = format(appointmentEndDate, "HH:mm");
+
+  // 2. Mesai Saatleri Kontrolü
+  if (!isWithinWorkingHours(timeString, endTimeString, policy)) {
     throw new AppError(
-      `Appointments must be between ${policy.workingTimeStart} and ${policy.workingTimeEnd}.`,
+      `Appointments must be between ${policy.workingTimeStart} and ${policy.workingTimeEnd}, and must not exceed working hours.`,
       400,
     );
   }
 
   // 3. Öğle Arası Kontrolü
-  if (policy.lunchBreakStart && policy.lunchBreakEnd) {
-    if (
-      timeString >= policy.lunchBreakStart &&
-      timeString < policy.lunchBreakEnd
-    ) {
-      throw new AppError(
-        "Appointments cannot be booked during lunch break.",
-        400,
-      );
-    }
+  if (isDuringLunchBreak(timeString, endTimeString, policy)) {
+    throw new AppError(
+      "Appointments cannot overlap with the lunch break.",
+      400,
+    );
   }
 
-  // 4. Slot Hizalama (Periyot Uyumu) Kontrolü
+  // 4. Slot Hizalama
   const dateStr = format(appointmentDate, "yyyy-MM-dd");
   const shiftStart = parse(
     `${dateStr} ${policy.workingTimeStart}`,
@@ -58,8 +66,11 @@ const validateAppointmentSlot = (appointmentDate, policy, doctor) => {
 };
 
 // Doktor Çakışma Kontrolü
-
-const assertNoDoctorConflict = async (doctorId, appointmentDate, excludeAppointmentId = null) => {
+const assertNoDoctorConflict = async (
+  doctorId,
+  appointmentDate,
+  excludeAppointmentId = null,
+) => {
   const query = {
     doctorId,
     dateAndTime: appointmentDate,
@@ -81,12 +92,11 @@ const assertNoDoctorConflict = async (doctorId, appointmentDate, excludeAppointm
 };
 
 // Hasta Çakışma Kontrolü
-
 const assertNoPatientConflict = async (
   patientId,
   doctorId,
   appointmentDate,
-  excludeAppointmentId = null
+  excludeAppointmentId = null,
 ) => {
   const sameDoctorQuery = {
     doctorId,

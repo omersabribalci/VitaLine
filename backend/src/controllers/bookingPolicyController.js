@@ -41,6 +41,7 @@ const updatePolicy = async (req, res, next) => {
     Object.assign(policy, updates);
 
     await policy.save({ runValidators: true });
+    // randevu süresi değiştiği an arka plan görevini de anında günceller. Böylece sistem dinamik olarak yeni ayarlara uyum sağlar.
     await startAppointmentStatusJob();
 
     return sendSuccessResponse(

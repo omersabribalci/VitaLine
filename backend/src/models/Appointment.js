@@ -31,20 +31,19 @@ const AppointmentSchema = new mongoose.Schema(
 
 // Deleted olanları gösterme/yok say, middleware
 
-AppointmentSchema.pre("find", function () {
+const filterDeleted = function () {
   this.where({ isDeleted: false });
-});
+};
 
-AppointmentSchema.pre("findOne", function () {
-  this.where({ isDeleted: false });
-});
+AppointmentSchema.pre("find", filterDeleted);
+AppointmentSchema.pre("findOne", filterDeleted);
+AppointmentSchema.pre("findOneAndUpdate", filterDeleted);
+AppointmentSchema.pre("findOneAndDelete", filterDeleted);
+AppointmentSchema.pre("countDocuments", filterDeleted);
 
-AppointmentSchema.pre("findOneAndUpdate", function () {
-  this.where({ isDeleted: false });
-});
-
-AppointmentSchema.pre("findOneAndDelete", function () {
-  this.where({ isDeleted: false });
+AppointmentSchema.pre("aggregate", function () {
+  // Aggregation pipeline'ının en başına { $match: { isDeleted: false } } ekler
+  this.pipeline().unshift({ $match: { isDeleted: false } });
 });
 
 module.exports = mongoose.model("Appointment", AppointmentSchema);

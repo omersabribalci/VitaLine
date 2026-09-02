@@ -22,16 +22,23 @@ const {
   buildDoctorStatistics,
   buildSpecialityStatistics,
 } = require("../utils/appointmentStatistics");
+const {
+  enforceRolePermissions,
+} = require("../utils/appointmentUpdatePermissions");
 
 const getAppointments = async (req, res, next) => {
   try {
     const filter = {};
+
+    // Patient ve doctos sadece kendi randevularını görebilir.
+    // Herkesi görebilir. İsterse URL parametrelerinden (?doctorId=...&patientId=...) filtreleme yapabilir.
 
     if (req.user.role === "patient") {
       const patient = await Patient.findOne({ userId: req.user.id });
 
       if (!patient)
         return next(new AppError("Patient profile not found.", 404));
+
       filter.patientId = patient?._id;
     } else if (req.user.role === "doctor") {
       const doctor = await Doctor.findOne({ userId: req.user.id });
@@ -57,8 +64,6 @@ const getAppointments = async (req, res, next) => {
 
 const getAdminStatistics = async (req, res, next) => {
   try {
-    const activeAppointmentFilter = { isDeleted: false };
-
     const [
       doctorCount,
       patientCount,
@@ -68,13 +73,11 @@ const getAdminStatistics = async (req, res, next) => {
     ] = await Promise.all([
       Doctor.countDocuments({ isDeleted: false }),
       Patient.countDocuments({ isDeleted: false }),
-      Appointment.countDocuments(activeAppointmentFilter),
+      Appointment.countDocuments(),
       Appointment.aggregate([
-        { $match: activeAppointmentFilter },
         { $group: { _id: "$status", count: { $sum: 1 } } },
       ]),
       Appointment.aggregate([
-        { $match: activeAppointmentFilter },
         { $group: { _id: "$doctorId", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
       ]),
@@ -83,7 +86,6 @@ const getAdminStatistics = async (req, res, next) => {
     const doctorIds = doctorCounts.map((item) => item._id);
     const doctors = await Doctor.find({
       _id: { $in: doctorIds },
-      isDeleted: false,
     })
       .populate("userId")
       .lean();
@@ -147,6 +149,12 @@ const getAppointmentById = async (req, res, next) => {
 const getAvailability = async (req, res, next) => {
   try {
     const { doctorId, date } = req.query;
+
+    if (!doctorId || !date) {
+      return next(new AppError("Doctor ID and date are required.", 400));
+    }
+
+    isIdValid(doctorId);
 
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) return next(new AppError("Doctor not found.", 404));
@@ -248,69 +256,46 @@ const updateAppointment = async (req, res, next) => {
     isIdValid(id);
 
     const appointment = await Appointment.findById(id);
-
     if (!appointment) {
       return next(new AppError("Appointment not found.", 404));
     }
 
-    if (req.user.role === "patient") {
-      const patient = await Patient.findOne({ userId: req.user.id });
-      const ownsAppointment =
-        patient && appointment.patientId.toString() === patient._id.toString();
+    await enforceRolePermissions(req.user, appointment, req.body);
 
-      if (!ownsAppointment) {
-        return next(new AppError("Appointment not found.", 404));
-      }
-
-      const fields = Object.keys(req.body);
-      if (fields.length !== 1 || req.body.status !== "cancelled") {
-        return next(
-          new AppError("Patients can only cancel their own appointments.", 403),
-        );
-      }
-    }
-
-    if (req.user.role === "doctor") {
-      const doctor = await Doctor.findOne({ userId: req.user.id });
-      const ownsAppointment =
-        doctor && appointment.doctorId.toString() === doctor._id.toString();
-
-      if (!ownsAppointment) {
-        return next(new AppError("Appointment not found.", 404));
-      }
-
-      const fields = Object.keys(req.body);
-      if (fields.length !== 1 || !fields.includes("status")) {
-        return next(
-          new AppError("Doctors can only update appointment status.", 403),
-        );
-      }
-    }
-
+    // Yeni Değerleri Belirle (Gönderilmediyse eskisini koru)
     const newDateAndTime = req.body.dateAndTime ?? appointment.dateAndTime;
     const newDoctorId = req.body.doctorId ?? appointment.doctorId;
     const newPatientId = req.body.patientId ?? appointment.patientId;
     const newStatus = req.body.status ?? appointment.status;
 
+    // İptal edilmiyorsa zaman, slot ve çakışma kurallarını denetle
     if (newStatus !== "cancelled") {
-      const doctor = await Doctor.findById(newDoctorId);
-      if (!doctor) {
-        return next(new AppError("Doctor not found", 404));
-      }
+      const [doctor, patient] = await Promise.all([
+        Doctor.findById(newDoctorId),
+        Patient.findById(newPatientId),
+      ]);
 
-      const patient = await Patient.findById(newPatientId);
-      if (!patient) {
-        return next(new AppError("Patient not found", 404));
-      }
+      if (!doctor) return next(new AppError("Doctor not found", 404));
+      if (!patient) return next(new AppError("Patient not found", 404));
 
       const policy = await BookingPolicy.getPolicy();
       const appointmentDate = new Date(newDateAndTime);
 
       validateAppointmentSlot(appointmentDate, policy, doctor);
-      await assertNoDoctorConflict(newDoctorId, appointmentDate, appointment._id);
-      await assertNoPatientConflict(newPatientId, newDoctorId, appointmentDate, appointment._id);
+
+      // Çakışma kontrolleri Promise.all ile paralel koşturulur
+      await Promise.all([
+        assertNoDoctorConflict(newDoctorId, appointmentDate, appointment._id),
+        assertNoPatientConflict(
+          newPatientId,
+          newDoctorId,
+          appointmentDate,
+          appointment._id,
+        ),
+      ]);
     }
 
+    // Alanları Güncelle ve Kaydet
     appointment.doctorId = newDoctorId;
     appointment.patientId = newPatientId;
     appointment.dateAndTime = newDateAndTime;
@@ -318,6 +303,7 @@ const updateAppointment = async (req, res, next) => {
 
     await appointment.save();
 
+    // İlişkili verileri doldur ve yanıt dön
     await appointment.populate([
       { path: "doctorId", populate: { path: "userId" } },
       { path: "patientId", populate: { path: "userId" } },

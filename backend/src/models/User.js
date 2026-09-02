@@ -13,7 +13,6 @@ const UserSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, "Email address is required"],
-      unique: true,
       lowercase: true,
       trim: true,
       maxLength: [255, "Email can be max 255 character"],
@@ -59,6 +58,15 @@ const UserSchema = new mongoose.Schema(
   },
 );
 
+// --- INDEKSLER ---
+
+// Sadece aktif (silinmemiş) kullanıcılar arasında e-posta benzersiz olsun.
+// Böylece silinen bir e-posta adresiyle tekrar kayıt olunabilir.
+UserSchema.index(
+  { email: 1 },
+  { unique: true, partialFilterExpression: { isDeleted: false } },
+);
+
 // document middleware, password hashleme user.create/update'den önce
 
 UserSchema.pre("save", async function () {
@@ -69,22 +77,20 @@ UserSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, 10);
 });
 
-// Deleted olanları gösterme/yok say, middleware
+// --- QUERY MIDDLEWARES (SOFT DELETE) ---
 
-UserSchema.pre("find", function () {
+const filterDeleted = function () {
   this.where({ isDeleted: false });
-});
+};
 
-UserSchema.pre("findOne", function () {
-  this.where({ isDeleted: false });
-});
+UserSchema.pre("find", filterDeleted);
+UserSchema.pre("findOne", filterDeleted);
+UserSchema.pre("findOneAndUpdate", filterDeleted);
+UserSchema.pre("findOneAndDelete", filterDeleted);
+UserSchema.pre("countDocuments", filterDeleted);
 
-UserSchema.pre("findOneAndUpdate", function () {
-  this.where({ isDeleted: false });
-});
-
-UserSchema.pre("findOneAndDelete", function () {
-  this.where({ isDeleted: false });
+UserSchema.pre("aggregate", function () {
+  this.pipeline().unshift({ $match: { isDeleted: false } });
 });
 
 module.exports = mongoose.model("User", UserSchema);

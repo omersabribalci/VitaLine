@@ -7,6 +7,7 @@ const DoctorSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      unique: true, // Bir kullanıcının yalnızca 1 doktor profili olabilir
     },
     title: {
       type: String,
@@ -17,6 +18,8 @@ const DoctorSchema = new mongoose.Schema(
     speciality: {
       type: String,
       required: [true, "Speciality is required."],
+      trim: true, // Baştaki ve sondaki boşlukları temizler
+      index: true, // Branşa göre hızlı arama/filtreleme için
     },
     unavailableDates: {
       type: [DateRangeSchema],
@@ -25,27 +28,26 @@ const DoctorSchema = new mongoose.Schema(
     isDeleted: {
       type: Boolean,
       default: false,
+      index: true, // Soft delete filtresini hızlandırır
     },
   },
   { timestamps: true },
 );
 
-// Deleted olanları gösterme/yok say, middleware
+// --- QUERY MIDDLEWARES (SOFT DELETE) ---
 
-DoctorSchema.pre("find", function () {
+const filterDeleted = function () {
   this.where({ isDeleted: false });
-});
+};
 
-DoctorSchema.pre("findOne", function () {
-  this.where({ isDeleted: false });
-});
+DoctorSchema.pre("find", filterDeleted);
+DoctorSchema.pre("findOne", filterDeleted);
+DoctorSchema.pre("findOneAndUpdate", filterDeleted);
+DoctorSchema.pre("findOneAndDelete", filterDeleted);
+DoctorSchema.pre("countDocuments", filterDeleted);
 
-DoctorSchema.pre("findOneAndUpdate", function () {
-  this.where({ isDeleted: false });
-});
-
-DoctorSchema.pre("findOneAndDelete", function () {
-  this.where({ isDeleted: false });
+DoctorSchema.pre("aggregate", function () {
+  this.pipeline().unshift({ $match: { isDeleted: false } });
 });
 
 module.exports = mongoose.model("Doctor", DoctorSchema);

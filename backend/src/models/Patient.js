@@ -6,6 +6,7 @@ const PatientSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      unique: true, // Bir kullanıcının yalnızca 1 hasta profili olabilir
     },
     accountStatus: {
       type: String,
@@ -15,27 +16,27 @@ const PatientSchema = new mongoose.Schema(
     isDeleted: {
       type: Boolean,
       default: false,
+      index: true, // Her sorguda filtrelendiği için indexlenmesi performansı artırır
     },
   },
   { timestamps: true },
 );
 
-// Deleted olanları gösterme/yok say, middleware
+// --- QUERY MIDDLEWARES (SOFT DELETE) ---
 
-PatientSchema.pre("find", function () {
+const filterDeleted = function () {
   this.where({ isDeleted: false });
-});
+};
 
-PatientSchema.pre("findOne", function () {
-  this.where({ isDeleted: false });
-});
+PatientSchema.pre("find", filterDeleted);
+PatientSchema.pre("findOne", filterDeleted);
+PatientSchema.pre("findOneAndUpdate", filterDeleted);
+PatientSchema.pre("findOneAndDelete", filterDeleted);
+PatientSchema.pre("countDocuments", filterDeleted);
 
-PatientSchema.pre("findOneAndUpdate", function () {
-  this.where({ isDeleted: false });
-});
-
-PatientSchema.pre("findOneAndDelete", function () {
-  this.where({ isDeleted: false });
+PatientSchema.pre("aggregate", function () {
+  // Aggregation boru hattının en başına { $match: { isDeleted: false } } ekler
+  this.pipeline().unshift({ $match: { isDeleted: false } });
 });
 
 module.exports = mongoose.model("Patient", PatientSchema);

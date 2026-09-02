@@ -55,10 +55,6 @@ const BookingPolicyFormSection = ({
         >
           Booking Policy
         </Typography>
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          These values are used across the system for appointment availability
-          and validation.
-        </Typography>
       </Box>
 
       <FormFieldRow>

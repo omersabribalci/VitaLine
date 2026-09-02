@@ -1,5 +1,6 @@
 const {
   isBefore,
+  isAfter,
   startOfDay,
   endOfDay,
   getDay,
@@ -12,9 +13,16 @@ const {
   isToday,
 } = require("date-fns");
 
+/**
+ * String tarih bilgisini ("2026-09-02") sunucunun yerel zaman diliminde 00:00 olarak parse eder.
+ * UTC kayma hatalarını ve gün kaymalarını engeller.
+ */
+const parseLocalDate = (dateStr) => {
+  return parse(dateStr, "yyyy-MM-dd", new Date());
+};
+
 // Geçmiş gün, booking window, çalışma günü ve doktor izni kurallarını denetler.
 // Hata varsa hata mesajı string'i döner, her şey yolundaysa null döner.
-
 const checkDateRules = (targetDate, policy, doctor) => {
   const today = startOfDay(new Date());
 
@@ -50,22 +58,29 @@ const checkDateRules = (targetDate, policy, doctor) => {
 };
 
 // Seçilen tarihin randevu alınabilir bir gün olup olmadığını kontrol eder.
-
 const isDateAvailableForBooking = (targetDate, policy, doctor) => {
   const errorMsg = checkDateRules(targetDate, policy, doctor);
   return errorMsg === null; // Hata yoksa true, varsa false döner
 };
 
-// Verilen saatin öğle arasına denk gelip gelmediğini kontrol eder.
+// Mesai saatleri sınırları içinde mi denetler (taşma engelli)
+const isWithinWorkingHours = (timeString, endTimeString, policy) => {
+  return (
+    timeString >= policy.workingTimeStart &&
+    endTimeString <= policy.workingTimeEnd
+  );
+};
 
-const isDuringLunchBreak = (timeString, policy) => {
+// Verilen randevu slotunun (başlangıç ve bitiş) öğle arasına denk gelip gelmediğini kontrol eder.
+const isDuringLunchBreak = (timeString, slotEndTimeString, policy) => {
   const { lunchBreakStart, lunchBreakEnd } = policy;
   if (!lunchBreakStart || !lunchBreakEnd) return false;
-  return timeString >= lunchBreakStart && timeString < lunchBreakEnd;
+
+  // Slot başlangıcı öğle bitişinden önce VE slot bitişi öğle başlangıcından sonra ise çakışır
+  return timeString < lunchBreakEnd && slotEndTimeString > lunchBreakStart;
 };
 
 // Günün mesai saatleri içindeki tüm slotlarını üretir ve durumlarını belirler.
-
 const generateSlotsForDay = (
   policy,
   targetDate,
@@ -95,9 +110,19 @@ const generateSlotsForDay = (
   let currentSlot = startTime;
 
   while (isBefore(currentSlot, endTime)) {
-    const timeString = format(currentSlot, "HH:mm");
+    // Slotun bitiş zamanını hesapla
+    const slotEnd = addMinutes(currentSlot, policy.appointmentDurationMinutes);
 
-    if (!isDuringLunchBreak(timeString, policy)) {
+    // KURAL: Eğer randevunun bitiş saati mesai bitimini aşıyorsa bu slotu üretme ve dur!
+    if (isAfter(slotEnd, endTime)) {
+      break;
+    }
+
+    const timeString = format(currentSlot, "HH:mm");
+    const slotEndTimeString = format(slotEnd, "HH:mm");
+
+    // Öğle arası çakışma kontrolü
+    if (!isDuringLunchBreak(timeString, slotEndTimeString, policy)) {
       const isBooked = bookedTimes.has(timeString);
       const isPast = isTargetToday && isBefore(currentSlot, now);
 
@@ -107,14 +132,17 @@ const generateSlotsForDay = (
       });
     }
 
-    currentSlot = addMinutes(currentSlot, policy.appointmentDurationMinutes);
+    currentSlot = slotEnd;
   }
 
   return slots;
 };
 
 module.exports = {
+  parseLocalDate,
   checkDateRules,
   isDateAvailableForBooking,
+  isWithinWorkingHours,
+  isDuringLunchBreak,
   generateSlotsForDay,
 };
