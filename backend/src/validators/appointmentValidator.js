@@ -20,7 +20,12 @@ const availability = [
 
 const create = [
   objectId("doctorId", "Doctor ID"),
-  objectId("patientId", "Patient ID"),
+  body("patientId")
+    .if((_, { req }) => req.user?.role === "admin")
+    .notEmpty()
+    .withMessage("Patient ID is required!")
+    .isMongoId()
+    .withMessage("Patient ID must be a valid ID!"),
   body("dateAndTime")
     .isISO8601()
     .withMessage("Date and time must be a valid date!"),

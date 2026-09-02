@@ -33,7 +33,7 @@ router.post(
 router.get("/:id", checkRole("admin", "doctor", "patient"), getAppointmentById);
 router.patch(
   "/:id",
-  checkRole("admin", "patient"),
+  checkRole("admin", "doctor", "patient"),
   appointmentValidator.update,
   updateAppointment,
 );

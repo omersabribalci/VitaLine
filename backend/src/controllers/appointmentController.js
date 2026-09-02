@@ -55,15 +55,29 @@ const getAppointmentById = async (req, res, next) => {
     const { id } = req.params;
     isIdValid(id);
 
-    const appointment = await Appointment.findById(id)
+    const filter = { _id: id };
+
+    if (req.user.role === "patient") {
+      const patient = await Patient.findOne({ userId: req.user.id });
+      if (!patient) {
+        return next(new AppError("Patient profile not found.", 404));
+      }
+      filter.patientId = patient._id;
+    } else if (req.user.role === "doctor") {
+      const doctor = await Doctor.findOne({ userId: req.user.id });
+      if (!doctor) {
+        return next(new AppError("Doctor profile not found.", 404));
+      }
+      filter.doctorId = doctor._id;
+    }
+
+    const appointment = await Appointment.findOne(filter)
       .populate({ path: "doctorId", populate: { path: "userId" } })
       .populate({ path: "patientId", populate: { path: "userId" } })
       .lean();
 
     if (!appointment) {
-      return next(
-        new AppError(`Appointment does not exist with this ID -> ${id}`, 404),
-      );
+      return next(new AppError("Appointment not found.", 404));
     }
     return sendSuccessResponse(res, 200, appointment);
   } catch (error) {
@@ -116,7 +130,16 @@ const getAvailability = async (req, res, next) => {
 
 const createAppointment = async (req, res, next) => {
   try {
-    const { doctorId, patientId, dateAndTime } = req.body;
+    const { doctorId, dateAndTime, status } = req.body;
+    let patientId = req.body.patientId;
+
+    if (req.user.role === "patient") {
+      const patientProfile = await Patient.findOne({ userId: req.user.id });
+      if (!patientProfile) {
+        return next(new AppError("Patient profile not found.", 404));
+      }
+      patientId = patientProfile._id;
+    }
 
     const [doctor, patient] = await Promise.all([
       Doctor.findById(doctorId),
@@ -133,7 +156,17 @@ const createAppointment = async (req, res, next) => {
     await assertNoDoctorConflict(doctorId, appointmentDate);
     await assertNoPatientConflict(patientId, doctorId, appointmentDate);
 
-    const appointment = await Appointment.create(req.body);
+    const appointmentData = {
+      doctorId,
+      patientId,
+      dateAndTime,
+    };
+
+    if (req.user.role === "admin" && status !== undefined) {
+      appointmentData.status = status;
+    }
+
+    const appointment = await Appointment.create(appointmentData);
     await appointment.populate([
       { path: "doctorId", populate: { path: "userId" } },
       { path: "patientId", populate: { path: "userId" } },
@@ -155,18 +188,67 @@ const updateAppointment = async (req, res, next) => {
     const { id } = req.params;
     isIdValid(id);
 
-    const appointment = await Appointment.findByIdAndUpdate(id, req.body, {
-      returnDocument: "after",
-      runValidators: true,
-    });
+    const appointment = await Appointment.findById(id);
 
     if (!appointment) {
-      return next(
-        new AppError(`Appointment does not exist with this ID -> ${id}`, 404),
-      );
+      return next(new AppError("Appointment not found.", 404));
     }
 
-    await appointment.populate([
+    if (req.user.role === "patient") {
+      const patient = await Patient.findOne({ userId: req.user.id });
+      const ownsAppointment =
+        patient && appointment.patientId.toString() === patient._id.toString();
+
+      if (!ownsAppointment) {
+        return next(new AppError("Appointment not found.", 404));
+      }
+
+      const fields = Object.keys(req.body);
+      if (fields.length !== 1 || req.body.status !== "cancelled") {
+        return next(
+          new AppError("Patients can only cancel their own appointments.", 403),
+        );
+      }
+    }
+
+    if (req.user.role === "doctor") {
+      const doctor = await Doctor.findOne({ userId: req.user.id });
+      const ownsAppointment =
+        doctor && appointment.doctorId.toString() === doctor._id.toString();
+
+      if (!ownsAppointment) {
+        return next(new AppError("Appointment not found.", 404));
+      }
+
+      const fields = Object.keys(req.body);
+      if (fields.length !== 1 || !fields.includes("status")) {
+        return next(
+          new AppError("Doctors can only update appointment status.", 403),
+        );
+      }
+    }
+
+    const allowedFields = ["doctorId", "patientId", "dateAndTime", "status"];
+    const updateData = Object.fromEntries(
+      Object.entries(req.body).filter(([field]) =>
+        allowedFields.includes(field),
+      ),
+    );
+
+    if (Object.keys(updateData).length === 0) {
+      return next(new AppError("No valid fields provided to update.", 400));
+    }
+
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      id,
+      updateData,
+      {
+        returnDocument: "after",
+        runValidators: true,
+      },
+    );
+
+    await updatedAppointment.populate([
       { path: "doctorId", populate: { path: "userId" } },
       { path: "patientId", populate: { path: "userId" } },
     ]);
@@ -174,7 +256,7 @@ const updateAppointment = async (req, res, next) => {
     return sendSuccessResponse(
       res,
       200,
-      appointment,
+      updatedAppointment,
       "Appointment updated successfully!",
     );
   } catch (error) {

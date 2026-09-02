@@ -31,9 +31,17 @@ const registerPatient = async (req, res, next) => {
     session = await mongoose.startSession();
     await session.withTransaction(async () => {
       // session kullanıldı çünkü patient ve user aynı anda oluşmalı.
-      const { confirmPassword, ...rest } = req.body;
+      const { name, email, phone, password, image } = req.body;
+      const userData = {
+        name,
+        email,
+        phone,
+        password,
+        image: image || "",
+        role: "patient",
+      };
 
-      const user = await User.create([{ ...rest, role: "patient" }], {
+      const user = await User.create([userData], {
         session,
       });
 
