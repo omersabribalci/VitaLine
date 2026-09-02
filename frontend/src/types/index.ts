@@ -108,11 +108,15 @@ export type BookingPolicyForm = {
 
 export type AvailabilityPolicy = BookingPolicyForm;
 
+export type AppointmentSlot = {
+  time: string;
+  isAvailable: boolean;
+};
+
 export type AvailabilityResponse = {
   date: string;
-  // TODO: Change this type to match backend slots: { time: string; isAvailable: boolean }[].
-  availableSlots: string[];
-  policy: AvailabilityPolicy | null;
+  doctorId: string;
+  slots: AppointmentSlot[];
 };
 
 export type TableProps<
@@ -212,7 +216,7 @@ export type CustomDatePickerProps = {
 };
 
 export type ResponsiveGridProps = {
-  array: string[]; // sadece müsait slotlar (backend filtreli)
+  array: AppointmentSlot[];
   value: string | null; // seçili değer
   onChange: ToggleButtonGroupProps["onChange"];
   className?: string;
@@ -241,8 +245,12 @@ export type DateTimeSelectorProps = {
   date: Date | null;
   time: string | null;
   setValue: UseFormSetValue<BookAppointmentFormData>;
-  availableSlots: string[];
+  maxDate?: Date;
+  slots: AppointmentSlot[];
   isAvailabilityLoading: boolean;
+  hasAvailabilityError: boolean;
+  refetchAvailability: () => unknown;
+  isAvailabilityFetching: boolean;
   isAdding: boolean;
 };
 

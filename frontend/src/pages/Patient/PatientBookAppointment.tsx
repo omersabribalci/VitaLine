@@ -10,9 +10,10 @@ import SpecialityDoctorSelector from "../../components/Patient/SpecialityDoctorS
 import DateTimeSelector from "../../components/Patient/DateTimeSelector";
 import { useAppointmentForm } from "../../hooks/useAppointmentForm";
 import { toast } from "react-toastify";
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
 import type { BookAppointmentFormData, Doctor } from "../../types";
 import { useGetMyPatientProfileQuery } from "../../store/services/patientApi";
+import { useGetBookingPolicyQuery } from "../../store/services/bookingPolicyApi";
 import Error from "../../components/UI/Error";
 import { useNavigate } from "react-router";
 import Avatar from "@mui/material/Avatar";
@@ -50,17 +51,25 @@ const PatientBookAppointment = () => {
   );
   const selectedDoctorId = selectedDoctor?._id;
 
-  // TODO: Remove frontend date validation; date availability must come from the backend.
-  // Tarih "YYYY-MM-DD" string olarak formatla (availability query için)
-  // new Date(date) kullanmak timezone kaymasına neden oluyor; doğrudan local date'i formatlamak doğru sonuç verir.
+  // Backend availability endpoint'inin beklediği YYYY-MM-DD formatına dönüştürülür.
+  // Local tarihi doğrudan formatlamak timezone kaymasını önler.
   const dateString = date ? format(date, "yyyy-MM-dd") : null;
 
-  const { data: availabilityData, isLoading: isAvailabilityLoading } =
-    // TODO: Use the backend availability response as the single source of truth.
-    useGetAvailabilityQuery(
-      { doctorId: selectedDoctorId!, date: dateString! },
-      { skip: !selectedDoctorId || !dateString },
-    );
+  const {
+    data: availabilityData,
+    isLoading: isAvailabilityLoading,
+    error: availabilityError,
+    refetch: refetchAvailability,
+    isFetching: isAvailabilityFetching,
+  } = useGetAvailabilityQuery(
+    { doctorId: selectedDoctorId!, date: dateString! },
+    { skip: !selectedDoctorId || !dateString },
+  );
+
+  const { data: bookingPolicy } = useGetBookingPolicyQuery();
+  const maxBookingDate = bookingPolicy
+    ? addDays(new Date(), bookingPolicy.bookingWindowDays)
+    : undefined;
 
   const [newAppointment, { isLoading: isAdding }] = useNewAppointmentMutation();
 
@@ -168,9 +177,12 @@ const PatientBookAppointment = () => {
             date={date}
             time={time}
             setValue={setValue}
-            // TODO: Map backend slot objects and pass availability state for disabling.
-            availableSlots={availabilityData?.availableSlots ?? []}
+            maxDate={maxBookingDate}
+            slots={availabilityData?.slots ?? []}
             isAvailabilityLoading={isAvailabilityLoading}
+            hasAvailabilityError={Boolean(availabilityError)}
+            refetchAvailability={refetchAvailability}
+            isAvailabilityFetching={isAvailabilityFetching}
             isAdding={isAdding}
           />
         )}

@@ -131,7 +131,7 @@ const createAppointment = async (req, res, next) => {
 
     validateAppointmentSlot(appointmentDate, policy, doctor);
     await assertNoDoctorConflict(doctorId, appointmentDate);
-    await assertNoPatientConflict(patientId, appointmentDate);
+    await assertNoPatientConflict(patientId, doctorId, appointmentDate);
 
     const appointment = await Appointment.create(req.body);
     await appointment.populate([

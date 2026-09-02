@@ -145,6 +145,7 @@ const updateDoctor = async (req, res, next) => {
       const doctorData = { title, speciality, unavailableDates };
       const userData = { name, email, phone };
 
+      // TODO: When a holiday overlaps existing scheduled appointments, decide whether to cancel them automatically and notify affected patients.
       if (typeof image !== "undefined") {
         userData.image = image;
       }

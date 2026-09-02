@@ -36,9 +36,14 @@ const requiredUserFields = [
     .withMessage("Phone number should be 11 characters!")
     .isNumeric()
     .withMessage("Phone number must contain only numbers!"),
-
-  body("image").trim().notEmpty().withMessage("Image is required!"),
 ];
+
+const optionalImage = () =>
+  body("image")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Image cannot be empty if provided!");
 
 const password = body("password")
   .notEmpty()
@@ -71,7 +76,7 @@ const optionalUserFields = [
     .isNumeric()
     .withMessage("Phone number must contain only numbers!"),
 
-  body("image").optional().trim().notEmpty().withMessage("Image is required!"),
+  optionalImage(),
 ];
 
 const validateUnavailableDateRanges = (ranges) => {
@@ -133,6 +138,7 @@ const doctorFields = (optional = false) => [
 
 const create = [
   ...requiredUserFields,
+  optionalImage(),
   body("title")
     .trim()
     .notEmpty()

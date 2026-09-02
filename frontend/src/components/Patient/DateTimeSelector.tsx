@@ -5,18 +5,29 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { addDays } from "date-fns";
 import type { DateTimeSelectorProps } from "../../types";
+import Error from "../UI/Error";
 
 export const DateTimeSelector = ({
   control,
   date,
   time,
   setValue,
-  availableSlots,
+  maxDate,
+  slots,
   isAvailabilityLoading,
+  hasAvailabilityError,
+  refetchAvailability,
+  isAvailabilityFetching,
   isAdding,
 }: DateTimeSelectorProps) => {
+  const selectedSlot = slots.find((slot) => slot.time === time);
+  const canSubmit =
+    Boolean(date) &&
+    Boolean(time) &&
+    !hasAvailabilityError &&
+    Boolean(selectedSlot?.isAvailable);
+
   return (
     <>
       <Controller
@@ -31,17 +42,19 @@ export const DateTimeSelector = ({
               setValue("time", null);
             }}
             value={value}
-            // TODO: Remove disablePast and maxDate; date rules must be controlled by the backend.
-            // maxDate backend'den gelen policy yoksa 30 gün default
-            maxDate={addDays(new Date(), 30)}
-            disablePast
+            maxDate={maxDate}
+            disablePast={true}
           />
         )}
       />
-
       {date && (
         <Box sx={{ minHeight: 80 }}>
-          {isAvailabilityLoading ? (
+          {hasAvailabilityError ? (
+            <Error
+              refetch={refetchAvailability}
+              isFetching={isAvailabilityFetching}
+            />
+          ) : isAvailabilityLoading ? (
             <Box
               sx={{
                 display: "flex",
@@ -56,7 +69,7 @@ export const DateTimeSelector = ({
                 Loading available slots...
               </Typography>
             </Box>
-          ) : availableSlots.length === 0 ? (
+          ) : slots.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
               No available slots for this day.
             </Typography>
@@ -69,21 +82,19 @@ export const DateTimeSelector = ({
                 <ResponsiveGrid
                   {...field}
                   className="max-w-md mx-auto mt-3"
-                  // TODO: Disable slots according to the backend isAvailable value.
-                  array={availableSlots}
+                  array={slots}
                 />
               )}
             />
           )}
         </Box>
       )}
-
       {date && time && (
-        // TODO: Enable submit only when the selected slot is available according to the backend.
         <Button
           type="submit"
           variant="contained"
           color="success"
+          disabled={!canSubmit}
           loading={isAdding}
         >
           Book Appointment

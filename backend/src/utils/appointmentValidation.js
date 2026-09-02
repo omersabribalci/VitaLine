@@ -1,6 +1,7 @@
 const AppError = require("./AppError");
 const Appointment = require("../models/Appointment");
 const { format, parse, differenceInMinutes } = require("date-fns");
+const { startOfDay, endOfDay } = require("date-fns");
 const { checkDateRules } = require("./appointmentHelpers");
 
 // Randevu oluşturulurken tüm kuralları ve çakışmaları denetler.
@@ -75,14 +76,36 @@ const assertNoDoctorConflict = async (doctorId, appointmentDate) => {
 
 // Hasta Çakışma Kontrolü
 
-const assertNoPatientConflict = async (patientId, appointmentDate) => {
-  const conflict = await Appointment.findOne({
-    patientId,
-    dateAndTime: appointmentDate,
-    status: { $ne: "cancelled" },
-  }).lean();
+const assertNoPatientConflict = async (
+  patientId,
+  doctorId,
+  appointmentDate,
+) => {
+  const [sameDoctorConflict, sameTimeConflict] = await Promise.all([
+    Appointment.findOne({
+      doctorId,
+      patientId,
+      dateAndTime: {
+        $gte: startOfDay(appointmentDate),
+        $lte: endOfDay(appointmentDate),
+      },
+      status: { $ne: "cancelled" },
+    }).lean(),
+    Appointment.findOne({
+      patientId,
+      dateAndTime: appointmentDate,
+      status: { $ne: "cancelled" },
+    }).lean(),
+  ]);
 
-  if (conflict) {
+  if (sameDoctorConflict) {
+    throw new AppError(
+      "You already have an appointment with this doctor on this day.",
+      409,
+    );
+  }
+
+  if (sameTimeConflict) {
     throw new AppError(
       "You already have an appointment at this time with another doctor.",
       409,

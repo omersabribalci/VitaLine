@@ -22,16 +22,15 @@ export default function ResponsiveGrid({
           spacing={{ xs: 2, md: 4 }}
           columns={{ xs: 6, sm: 9, md: 12 }}
         >
-          {array.map((time, index) => (
+          {array.map((slot, index) => (
             <Grid key={index}>
-              {/* TODO: Set disabled from the backend-provided slot availability. */}
               <ToggleButton
                 sx={{
-                  bgcolor: "#fafafab8", // çok açık gri arka plan
+                  bgcolor: "#fafafab8",
                   transition: "all 0.3s ease",
                   boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
                   "&:hover": {
-                    bgcolor: "#f0f0f0a7", // hover için hafif koyulaşma
+                    bgcolor: "#f0f0f0a7",
                   },
                   "&.Mui-selected": {
                     background: "linear-gradient(135deg, #4385ef, #6cc6f0)",
@@ -40,9 +39,10 @@ export default function ResponsiveGrid({
                     transform: "scale(1.03)",
                   },
                 }}
-                value={time}
+                value={slot.time}
+                disabled={!slot.isAvailable}
               >
-                {time}
+                {slot.time}
               </ToggleButton>
             </Grid>
           ))}

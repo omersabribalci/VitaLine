@@ -19,8 +19,6 @@ const {
 const RefreshToken = require("../models/RefreshToken");
 
 const registerPatient = async (req, res, next) => {
-  // TODO validation
-
   if (req.body.password !== req.body.confirmPassword) {
     return next(new AppError("Passwords do not match!", 400));
   }
@@ -71,8 +69,6 @@ const registerPatient = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  // TODO validation
-
   try {
     const { email, password } = req.body;
 
@@ -126,10 +122,6 @@ const login = async (req, res, next) => {
       { token: accessToken, user: userData },
       "Logged in successfully!",
     );
-
-    //res.json({ accessToken });
-
-    // TODO ne döneceğine frontende göre karar ver!!!
   } catch (error) {
     next(error);
   }

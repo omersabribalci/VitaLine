@@ -69,7 +69,6 @@ export const appointmentApi = createApi({
       AvailabilityResponse,
       { doctorId: string; date: string }
     >({
-      // TODO: Normalize backend slot objects ({ time, isAvailable }) for the frontend.
       query: ({ doctorId, date }) =>
         `appointments/availability?doctorId=${doctorId}&date=${date}`,
       providesTags: (_, __, { doctorId }) => [
