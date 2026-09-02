@@ -82,8 +82,7 @@ const DoctorSetHoliday = ({
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
       <h3 className="text-xl">Manage Holiday</h3>
       <p className="text-sm text-gray-700">
-        Please pick the days you won’t be available for appointments. (End date
-        will be first working day.)
+        Please pick the days you won’t be available for appointments.
       </p>
       <div className="grid w-full max-w-xl grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
         <div>
