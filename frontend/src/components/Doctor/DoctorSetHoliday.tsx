@@ -142,7 +142,11 @@ const DoctorSetHoliday = ({
         </div>
       </div>
       <div className="w-full">
-        {error && <FormError message="Updating Error" />}
+        {error && (
+          <FormError
+            message={extractErrorMessage(error, "Unable to update holiday.")}
+          />
+        )}
       </div>
       <div className="flex flex-row gap-2">
         <Button

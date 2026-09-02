@@ -1,5 +1,11 @@
 type ErrorWithMessage = {
-  data?: { message?: unknown };
+  data?: {
+    message?: unknown;
+    errors?: Array<{
+      message?: unknown;
+      msg?: unknown;
+    }>;
+  };
   message?: unknown;
 };
 
@@ -12,6 +18,14 @@ export const extractErrorMessage = (
   }
 
   const { data, message } = error as ErrorWithMessage;
+
+  if (data?.errors?.length) {
+    const firstError = data.errors[0];
+    const detail = firstError.message ?? firstError.msg;
+    if (typeof detail === "string") {
+      return detail;
+    }
+  }
 
   if (data && typeof data.message === "string") {
     return data.message;

@@ -40,6 +40,11 @@ export type LoginFormData = {
 export type ApiError = {
   data: {
     message: string;
+    errors?: Array<{
+      field?: string;
+      message?: string;
+      msg?: string;
+    }>;
   };
 };
 
