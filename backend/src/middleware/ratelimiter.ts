@@ -8,9 +8,14 @@ const rateLimitHandler = (_req: Request, res: Response) => {
   });
 };
 
+// Integration tests share one local IP and can legitimately make many requests.
+// Production and development limits remain unchanged.
+const testSafeLimit = (normalLimit: number): number =>
+  process.env.NODE_ENV === "test" ? 10_000 : normalLimit;
+
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 100,
+  limit: testSafeLimit(100),
   standardHeaders: "draft-8",
   legacyHeaders: false,
   handler: rateLimitHandler,
@@ -18,7 +23,7 @@ const globalLimiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 10,
+  limit: testSafeLimit(10),
   standardHeaders: "draft-8",
   legacyHeaders: false,
   handler: rateLimitHandler,

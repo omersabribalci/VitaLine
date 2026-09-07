@@ -43,6 +43,7 @@ const Header = () => {
         <span>{user?.name}</span>
       </div>
       <Button
+        aria-label="Log out"
         sx={{
           textTransform: "none",
           fontSize: 12,
