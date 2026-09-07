@@ -13,7 +13,7 @@ VitaLine is a modern, full-stack web application designed with a robust backend 
 - **Form Handling:** React Hook Form
 
 ### Backend
-- **Core:** Node.js, Express.js
+- **Core:** Node.js, TypeScript, Express.js
 - **Database:** MongoDB, Mongoose
 - **Authentication & Security:** JSON Web Tokens (JWT), bcryptjs, Express Rate Limit
 - **API Documentation:** Swagger UI
@@ -74,6 +74,21 @@ Start the backend:
 ```bash
 cd backend
 npm run dev
+```
+
+The development command runs `server.ts` directly and restarts when a backend
+source file changes. Before committing backend work, run the type checker:
+
+```bash
+npm run check
+```
+
+For a production-style run, compile the TypeScript source into `backend/dist`
+and start the generated JavaScript:
+
+```bash
+npm run build
+npm start
 ```
 
 Start the frontend:
