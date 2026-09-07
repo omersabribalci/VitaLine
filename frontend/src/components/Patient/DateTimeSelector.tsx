@@ -14,6 +14,7 @@ export const DateTimeSelector = ({
   time,
   setValue,
   maxDate,
+  shouldDisableDate,
   slots,
   isAvailabilityLoading,
   hasAvailabilityError,
@@ -43,6 +44,7 @@ export const DateTimeSelector = ({
             }}
             value={value}
             maxDate={maxDate}
+            shouldDisableDate={shouldDisableDate}
             disablePast={true}
           />
         )}

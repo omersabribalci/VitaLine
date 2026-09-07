@@ -271,6 +271,7 @@ export type DateTimeSelectorProps = {
   time: string | null;
   setValue: UseFormSetValue<BookAppointmentFormData>;
   maxDate?: Date;
+  shouldDisableDate: (day: Date) => boolean;
   slots: AppointmentSlot[];
   isAvailabilityLoading: boolean;
   hasAvailabilityError: boolean;

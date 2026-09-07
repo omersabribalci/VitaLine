@@ -10,7 +10,8 @@ import SpecialityDoctorSelector from "../../components/Patient/SpecialityDoctorS
 import DateTimeSelector from "../../components/Patient/DateTimeSelector";
 import { useAppointmentForm } from "../../hooks/useAppointmentForm";
 import { toast } from "react-toastify";
-import { addDays, format } from "date-fns";
+import { addDays, format, startOfDay } from "date-fns";
+import { useCallback } from "react";
 import type { BookAppointmentFormData, Doctor } from "../../types";
 import { useGetMyPatientProfileQuery } from "../../store/services/patientApi";
 import { useGetBookingPolicyQuery } from "../../store/services/bookingPolicyApi";
@@ -18,6 +19,7 @@ import Error from "../../components/UI/Error";
 import { useNavigate } from "react-router";
 import Avatar from "@mui/material/Avatar";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import { isAppointmentDateDisabled } from "../../utils/bookingPolicyUtils";
 
 const PatientBookAppointment = () => {
   const navigate = useNavigate();
@@ -66,10 +68,28 @@ const PatientBookAppointment = () => {
     { skip: !selectedDoctorId || !dateString },
   );
 
-  const { data: bookingPolicy } = useGetBookingPolicyQuery();
+  const {
+    data: bookingPolicy,
+    isLoading: isPolicyLoading,
+    error: policyError,
+    refetch: refetchPolicy,
+    isFetching: isPolicyFetching,
+  } = useGetBookingPolicyQuery();
   const maxBookingDate = bookingPolicy
-    ? addDays(new Date(), bookingPolicy.bookingWindowDays)
+    ? addDays(startOfDay(new Date()), bookingPolicy.bookingWindowDays)
     : undefined;
+
+  const shouldDisableDate = useCallback(
+    (day: Date) =>
+      bookingPolicy && selectedDoctor
+        ? isAppointmentDateDisabled(
+            day,
+            bookingPolicy,
+            selectedDoctor.unavailableDates,
+          )
+        : true,
+    [bookingPolicy, selectedDoctor],
+  );
 
   const [newAppointment, { isLoading: isAdding }] = useNewAppointmentMutation();
 
@@ -105,7 +125,7 @@ const PatientBookAppointment = () => {
     setValue("time", null);
   };
 
-  if (isPatLoading || isLoading)
+  if (isPatLoading || isLoading || isPolicyLoading)
     return (
       <div className="mx-auto mt-4 flex w-full max-w-3xl flex-col gap-4 rounded-2xl bg-cardBg p-4 shadow-xl">
         <Loading />
@@ -118,6 +138,12 @@ const PatientBookAppointment = () => {
 
   if (error) {
     return <Error refetch={refetch} isFetching={isFetching} />;
+  }
+
+  if (policyError) {
+    return (
+      <Error refetch={refetchPolicy} isFetching={isPolicyFetching} />
+    );
   }
 
   return (
@@ -178,6 +204,7 @@ const PatientBookAppointment = () => {
             time={time}
             setValue={setValue}
             maxDate={maxBookingDate}
+            shouldDisableDate={shouldDisableDate}
             slots={availabilityData?.slots ?? []}
             isAvailabilityLoading={isAvailabilityLoading}
             hasAvailabilityError={Boolean(availabilityError)}
