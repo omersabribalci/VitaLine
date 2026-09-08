@@ -5,9 +5,11 @@ import Loading from "../../components/UI/Loading";
 import Error from "../../components/UI/Error";
 import { useGetMyDoctorProfileQuery } from "../../store/services/doctorApi";
 import { useNavigate } from "react-router";
+import { useState } from "react";
 
 const DoctorAppointments = () => {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
   const {
     data: doctor,
     isLoading: isDocLoading,
@@ -17,12 +19,16 @@ const DoctorAppointments = () => {
   } = useGetMyDoctorProfileQuery();
 
   const {
-    data: appointments,
+    data: appointmentPage,
     isLoading,
     error,
     refetch,
     isFetching,
-  } = useGetAppointmentsByDoctorIdQuery(doctor?._id, { skip: !doctor?._id });
+  } = useGetAppointmentsByDoctorIdQuery(
+    { doctorId: doctor?._id ?? "", page, limit: 8 },
+    { skip: !doctor?._id },
+  );
+  const appointments = appointmentPage?.items;
 
   if (isDocLoading || isLoading) {
     return <Loading />;
@@ -52,15 +58,15 @@ const DoctorAppointments = () => {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
-      <div className="w-full overflow-x-auto rounded-2xl border border-white/20 bg-cardBg/60 shadow-sm">
-        <Table
-          list={appointments}
-          columns={doctorAppointmentColumns}
-          onRowClick={(appointment) =>
-            navigate(`/doctor/appointments/${appointment._id}`)
-          }
-        />
-      </div>
+      <Table
+        list={appointments}
+        columns={doctorAppointmentColumns}
+        onRowClick={(appointment) =>
+          navigate(`/doctor/appointments/${appointment._id}`)
+        }
+        pagination={appointmentPage?.pagination}
+        onPageChange={setPage}
+      />
     </div>
   );
 };

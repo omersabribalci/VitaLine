@@ -4,16 +4,19 @@ import Table from "../../components/UI/Table";
 import { appointmentColumns } from "../../data/tableColumns";
 import { useGetAllAppointmentsQuery } from "../../store/services/appointmentApi";
 import { useNavigate } from "react-router";
+import { useState } from "react";
 
 const AdminAppointments = () => {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
   const {
-    data: appointments,
+    data: appointmentPage,
     isLoading,
     error,
     refetch,
     isFetching,
-  } = useGetAllAppointmentsQuery();
+  } = useGetAllAppointmentsQuery({ page, limit: 8 });
+  const appointments = appointmentPage?.items;
 
   if (isLoading) {
     return <Loading />;
@@ -37,15 +40,15 @@ const AdminAppointments = () => {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
-      <div className="w-full overflow-x-auto rounded-2xl border border-white/20 bg-cardBg/60 shadow-sm">
-        <Table
-          list={appointments}
-          columns={appointmentColumns}
-          onRowClick={(appointment) =>
-            navigate(`/admin/appointments/${appointment._id}`)
-          }
-        />
-      </div>
+      <Table
+        list={appointments}
+        columns={appointmentColumns}
+        onRowClick={(appointment) =>
+          navigate(`/admin/appointments/${appointment._id}`)
+        }
+        pagination={appointmentPage?.pagination}
+        onPageChange={setPage}
+      />
     </div>
   );
 };

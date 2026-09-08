@@ -331,6 +331,43 @@ describe("appointment availability API", () => {
     );
   });
 
+  it("paginates appointment lists and returns pagination metadata", async () => {
+    const { doctor } = await createDoctor();
+    const { patient } = await createPatient();
+    const adminToken = await createAdminToken();
+    await Appointment.create([
+      {
+        doctorId: doctor._id,
+        patientId: patient._id,
+        dateAndTime: new Date(Date.now() + 86_400_000),
+      },
+      {
+        doctorId: doctor._id,
+        patientId: patient._id,
+        dateAndTime: new Date(Date.now() + 172_800_000),
+      },
+      {
+        doctorId: doctor._id,
+        patientId: patient._id,
+        dateAndTime: new Date(Date.now() + 259_200_000),
+      },
+    ]);
+
+    const response = await request(app)
+      .get("/api/appointments")
+      .query({ page: 2, limit: 2 })
+      .set("Authorization", `Bearer ${adminToken}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.items).toHaveLength(1);
+    expect(response.body.data.pagination).toEqual({
+      page: 2,
+      limit: 2,
+      totalItems: 3,
+      totalPages: 2,
+    });
+  });
+
   it("returns correctly grouped appointment statistics to an admin", async () => {
     const { doctor } = await createDoctor();
     const { patient } = await createPatient();

@@ -46,7 +46,7 @@ const PatientBookAppointment = () => {
     error,
     refetch,
     isFetching,
-  } = useGetDoctorsBySpecialityQuery(speciality, { skip: !speciality });
+  } = useGetDoctorsBySpecialityQuery(speciality ?? "", { skip: !speciality });
 
   const selectedDoctor = doctorsBySpeciality?.find(
     (doc: Doctor) => doc.userId.name === doctorName,

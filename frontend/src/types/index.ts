@@ -144,6 +144,23 @@ export type AvailabilityResponse = {
   slots: AppointmentSlot[];
 };
 
+export type PaginationMeta = {
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+};
+
+export type PaginatedData<T> = {
+  items: T[];
+  pagination: PaginationMeta;
+};
+
+export type PaginationQuery = {
+  page?: number;
+  limit?: number;
+};
+
 export type TableProps<
   T extends { _id: string | number } = { _id: string | number },
 > = {
@@ -151,6 +168,8 @@ export type TableProps<
   columns: TableColumn<T>[];
   onRowClick?: (item: T) => void;
   emptyMessage?: string;
+  pagination?: PaginationMeta;
+  onPageChange?: (page: number) => void;
 };
 
 export type TableColumn<T> = {
@@ -158,10 +177,12 @@ export type TableColumn<T> = {
   render: (item: T) => React.ReactNode;
 };
 
-export type StatCardProps<T> = {
+export type StatCardProps = {
   icon: React.ReactNode;
-  parameter: T[] | number | undefined;
+  parameter: number;
   title: string;
+  description?: string;
+  iconClassName?: string;
 };
 
 export type AddDoctorFormData = {

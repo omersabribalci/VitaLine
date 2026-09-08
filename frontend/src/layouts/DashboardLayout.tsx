@@ -34,7 +34,7 @@ const DashboardLayout = ({ headerMinWidth = "min-w-75" }) => {
       {/* Main Content Area */}
       <div className="flex h-screen w-full min-w-[320px] flex-col gap-2 overflow-hidden px-3 sm:px-4 lg:basis-9/10 lg:px-5">
         <div
-          className={`flex ${headerMinWidth} items-center justify-between gap-3 rounded-full border border-white/20 bg-myBlackBg/20 px-2 py-2`}
+          className={`flex ${headerMinWidth} items-center justify-between gap-3 rounded-full border border-white/20 bg-myBlackBg/20 px-2 py-1.5`}
         >
           {!isSidebarOpen && (
             <IconButton

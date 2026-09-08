@@ -1,11 +1,6 @@
 import { format } from "date-fns";
 import type { Appointment } from "../../types";
-
-const statusStyles = {
-  scheduled: "bg-blue-100 text-blue-700",
-  completed: "bg-green-100 text-green-700",
-  cancelled: "bg-red-100 text-red-700",
-};
+import AppointmentStatusBadge from "../UI/AppointmentStatusBadge";
 
 const DoctorAppointmentCard = ({
   appointment,
@@ -34,11 +29,7 @@ const DoctorAppointmentCard = ({
       <span className="text-sm font-semibold text-gray-800 group-hover:text-blue-900 transition-colors">
         {appointment.patientId?.userId?.name ?? "Unknown patient"}
       </span>
-      <span
-        className={`rounded-full px-2 py-1 text-xs font-semibold capitalize ${statusStyles[appointment.status]}`}
-      >
-        {appointment.status}
-      </span>
+      <AppointmentStatusBadge status={appointment.status} />
     </div>
   );
 };

@@ -10,7 +10,7 @@ const NoAppointments = () => {
         <p className="text-base font-semibold text-gray-800">
           There are no appointments yet.
         </p>
-        <p className="mt-1 text-sm text-gray-600">
+        <p className="mt-1 text-sm font-medium text-slate-700">
           Appointment statistics will appear here when one is booked.
         </p>
       </div>

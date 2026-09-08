@@ -1,8 +1,14 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import type { ApiResponse, Doctor } from "../../types";
+import type {
+  ApiResponse,
+  Doctor,
+  PaginatedData,
+  PaginationQuery,
+} from "../../types";
 import { baseQueryWithReAuth } from "./baseQueryWithReAuth";
+import { normalizePaginatedData } from "../../utils/pagination";
 
-export type DoctorListQuery = {
+export type DoctorListQuery = PaginationQuery & {
   search?: string;
   speciality?: string;
   sort?: "name";
@@ -13,21 +19,23 @@ export const doctorApi = createApi({
   tagTypes: ["Doctor"],
   baseQuery: baseQueryWithReAuth,
   endpoints: (builder) => ({
-    getDoctors: builder.query<Doctor[], DoctorListQuery | void>({
+    getDoctors: builder.query<PaginatedData<Doctor>, DoctorListQuery | void>({
       query: (params) => {
         const query = new URLSearchParams();
 
         if (params?.search) query.set("search", params.search);
         if (params?.speciality) query.set("speciality", params.speciality);
         if (params?.sort) query.set("sort", params.sort);
+        if (params?.page) query.set("page", String(params.page));
+        if (params?.limit) query.set("limit", String(params.limit));
 
         const queryString = query.toString();
         return queryString ? `doctors?${queryString}` : "doctors";
       },
       providesTags: ["Doctor"],
-      transformResponse: (response: ApiResponse<Doctor[]>) => {
-        return response.data;
-      },
+      transformResponse: (
+        response: ApiResponse<PaginatedData<Doctor> | Doctor[]>,
+      ) => normalizePaginatedData(response.data),
     }),
 
     getDoctorById: builder.query({
@@ -46,12 +54,13 @@ export const doctorApi = createApi({
       },
     }),
 
-    getDoctorsBySpeciality: builder.query({
-      query: (speciality) => `doctors?speciality=${speciality}`,
+    getDoctorsBySpeciality: builder.query<Doctor[], string>({
+      query: (speciality) =>
+        `doctors?speciality=${encodeURIComponent(speciality)}&sort=name&limit=100`,
       providesTags: (_, __, speciality) => [{ type: "Doctor", id: speciality }],
-      transformResponse: (response: ApiResponse<Doctor[]>) => {
-        return response.data;
-      },
+      transformResponse: (
+        response: ApiResponse<PaginatedData<Doctor> | Doctor[]>,
+      ) => normalizePaginatedData(response.data).items,
     }),
 
     addDoctor: builder.mutation({

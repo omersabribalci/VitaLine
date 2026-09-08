@@ -4,8 +4,21 @@ import type {
   AdminStatistics,
   Appointment,
   AvailabilityResponse,
+  PaginatedData,
+  PaginationQuery,
 } from "../../types";
 import { baseQueryWithReAuth } from "./baseQueryWithReAuth";
+import { normalizePaginatedData } from "../../utils/pagination";
+
+type ScopedAppointmentQuery = PaginationQuery & {
+  doctorId?: string;
+  patientId?: string;
+};
+
+const appointmentListQuery = (params?: ScopedAppointmentQuery) => ({
+  url: "appointments",
+  params,
+});
 
 export const appointmentApi = createApi({
   reducerPath: "appointmentApi",
@@ -31,28 +44,41 @@ export const appointmentApi = createApi({
       ],
     }),
 
-    getAllAppointments: builder.query<Appointment[], void>({
-      query: () => "appointments",
+    getAllAppointments: builder.query<
+      PaginatedData<Appointment>,
+      PaginationQuery | void
+    >({
+      query: (params) => appointmentListQuery(params || undefined),
       providesTags: [{ type: "Appointment", id: "LIST" }],
-      transformResponse: (response: ApiResponse<Appointment[]>) => {
-        return response.data;
-      },
+      transformResponse: (
+        response: ApiResponse<PaginatedData<Appointment> | Appointment[]>,
+      ) => normalizePaginatedData(response.data),
     }),
 
-    getAppointmentsByDoctorId: builder.query({
-      query: (doctorId) => `appointments?doctorId=${doctorId}`,
-      providesTags: (_, __, id) => [{ type: "Appointment", id }],
-      transformResponse: (response: ApiResponse<Appointment[]>) => {
-        return response.data;
-      },
+    getAppointmentsByDoctorId: builder.query<
+      PaginatedData<Appointment>,
+      PaginationQuery & { doctorId: string }
+    >({
+      query: (params) => appointmentListQuery(params),
+      providesTags: (_, __, { doctorId }) => [
+        { type: "Appointment", id: doctorId },
+      ],
+      transformResponse: (
+        response: ApiResponse<PaginatedData<Appointment> | Appointment[]>,
+      ) => normalizePaginatedData(response.data),
     }),
 
-    getAppointmentsByPatientId: builder.query({
-      query: (patientId) => `appointments?patientId=${patientId}`,
-      providesTags: (_, __, id) => [{ type: "Appointment", id }],
-      transformResponse: (response: ApiResponse<Appointment[]>) => {
-        return response.data;
-      },
+    getAppointmentsByPatientId: builder.query<
+      PaginatedData<Appointment>,
+      PaginationQuery & { patientId: string }
+    >({
+      query: (params) => appointmentListQuery(params),
+      providesTags: (_, __, { patientId }) => [
+        { type: "Appointment", id: patientId },
+      ],
+      transformResponse: (
+        response: ApiResponse<PaginatedData<Appointment> | Appointment[]>,
+      ) => normalizePaginatedData(response.data),
     }),
 
     getAppointmentById: builder.query({

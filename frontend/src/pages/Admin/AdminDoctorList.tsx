@@ -11,21 +11,23 @@ import { useGetDoctorsQuery } from "../../store/services/doctorApi";
 import Loading from "../../components/UI/Loading";
 import Error from "../../components/UI/Error";
 import DoctorProfileCard from "../../components/Doctor/DoctorProfileCard";
+import PaginationControls from "../../components/UI/PaginationControls";
 
 const AdminDoctorList = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpeciality, setSelectedSpeciality] = useState("all");
+  const [page, setPage] = useState(1);
   const {
-    data: allDoctors,
+    data: allDoctorPage,
     isLoading: isAllDoctorsLoading,
     error: allDoctorsError,
     refetch: refetchAllDoctors,
     isFetching: isAllDoctorsFetching,
-  } = useGetDoctorsQuery();
+  } = useGetDoctorsQuery({ sort: "name", limit: 100 });
 
   const {
-    data: doctors,
+    data: doctorPage,
     isLoading,
     error,
     refetch,
@@ -34,7 +36,11 @@ const AdminDoctorList = () => {
     search: searchTerm.trim() || undefined,
     speciality: selectedSpeciality === "all" ? undefined : selectedSpeciality,
     sort: "name",
+    page,
+    limit: 8,
   });
+  const allDoctors = allDoctorPage?.items;
+  const doctors = doctorPage?.items;
 
   const specialities = Array.from(
     new Set(allDoctors?.map((doctor) => doctor.speciality) ?? []),
@@ -85,6 +91,7 @@ const AdminDoctorList = () => {
           value={searchTerm}
           onChange={(event) => {
             setSearchTerm(event.target.value);
+            setPage(1);
           }}
           slotProps={{
             input: {
@@ -102,7 +109,10 @@ const AdminDoctorList = () => {
           size="small"
           label="Filter by speciality"
           value={selectedSpeciality}
-          onChange={(event) => setSelectedSpeciality(event.target.value)}
+          onChange={(event) => {
+            setSelectedSpeciality(event.target.value);
+            setPage(1);
+          }}
           slotProps={{
             select: {
               startAdornment: (
@@ -145,6 +155,12 @@ const AdminDoctorList = () => {
           />
         ))}
       </div>
+
+      <PaginationControls
+        pagination={doctorPage?.pagination}
+        onPageChange={setPage}
+        standalone
+      />
 
       {doctors?.length === 0 && (
         <div className="rounded-2xl border border-white/20 bg-cardBg p-6 text-center shadow-sm">

@@ -134,6 +134,16 @@ const options = {
             },
           },
         },
+        PaginationMeta: {
+          type: "object",
+          required: ["page", "limit", "totalItems", "totalPages"],
+          properties: {
+            page: { type: "integer", minimum: 1, example: 1 },
+            limit: { type: "integer", minimum: 1, maximum: 100, example: 10 },
+            totalItems: { type: "integer", minimum: 0, example: 24 },
+            totalPages: { type: "integer", minimum: 0, example: 3 },
+          },
+        },
         BookingPolicy: {
           type: "object",
           properties: {
@@ -218,6 +228,8 @@ const options = {
             { $ref: "#/components/parameters/Speciality" },
             { $ref: "#/components/parameters/Search" },
             { $ref: "#/components/parameters/Sort" },
+            { $ref: "#/components/parameters/Page" },
+            { $ref: "#/components/parameters/Limit" },
           ],
           responses: {
             200: { description: "Doctors returned successfully" },
@@ -293,6 +305,10 @@ const options = {
         get: {
           tags: ["Patients"],
           summary: "List patients",
+          parameters: [
+            { $ref: "#/components/parameters/Page" },
+            { $ref: "#/components/parameters/Limit" },
+          ],
           responses: { 200: { description: "Patients returned successfully" } },
         },
       },
@@ -340,6 +356,8 @@ const options = {
           parameters: [
             { $ref: "#/components/parameters/DoctorId" },
             { $ref: "#/components/parameters/PatientId" },
+            { $ref: "#/components/parameters/Page" },
+            { $ref: "#/components/parameters/Limit" },
           ],
           responses: {
             200: { description: "Appointments returned successfully" },
@@ -588,6 +606,18 @@ components.parameters = {
     name: "sort",
     in: "query",
     schema: { type: "string" },
+  },
+  Page: {
+    name: "page",
+    in: "query",
+    description: "Requested result page.",
+    schema: { type: "integer", minimum: 1, default: 1 },
+  },
+  Limit: {
+    name: "limit",
+    in: "query",
+    description: "Items per page (maximum 100).",
+    schema: { type: "integer", minimum: 1, maximum: 100, default: 10 },
   },
 };
 

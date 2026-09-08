@@ -22,7 +22,12 @@ export interface LoginBody {
   password: string;
 }
 
-export interface AppointmentListQuery extends Record<string, string | undefined> {
+export interface PaginationQuery extends Record<string, string | undefined> {
+  page?: string;
+  limit?: string;
+}
+
+export interface AppointmentListQuery extends PaginationQuery {
   doctorId?: string;
   patientId?: string;
 }
@@ -46,7 +51,7 @@ export interface UpdateAppointmentBody {
   status?: AppointmentStatus;
 }
 
-export interface DoctorListQuery extends Record<string, string | undefined> {
+export interface DoctorListQuery extends PaginationQuery {
   search?: string;
   speciality?: string;
   sort?: "name";

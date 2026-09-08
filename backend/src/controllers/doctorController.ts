@@ -10,6 +10,7 @@ import type { NextFunction, Response } from "express";
 import type { AppRequest } from "../types";
 import requireAuthenticatedUser = require("../utils/requireAuthenticatedUser");
 import type { ClientSession } from "mongoose";
+import { buildPaginationMeta, getPagination } from "../utils/pagination";
 import type {
   CreateDoctorBody,
   DoctorListQuery,
@@ -28,6 +29,7 @@ const getDoctors = async (
   try {
     const filter: Record<string, unknown> = {};
     const { search, speciality, sort = "name" } = req.query;
+    const { page, limit, skip } = getPagination(req.query);
 
     if (speciality) {
       filter.speciality = speciality;
@@ -58,7 +60,11 @@ const getDoctors = async (
       );
     }
 
-    return sendSuccessResponse(res, 200, doctors);
+    const totalItems = doctors.length;
+    return sendSuccessResponse(res, 200, {
+      items: doctors.slice(skip, skip + limit),
+      pagination: buildPaginationMeta(page, limit, totalItems),
+    });
   } catch (error) {
     next(error);
   }

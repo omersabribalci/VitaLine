@@ -1,3 +1,4 @@
+import AppointmentStatusBadge from "../components/UI/AppointmentStatusBadge";
 import type { Appointment, Doctor, Patient, TableColumn } from "../types";
 
 const formatDateTime = (value: string) => {
@@ -21,7 +22,12 @@ export const doctorColumns: TableColumn<Doctor>[] = [
 
 export const patientColumns: TableColumn<Patient>[] = [
   { label: "Name", render: (patient) => patient.userId.name },
-  { label: "Email", render: (patient) => patient.userId.email },
+  {
+    label: "Email",
+    render: (patient) => (
+      <span className="font-medium text-sky-600">{patient.userId.email}</span>
+    ),
+  },
   { label: "Phone", render: (patient) => patient.userId.phone },
 ];
 
@@ -45,7 +51,12 @@ export const appointmentColumns: TableColumn<Appointment>[] = [
     label: "Date",
     render: (appointment) => formatDateTime(appointment.dateAndTime),
   },
-  { label: "Status", render: (appointment) => appointment.status },
+  {
+    label: "Status",
+    render: (appointment) => (
+      <AppointmentStatusBadge status={appointment.status} />
+    ),
+  },
 ];
 
 export const doctorAppointmentColumns: TableColumn<Appointment>[] = [
@@ -58,5 +69,10 @@ export const doctorAppointmentColumns: TableColumn<Appointment>[] = [
     label: "Date",
     render: (appointment) => formatDateTime(appointment.dateAndTime),
   },
-  { label: "Status", render: (appointment) => appointment.status },
+  {
+    label: "Status",
+    render: (appointment) => (
+      <AppointmentStatusBadge status={appointment.status} />
+    ),
+  },
 ];

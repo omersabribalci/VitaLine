@@ -9,13 +9,34 @@ import type { NextFunction, Response } from "express";
 import type { AppRequest } from "../types";
 import requireAuthenticatedUser = require("../utils/requireAuthenticatedUser");
 import type { ClientSession } from "mongoose";
-import type { IdParams, UpdatePatientBody } from "../types/requests";
+import type {
+  IdParams,
+  PaginationQuery,
+  UpdatePatientBody,
+} from "../types/requests";
+import { buildPaginationMeta, getPagination } from "../utils/pagination";
 
-const getPatients = async (req: AppRequest, res: Response, next: NextFunction) => {
+const getPatients = async (
+  req: AppRequest<unknown, PaginationQuery>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const patients = await Patient.find().populate("userId").lean();
+    const { page, limit, skip } = getPagination(req.query);
+    const [patients, totalItems] = await Promise.all([
+      Patient.find()
+        .populate("userId")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Patient.countDocuments(),
+    ]);
 
-    return sendSuccessResponse(res, 200, patients);
+    return sendSuccessResponse(res, 200, {
+      items: patients,
+      pagination: buildPaginationMeta(page, limit, totalItems),
+    });
   } catch (error) {
     next(error);
   }

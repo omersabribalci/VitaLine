@@ -10,12 +10,13 @@ import type { Appointment } from "../../types";
 
 const DoctorDailyAppointments = ({ id }: { id: string }) => {
   const {
-    data: appointments,
+    data: appointmentPage,
     isLoading,
     error,
     refetch,
     isFetching,
-  } = useGetAppointmentsByDoctorIdQuery(id);
+  } = useGetAppointmentsByDoctorIdQuery({ doctorId: id, page: 1, limit: 100 });
+  const appointments = appointmentPage?.items;
 
   const [selectedDate, setSelectedDate] = useState(new Date());
 

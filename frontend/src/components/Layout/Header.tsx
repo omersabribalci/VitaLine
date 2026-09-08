@@ -27,8 +27,8 @@ const Header = () => {
   };
 
   return (
-    <header className="flex min-w-75 flex-row items-center justify-between p-4">
-      <h1 className="hidden md:block text-2xl text-gray-800 font-semibold flex-1">
+    <header className="flex min-w-75 flex-row items-center justify-between px-4 py-2">
+      <h1 className="hidden flex-1 text-xl font-semibold text-gray-800 md:block">
         Hello, {user?.name}
       </h1>
 
@@ -36,7 +36,7 @@ const Header = () => {
         <Avatar
           src={user?.image || undefined}
           alt={user?.name || "User"}
-          sx={{ width: 40, height: 40, bgcolor: "#dbeafe", color: "#1d4ed8" }}
+          sx={{ width: 36, height: 36, bgcolor: "#dbeafe", color: "#1d4ed8" }}
         >
           {!user?.image && user?.name?.charAt(0)?.toUpperCase()}
         </Avatar>

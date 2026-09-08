@@ -27,6 +27,7 @@ import type { NextFunction, Response } from "express";
 import { Types } from "mongoose";
 import type { AppRequest } from "../types";
 import requireAuthenticatedUser = require("../utils/requireAuthenticatedUser");
+import { buildPaginationMeta, getPagination } from "../utils/pagination";
 import type {
   AppointmentListQuery,
   AvailabilityQuery,
@@ -43,6 +44,7 @@ const getAppointments = async (
   try {
     const user = requireAuthenticatedUser(req);
     const filter: Record<string, unknown> = {};
+    const { page, limit, skip } = getPagination(req.query);
 
     // Patient ve doctor sadece kendi randevularını görebilir.
     // Herkesi görebilir. İsterse URL parametrelerinden (?doctorId=...&patientId=...) filtreleme yapabilir.
@@ -64,13 +66,21 @@ const getAppointments = async (
       if (req.query.patientId) filter.patientId = req.query.patientId;
     }
 
-    const appointments = await Appointment.find(filter)
-      .populate({ path: "doctorId", populate: { path: "userId" } })
-      .populate({ path: "patientId", populate: { path: "userId" } })
-      .sort({ dateAndTime: 1 })
-      .lean();
+    const [appointments, totalItems] = await Promise.all([
+      Appointment.find(filter)
+        .populate({ path: "doctorId", populate: { path: "userId" } })
+        .populate({ path: "patientId", populate: { path: "userId" } })
+        .sort({ dateAndTime: 1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Appointment.countDocuments(filter),
+    ]);
 
-    return sendSuccessResponse(res, 200, appointments);
+    return sendSuccessResponse(res, 200, {
+      items: appointments,
+      pagination: buildPaginationMeta(page, limit, totalItems),
+    });
   } catch (error) {
     next(error);
   }

@@ -5,9 +5,11 @@ import Loading from "../../components/UI/Loading";
 import Error from "../../components/UI/Error";
 import { useGetMyPatientProfileQuery } from "../../store/services/patientApi";
 import { useNavigate } from "react-router";
+import { useState } from "react";
 
 const PatientAppointments = () => {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
   const {
     data: patient,
     isLoading: isPatLoading,
@@ -17,12 +19,16 @@ const PatientAppointments = () => {
   } = useGetMyPatientProfileQuery();
 
   const {
-    data: appointments,
+    data: appointmentPage,
     error,
     isLoading,
     refetch,
     isFetching,
-  } = useGetAppointmentsByPatientIdQuery(patient?._id, { skip: !patient?._id });
+  } = useGetAppointmentsByPatientIdQuery(
+    { patientId: patient?._id ?? "", page, limit: 8 },
+    { skip: !patient?._id },
+  );
+  const appointments = appointmentPage?.items;
 
   if (isPatLoading || isLoading) {
     return <Loading />;
@@ -50,15 +56,15 @@ const PatientAppointments = () => {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
-      <div className="w-full overflow-x-auto rounded-2xl border border-white/20 bg-cardBg/60 shadow-sm">
-        <Table
-          list={appointments}
-          columns={appointmentColumns}
-          onRowClick={(appointment) =>
-            navigate(`/patient/appointments/${appointment._id}`)
-          }
-        />
-      </div>
+      <Table
+        list={appointments}
+        columns={appointmentColumns}
+        onRowClick={(appointment) =>
+          navigate(`/patient/appointments/${appointment._id}`)
+        }
+        pagination={appointmentPage?.pagination}
+        onPageChange={setPage}
+      />
     </div>
   );
 };

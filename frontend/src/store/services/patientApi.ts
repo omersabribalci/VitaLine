@@ -1,17 +1,23 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import type { ApiResponse, Patient } from "../../types";
+import type {
+  ApiResponse,
+  PaginatedData,
+  PaginationQuery,
+  Patient,
+} from "../../types";
 import { baseQueryWithReAuth } from "./baseQueryWithReAuth";
+import { normalizePaginatedData } from "../../utils/pagination";
 export const patientApi = createApi({
   reducerPath: "patientApi",
   tagTypes: ["Patient"],
   baseQuery: baseQueryWithReAuth,
   endpoints: (builder) => ({
-    getPatients: builder.query<Patient[], void>({
-      query: () => "patients",
+    getPatients: builder.query<PaginatedData<Patient>, PaginationQuery | void>({
+      query: (params) => ({ url: "patients", params: params || undefined }),
       providesTags: ["Patient"],
-      transformResponse: (response: ApiResponse<Patient[]>) => {
-        return response.data;
-      },
+      transformResponse: (
+        response: ApiResponse<PaginatedData<Patient> | Patient[]>,
+      ) => normalizePaginatedData(response.data),
     }),
 
     getPatientById: builder.query({
