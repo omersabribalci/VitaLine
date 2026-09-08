@@ -1,7 +1,10 @@
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
-import { describe, expect, it } from "vitest";
-import { seedAdminUser } from "../../dist/src/scripts/seedAdmin.js";
+import { afterEach, describe, expect, it } from "vitest";
+import {
+  ensureAdminExists,
+  seedAdminUser,
+} from "../../dist/src/scripts/seedAdmin.js";
 import type { UserDocumentShape } from "../../src/types";
 
 const User = mongoose.model<UserDocumentShape>("User");
@@ -14,14 +17,41 @@ const adminData = {
   image: "",
 };
 
+const originalAdminEnv = {
+  ADMIN_NAME: process.env.ADMIN_NAME,
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+  ADMIN_PHONE: process.env.ADMIN_PHONE,
+  ADMIN_IMAGE: process.env.ADMIN_IMAGE,
+};
+
+afterEach(() => {
+  for (const [key, value] of Object.entries(originalAdminEnv)) {
+    if (value === undefined) {
+      delete process.env[key];
+    } else {
+      process.env[key] = value;
+    }
+  }
+});
+
 describe("admin seed", () => {
-  it("creates the admin once and leaves the existing password unchanged", async () => {
-    const firstResult = await seedAdminUser(adminData);
+  it("creates the initial admin once and leaves it unchanged on later starts", async () => {
+    process.env.ADMIN_NAME = adminData.name;
+    process.env.ADMIN_EMAIL = adminData.email;
+    process.env.ADMIN_PASSWORD = adminData.password;
+    process.env.ADMIN_PHONE = adminData.phone;
+    process.env.ADMIN_IMAGE = adminData.image;
+
+    const firstResult = await ensureAdminExists();
     const firstAdmin = await User.findOne({ email: "admin@vitaline.test" })
       .select("+password")
       .lean();
 
-    const secondResult = await seedAdminUser(adminData);
+    process.env.ADMIN_EMAIL = "another-admin@vitaline.test";
+    process.env.ADMIN_PASSWORD = "Changed123";
+
+    const secondResult = await ensureAdminExists();
     const secondAdmin = await User.findOne({ email: "admin@vitaline.test" })
       .select("+password")
       .lean();

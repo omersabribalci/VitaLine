@@ -4,6 +4,7 @@ const connectDatabase = require("./src/config/database");
 const logger = require("./src/middleware/logger");
 const getErrorMessage = require("./src/utils/getErrorMessage");
 const { getPort, validateServerEnv } = require("./src/config/env");
+const { ensureAdminExists } = require("./src/scripts/seedAdmin");
 const {
   startAppointmentStatusJob,
 } = require("./src/jobs/appointmentStatusJob");
@@ -14,6 +15,7 @@ const startServer = async () => {
   try {
     validateServerEnv();
     await connectDatabase();
+    await ensureAdminExists();
     await startAppointmentStatusJob();
 
     app.listen(PORT, "0.0.0.0", () => {

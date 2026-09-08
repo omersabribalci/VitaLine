@@ -50,10 +50,21 @@ const getAdminDataFromEnv = (): AdminSeedData => ({
   image: process.env.ADMIN_IMAGE ?? "",
 });
 
+export const ensureAdminExists = async () => {
+  const existingAdmin = await User.findOne({ role: "admin" });
+
+  if (existingAdmin) {
+    logger.info(`Initial admin already exists: ${existingAdmin.email}`);
+    return { created: false, admin: existingAdmin };
+  }
+
+  return seedAdminUser(getAdminDataFromEnv());
+};
+
 export const runAdminSeed = async () => {
   try {
     await connectDatabase();
-    await seedAdminUser(getAdminDataFromEnv());
+    await ensureAdminExists();
   } catch (error) {
     logger.error(`Failed to create Admin User: ${getErrorMessage(error)}`);
     process.exitCode = 1;
@@ -65,5 +76,3 @@ export const runAdminSeed = async () => {
 if (require.main === module) {
   void runAdminSeed();
 }
-
-// docker compose --env-file backend/.env run --rm admin-seed
