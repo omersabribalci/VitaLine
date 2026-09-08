@@ -10,20 +10,26 @@ const fileFormat = winston.format.combine(
   ),
 );
 
+// Containers should write logs to stdout/stderr so the runtime platform can
+// collect them. Local development keeps the existing log files for convenience.
+const fileTransports =
+  process.env.NODE_ENV === "production"
+    ? []
+    : [
+        new winston.transports.File({
+          level: "error",
+          filename: path.join(__dirname, "..", "logs", "error.log"),
+          format: fileFormat,
+        }),
+        new winston.transports.File({
+          filename: path.join(__dirname, "..", "logs", "combined.log"),
+          format: fileFormat,
+        }),
+      ];
+
 const logger = winston.createLogger({
   level: "info",
-  transports: [
-    new winston.transports.File({
-      level: "error",
-      filename: path.join(__dirname, "..", "logs", "error.log"),
-      format: fileFormat,
-    }),
-    new winston.transports.File({
-      filename: path.join(__dirname, "..", "logs", "combined.log"),
-      format: fileFormat,
-    }),
-    new winston.transports.Console(),
-  ],
+  transports: [...fileTransports, new winston.transports.Console()],
 });
 
 module.exports = logger;

@@ -1,4 +1,5 @@
 import "dotenv/config";
+import mongoose from "mongoose";
 import connectDatabase = require("../config/database");
 const logger = require("../middleware/logger");
 import User = require("../models/User");
@@ -6,40 +7,63 @@ import getErrorMessage = require("../utils/getErrorMessage");
 import { getRequiredEnv } from "../config/env";
 import type { UserDocumentShape } from "../types";
 
-type AdminSeedData = Pick<
+export type AdminSeedData = Pick<
   UserDocumentShape,
   "name" | "email" | "password" | "phone" | "image"
 >;
 
-const createAdminUser = async (adminData: AdminSeedData) => {
+export const seedAdminUser = async (adminData: AdminSeedData) => {
   const { name, email, password, phone, image } = adminData;
-  try {
-    await connectDatabase();
 
-    const adminUser = {
-      name: name,
-      email: email,
-      password: password,
-      role: "admin" as const,
-      phone: phone,
-      image: image,
-    };
+  const normalizedEmail = email.trim().toLowerCase();
+  const existingUser = await User.findOne({ email: normalizedEmail });
 
-    const admin = await User.create(adminUser);
-    logger.info(`Admin user created: ${admin.email}`);
-    process.exit(0);
-  } catch (error) {
-    logger.error(`Failed to create Admin User: ${getErrorMessage(error)}`);
-    process.exit(1);
+  if (existingUser) {
+    if (existingUser.role !== "admin") {
+      throw new Error(
+        `The email ${normalizedEmail} already belongs to a non-admin user.`,
+      );
+    }
+
+    logger.info(`Admin user already exists: ${existingUser.email}`);
+    return { created: false, admin: existingUser };
   }
+
+  const admin = await User.create({
+    name,
+    email: normalizedEmail,
+    password,
+    role: "admin" as const,
+    phone,
+    image,
+  });
+
+  logger.info(`Admin user created: ${admin.email}`);
+  return { created: true, admin };
 };
 
-const adminData = {
+const getAdminDataFromEnv = (): AdminSeedData => ({
   name: getRequiredEnv("ADMIN_NAME"),
   email: getRequiredEnv("ADMIN_EMAIL"),
   password: getRequiredEnv("ADMIN_PASSWORD"),
   phone: getRequiredEnv("ADMIN_PHONE"),
   image: process.env.ADMIN_IMAGE ?? "",
+});
+
+export const runAdminSeed = async () => {
+  try {
+    await connectDatabase();
+    await seedAdminUser(getAdminDataFromEnv());
+  } catch (error) {
+    logger.error(`Failed to create Admin User: ${getErrorMessage(error)}`);
+    process.exitCode = 1;
+  } finally {
+    await mongoose.disconnect();
+  }
 };
 
-createAdminUser(adminData);
+if (require.main === module) {
+  void runAdminSeed();
+}
+
+// docker compose --env-file backend/.env run --rm admin-seed

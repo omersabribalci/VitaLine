@@ -10,7 +10,8 @@
     "test": "npm run build && vitest",
     "test:run": "npm run build && vitest run",
     "dev": "tsx watch server.ts",
-    "seed": "tsx src/scripts/seedAdmin.ts"
+    "seed": "tsx src/scripts/seedAdmin.ts",
+    "seed:prod": "node dist/src/scripts/seedAdmin.js"
   },
   "keywords": [],
   "author": "",

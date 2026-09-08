@@ -4,6 +4,7 @@ backend/dist/
 frontend/build/
 backend/.env
 frontend/.env
+/.env
 frontend/*.tsbuildinfo
 backend/*.tsbuildinfo
 backend/src/logs/

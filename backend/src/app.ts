@@ -22,6 +22,14 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morganMiddleware);
 app.use(cookieParser());
+
+// Liveness endpoint for Docker and deployment platforms.
+// It intentionally does not query MongoDB: a liveness check only answers
+// whether the HTTP process is running and able to respond.
+app.get("/health", (_req: Request, res: Response) => {
+  res.status(200).json({ status: "ok" });
+});
+
 app.use(globalLimiter);
 if (process.env.NODE_ENV !== "production") {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
