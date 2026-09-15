@@ -39,6 +39,7 @@ const loadGatewayApp = (upstreams: GatewayUpstreams) => {
 
   delete require.cache[require.resolve("../src/app.js")];
   delete require.cache[require.resolve("../src/routes/proxyRoutes.js")];
+  delete require.cache[require.resolve("../src/middleware/rateLimiter.js")];
 
   return require("../src/app.js");
 };
@@ -94,6 +95,52 @@ test("gateway keeps the API path, body and request ID while proxying", async (t:
   assert.ok(data.requestId);
   assert.deepEqual(JSON.parse(data.body), { email: "test@example.com" });
   assert.equal(response.headers.get("x-request-id"), data.requestId);
+  assert.ok(response.headers.get("ratelimit"));
+});
+
+test("gateway limits repeated authentication requests", async (t: TestContext) => {
+  const previousNodeEnv = process.env.NODE_ENV;
+  process.env.NODE_ENV = "production";
+  t.after(() => {
+    if (previousNodeEnv === undefined) {
+      delete process.env.NODE_ENV;
+    } else {
+      process.env.NODE_ENV = previousNodeEnv;
+    }
+  });
+
+  const upstream = createServer((_req: IncomingMessage, res: ServerResponse) => {
+    res.setHeader("content-type", "application/json");
+    res.end(JSON.stringify({ success: true }));
+  });
+  const upstreamPort = await listen(upstream);
+  t.after(() => upstream.close());
+
+  const app = loadGatewayApp(
+    allUpstreamsAt(`http://127.0.0.1:${upstreamPort}`),
+  );
+  const gateway = createServer(app);
+  const gatewayPort = await listen(gateway);
+  t.after(() => gateway.close());
+
+  for (let requestNumber = 1; requestNumber <= 10; requestNumber += 1) {
+    const response = await fetch(
+      `http://127.0.0.1:${gatewayPort}/api/auth/login`,
+      { method: "POST" },
+    );
+    assert.equal(response.status, 200);
+  }
+
+  const blockedResponse = await fetch(
+    `http://127.0.0.1:${gatewayPort}/api/auth/login`,
+    { method: "POST" },
+  );
+
+  assert.equal(blockedResponse.status, 429);
+  assert.deepEqual(await blockedResponse.json(), {
+    success: false,
+    message: "Too many requests. Please try again later.",
+  });
 });
 
 test("gateway health endpoint does not depend on the backend", async (t: TestContext) => {

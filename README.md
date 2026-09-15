@@ -15,7 +15,7 @@ VitaLine is a modern, full-stack web application designed with a robust backend 
 ### Backend
 - **Core:** Node.js, TypeScript, Express.js
 - **Database:** MongoDB, Mongoose
-- **Authentication & Security:** JSON Web Tokens (JWT), bcryptjs, role checks
+- **Authentication & Security:** JSON Web Tokens (JWT), bcryptjs, role checks, API rate limiting
 - **API Documentation:** Swagger UI
 - **Logging:** Structured JSON logs written to stdout/stderr and collected by Docker
 
