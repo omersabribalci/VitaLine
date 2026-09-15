@@ -22,7 +22,6 @@ const AdminManagement = () => {
     try {
       await updatePolicy({ ...formData }).unwrap();
       toast.success("Booking policy updated successfully.");
-      refetch();
     } catch (err) {
       toast.error(extractErrorMessage(err, "Unable to update booking policy."));
     }

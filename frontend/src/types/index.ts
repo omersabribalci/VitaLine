@@ -27,11 +27,6 @@ export type AuthState = {
   authStatus: "idle" | "authenticated" | "unauthenticated";
 };
 
-export type CredentialsPayload = {
-  accessToken: string;
-  user: User;
-};
-
 export type LoginFormData = {
   email: string;
   password: string;
@@ -202,11 +197,10 @@ export type EditDoctorFormData = {
   phone: string;
   image: string;
   speciality: string;
-  password?: string;
 };
 
 export type ErrorProps = {
-  refetch?: () => unknown;
+  refetch: () => unknown;
   isFetching?: boolean;
 };
 
@@ -257,6 +251,7 @@ export type CustomDatePickerProps = {
   value: Date | null;
   onChange: (date: Date | null) => void;
   disablePast?: boolean;
+  minDate?: Date;
   maxDate?: Date; // null değil, opsiyonel Date
   shouldDisableDate?: (day: Date) => boolean; // null değil, opsiyonel fonksiyon
 };
@@ -291,6 +286,7 @@ export type DateTimeSelectorProps = {
   date: Date | null;
   time: string | null;
   setValue: UseFormSetValue<BookAppointmentFormData>;
+  minDate?: Date;
   maxDate?: Date;
   shouldDisableDate: (day: Date) => boolean;
   slots: AppointmentSlot[];

@@ -10,6 +10,7 @@ export default function CustomDatePicker({
   onChange,
   value,
   disablePast = true,
+  minDate,
   maxDate,
   shouldDisableDate,
 }: CustomDatePickerProps) {
@@ -22,6 +23,7 @@ export default function CustomDatePicker({
           onChange={onChange}
           value={value ?? null}
           disablePast={disablePast}
+          minDate={minDate}
           maxDate={maxDate}
           shouldDisableDate={shouldDisableDate}
         />

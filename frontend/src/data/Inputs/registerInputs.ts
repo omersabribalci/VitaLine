@@ -36,6 +36,10 @@ export const getRegisterInputs = (watch: UseFormWatch<RegisterFormData>) => [
     name: "phone",
     rules: {
       required: "Phone Number is required",
+      pattern: {
+        value: /^\d{11}$/,
+        message: "Phone number must contain exactly 11 digits",
+      },
     },
   },
   {

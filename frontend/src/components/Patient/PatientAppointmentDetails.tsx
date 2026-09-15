@@ -34,6 +34,8 @@ const PatientAppointmentDetails = () => {
     try {
       await updateAppointment({ id, status: "cancelled" }).unwrap();
       setShowCancelDialog(false);
+      toast.success("Appointment cancelled successfully!");
+      navigate("/patient/appointments");
     } catch (err) {
       toast.error(extractErrorMessage(err, "Unable to cancel appointment."));
     }

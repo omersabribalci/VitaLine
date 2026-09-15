@@ -138,7 +138,10 @@ const renderPage = () => {
       <MemoryRouter initialEntries={["/patient/book"]}>
         <Routes>
           <Route path="/patient/book" element={<PatientBookAppointment />} />
-          <Route path="/patient" element={<h1>Patient home</h1>} />
+          <Route
+            path="/patient/appointments"
+            element={<h1>Patient appointments</h1>}
+          />
         </Routes>
       </MemoryRouter>
     </Provider>,
@@ -161,7 +164,7 @@ const selectDoctorAndDate = async (
 };
 
 describe("PatientBookAppointment", () => {
-  it("books a backend-provided slot and navigates to the patient page", async () => {
+  it("books a backend-provided slot and navigates to appointments", async () => {
     addBaseHandlers();
     let submittedAppointment: unknown;
     server.use(
@@ -186,12 +189,12 @@ describe("PatientBookAppointment", () => {
     );
 
     expect(
-      await screen.findByRole("heading", { name: "Patient home" }),
+      await screen.findByRole("heading", { name: "Patient appointments" }),
     ).toBeInTheDocument();
     expect(submittedAppointment).toEqual({
       doctorId: "doctor-1",
       patientId: "patient-1",
-      dateAndTime: "2030-01-07T09:00",
+      dateAndTime: "2030-01-07T06:00:00.000Z",
     });
     expect(toast.success).toHaveBeenCalledWith(
       "Appointment booked successfully!",

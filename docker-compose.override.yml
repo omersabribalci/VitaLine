@@ -1,0 +1,10 @@
+services:
+  # This file is loaded automatically by local `docker compose` commands.
+  # It exposes only the two ports that a developer needs on the host machine.
+  mongodb:
+    ports:
+      - "127.0.0.1:27018:27017"
+
+  frontend:
+    ports:
+      - "127.0.0.1:8080:80"

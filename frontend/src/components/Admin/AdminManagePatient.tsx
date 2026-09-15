@@ -2,12 +2,11 @@ import { Switch } from "@mui/material";
 import { useUpdatePatientMutation } from "../../store/services/patientApi";
 import { toast } from "react-toastify";
 import Loading from "../UI/Loading";
-import Error from "../UI/Error";
 import type { Patient } from "../../types";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const AdminManagePatient = ({ patient }: { patient: Patient }) => {
-  const [updatePatient, { isLoading, error }] = useUpdatePatientMutation();
+  const [updatePatient, { isLoading }] = useUpdatePatientMutation();
 
   const handleChange = async () => {
     try {
@@ -26,10 +25,6 @@ const AdminManagePatient = ({ patient }: { patient: Patient }) => {
 
   if (isLoading) {
     return <Loading />;
-  }
-
-  if (error) {
-    return <Error />;
   }
 
   return (

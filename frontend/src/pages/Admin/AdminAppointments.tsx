@@ -5,6 +5,7 @@ import { appointmentColumns } from "../../data/tableColumns";
 import { useGetAllAppointmentsQuery } from "../../store/services/appointmentApi";
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import EmptyState from "../../components/UI/EmptyState";
 
 const AdminAppointments = () => {
   const navigate = useNavigate();
@@ -27,15 +28,7 @@ const AdminAppointments = () => {
   }
 
   if (appointments?.length === 0) {
-    return (
-      <div className="mx-auto w-full max-w-6xl">
-        <div className="rounded-2xl border border-white/20 bg-cardBg/80 p-6 shadow-sm">
-          <p className="text-sm text-slate-700">
-            There are no scheduled appointments.
-          </p>
-        </div>
-      </div>
-    );
+    return <EmptyState message="There are no scheduled appointments." />;
   }
 
   return (

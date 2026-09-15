@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import DoctorNotAppointmentsFound from "./DoctorNotAppointmentsFound";
 import DoctorAppointmentCard from "./DoctorAppointmentCard";
 import type { Appointment } from "../../types";
+import { formatAppointmentDate } from "../../utils/appointmentUtils";
 
 const DoctorDailyAppointments = ({ id }: { id: string }) => {
   const {
@@ -37,7 +38,7 @@ const DoctorDailyAppointments = ({ id }: { id: string }) => {
   if (!appointments) return null;
 
   const filteredAppointments = appointments?.filter((app: Appointment) => {
-    const date = format(new Date(app.dateAndTime), "dd,MM,yyyy");
+    const date = formatAppointmentDate(app.dateAndTime);
     const formattedSelectedDate = format(selectedDate, "dd,MM,yyyy");
     return date === formattedSelectedDate;
   });

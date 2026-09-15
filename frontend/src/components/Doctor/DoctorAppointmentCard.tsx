@@ -1,5 +1,5 @@
-import { format } from "date-fns";
 import type { Appointment } from "../../types";
+import { formatAppointmentTime } from "../../utils/appointmentUtils";
 import AppointmentStatusBadge from "../UI/AppointmentStatusBadge";
 
 const DoctorAppointmentCard = ({
@@ -24,7 +24,7 @@ const DoctorAppointmentCard = ({
             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        {format(new Date(appointment.dateAndTime), "HH:mm")}
+        {formatAppointmentTime(appointment.dateAndTime)}
       </span>
       <span className="text-sm font-semibold text-gray-800 group-hover:text-blue-900 transition-colors">
         {appointment.patientId?.userId?.name ?? "Unknown patient"}

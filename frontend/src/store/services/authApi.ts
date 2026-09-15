@@ -1,5 +1,10 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import type { ApiResponse, LoginData, LoginFormData } from "../../types";
+import type {
+  ApiResponse,
+  LoginData,
+  LoginFormData,
+  RegisterFormData,
+} from "../../types";
 import { baseQuery } from "./baseQuery";
 
 export const authApi = createApi({
@@ -16,7 +21,7 @@ export const authApi = createApi({
         return response.data;
       },
     }),
-    signup: builder.mutation({
+    signup: builder.mutation<unknown, RegisterFormData>({
       query: (registerInfos) => ({
         url: "auth/register",
         method: "POST",

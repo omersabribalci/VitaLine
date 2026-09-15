@@ -23,16 +23,8 @@ export const authSlice = createSlice({
       state.user = action.payload.user;
 
       if (action.payload.user) {
-        state.user = action.payload.user;
         localStorage.setItem("user", JSON.stringify(action.payload.user));
       }
-    },
-
-    // Sayfa yenilendiğinde, refresh başarılı olursa çağrılır.
-    setToken: (state, action: PayloadAction<string>) => {
-      state.token = action.payload;
-      state.isAuthenticated = true;
-      state.authStatus = "authenticated";
     },
 
     // Refresh başarısız olursa (cookie yok/geçersiz) çağrılır.
@@ -55,6 +47,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, setToken, setUnauthenticated, logOut } =
-  authSlice.actions;
+export const { setCredentials, setUnauthenticated, logOut } = authSlice.actions;
 export default authSlice.reducer;

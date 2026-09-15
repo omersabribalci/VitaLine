@@ -1,16 +1,6 @@
 import AppointmentStatusBadge from "../components/UI/AppointmentStatusBadge";
 import type { Appointment, Doctor, Patient, TableColumn } from "../types";
-
-const formatDateTime = (value: string) => {
-  const date = new Date(value);
-  return `${date.toLocaleDateString("tr-TR")} ${date.toLocaleTimeString(
-    "tr-TR",
-    {
-      hour: "2-digit",
-      minute: "2-digit",
-    },
-  )}`;
-};
+import { formatAppointmentDateTime } from "../utils/appointmentUtils";
 
 export const doctorColumns: TableColumn<Doctor>[] = [
   { label: "Title", render: (doctor) => doctor.title },
@@ -49,7 +39,8 @@ export const appointmentColumns: TableColumn<Appointment>[] = [
   },
   {
     label: "Date",
-    render: (appointment) => formatDateTime(appointment.dateAndTime),
+    render: (appointment) =>
+      formatAppointmentDateTime(appointment.dateAndTime),
   },
   {
     label: "Status",
@@ -67,7 +58,8 @@ export const doctorAppointmentColumns: TableColumn<Appointment>[] = [
   },
   {
     label: "Date",
-    render: (appointment) => formatDateTime(appointment.dateAndTime),
+    render: (appointment) =>
+      formatAppointmentDateTime(appointment.dateAndTime),
   },
   {
     label: "Status",

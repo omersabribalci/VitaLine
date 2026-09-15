@@ -12,6 +12,7 @@ import Loading from "../../components/UI/Loading";
 import Error from "../../components/UI/Error";
 import DoctorProfileCard from "../../components/Doctor/DoctorProfileCard";
 import PaginationControls from "../../components/UI/PaginationControls";
+import EmptyState from "../../components/UI/EmptyState";
 
 const AdminDoctorList = () => {
   const navigate = useNavigate();
@@ -64,20 +65,19 @@ const AdminDoctorList = () => {
 
   if (allDoctors?.length === 0) {
     return (
-      <div className="w-full max-w-6xl mx-auto bg-cardBg p-4 sm:p-6 rounded-2xl shadow-md">
-        <p>There is no registered doctor.</p>
+      <EmptyState message="There is no registered doctor.">
         <Button
           onClick={() => {
             navigate("/admin/addNewDoctor");
           }}
           variant="contained"
           color="success"
-          sx={{ alignSelf: "flex-end", px: 1, py: 1, mt: 4 }}
+          sx={{ px: 1, py: 1 }}
         >
           <AddIcon className="border rounded-md mr-2"></AddIcon>
           Add New Doctor
         </Button>
-      </div>
+      </EmptyState>
     );
   }
 
@@ -163,14 +163,11 @@ const AdminDoctorList = () => {
       />
 
       {doctors?.length === 0 && (
-        <div className="rounded-2xl border border-white/20 bg-cardBg p-6 text-center shadow-sm">
-          <p className="font-medium text-slate-800">
-            No doctors match your filters.
-          </p>
+        <EmptyState message="No doctors match your filters.">
           <p className="mt-1 text-sm text-slate-600">
             Try another name or speciality.
           </p>
-        </div>
+        </EmptyState>
       )}
     </div>
   );

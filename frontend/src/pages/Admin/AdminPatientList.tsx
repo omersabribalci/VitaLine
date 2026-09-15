@@ -5,6 +5,7 @@ import Loading from "../../components/UI/Loading";
 import Error from "../../components/UI/Error";
 import { useState, type JSX } from "react";
 import { useNavigate } from "react-router";
+import EmptyState from "../../components/UI/EmptyState";
 
 const AdminPatientList = (): JSX.Element => {
   const navigate = useNavigate();
@@ -27,11 +28,7 @@ const AdminPatientList = (): JSX.Element => {
   }
 
   if (patients?.length === 0) {
-    return (
-      <div className="bg-white p-6 rounded shadow m-4">
-        <p>There is no registered patient.</p>
-      </div>
-    );
+    return <EmptyState message="There is no registered patient." />;
   }
 
   return (

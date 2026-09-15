@@ -8,10 +8,8 @@ import Loading from "../../components/UI/Loading";
 import { useForm, useWatch } from "react-hook-form";
 import SpecialityDoctorSelector from "../../components/Patient/SpecialityDoctorSelector";
 import DateTimeSelector from "../../components/Patient/DateTimeSelector";
-import { useAppointmentForm } from "../../hooks/useAppointmentForm";
 import { toast } from "react-toastify";
-import { addDays, format, startOfDay } from "date-fns";
-import { useCallback } from "react";
+import { addDays, format } from "date-fns";
 import type { BookAppointmentFormData, Doctor } from "../../types";
 import { useGetMyPatientProfileQuery } from "../../store/services/patientApi";
 import { useGetBookingPolicyQuery } from "../../store/services/bookingPolicyApi";
@@ -20,6 +18,10 @@ import { useNavigate } from "react-router";
 import Avatar from "@mui/material/Avatar";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import { isAppointmentDateDisabled } from "../../utils/bookingPolicyUtils";
+import {
+  buildAppointmentObject,
+  getClinicToday,
+} from "../../utils/appointmentUtils";
 
 const PatientBookAppointment = () => {
   const navigate = useNavigate();
@@ -75,41 +77,39 @@ const PatientBookAppointment = () => {
     refetch: refetchPolicy,
     isFetching: isPolicyFetching,
   } = useGetBookingPolicyQuery();
+  const clinicToday = getClinicToday();
   const maxBookingDate = bookingPolicy
-    ? addDays(startOfDay(new Date()), bookingPolicy.bookingWindowDays)
+    ? addDays(clinicToday, bookingPolicy.bookingWindowDays)
     : undefined;
 
-  const shouldDisableDate = useCallback(
-    (day: Date) =>
-      bookingPolicy && selectedDoctor
-        ? isAppointmentDateDisabled(
-            day,
-            bookingPolicy,
-            selectedDoctor.unavailableDates,
-          )
-        : true,
-    [bookingPolicy, selectedDoctor],
-  );
+  const shouldDisableDate = (day: Date) =>
+    bookingPolicy && selectedDoctor
+      ? isAppointmentDateDisabled(
+          day,
+          bookingPolicy,
+          selectedDoctor.unavailableDates,
+        )
+      : true;
 
   const [newAppointment, { isLoading: isAdding }] = useNewAppointmentMutation();
-
-  const onSubmit = useAppointmentForm(
-    newAppointment,
-    selectedDoctorId ?? "",
-    patient?._id,
-  );
 
   const doctorNamesArray =
     doctorsBySpeciality?.map((doc: Doctor) => doc.userId.name) || [];
 
   const handleFormSubmit = async (data: BookAppointmentFormData) => {
-    const result = await onSubmit(data);
-    if (result.success) {
+    try {
+      const appointment = buildAppointmentObject(
+        data,
+        selectedDoctorId ?? "",
+        patient?._id ?? "",
+      );
+
+      await newAppointment(appointment).unwrap();
       toast.success("Appointment booked successfully!");
-      navigate("/patient");
-    } else {
+      navigate("/patient/appointments");
+    } catch (error) {
       toast.error(
-        extractErrorMessage(result.error, "Unable to book appointment."),
+        extractErrorMessage(error, "Unable to book appointment."),
       );
     }
   };
@@ -203,6 +203,7 @@ const PatientBookAppointment = () => {
             date={date}
             time={time}
             setValue={setValue}
+            minDate={clinicToday}
             maxDate={maxBookingDate}
             shouldDisableDate={shouldDisableDate}
             slots={availabilityData?.slots ?? []}

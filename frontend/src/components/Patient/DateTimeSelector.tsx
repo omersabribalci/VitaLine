@@ -13,6 +13,7 @@ export const DateTimeSelector = ({
   date,
   time,
   setValue,
+  minDate,
   maxDate,
   shouldDisableDate,
   slots,
@@ -43,6 +44,7 @@ export const DateTimeSelector = ({
               setValue("time", null);
             }}
             value={value}
+            minDate={minDate}
             maxDate={maxDate}
             shouldDisableDate={shouldDisableDate}
             disablePast={true}

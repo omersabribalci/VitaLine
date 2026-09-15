@@ -1,15 +1,8 @@
 import type { Appointment } from "../../types";
+import { formatAppointmentDateTime } from "../../utils/appointmentUtils";
 import AppointmentDetailSection from "./AppointmentDetailSection";
 
 const AppointmentDetails = ({ appointment }: { appointment: Appointment }) => {
-  const formatDateTime = (isoString: string) => {
-    const date = new Date(isoString);
-    return `${date.toLocaleDateString("tr-TR")} ${date.toLocaleTimeString(
-      "tr-TR",
-      { hour: "2-digit", minute: "2-digit" },
-    )}`;
-  };
-
   return (
     <div className="bg-cardBg rounded-2xl shadow-xl p-6 my-4 min-w-xs">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -45,7 +38,7 @@ const AppointmentDetails = ({ appointment }: { appointment: Appointment }) => {
           items={[
             {
               label: "Date & Time",
-              value: formatDateTime(appointment.dateAndTime),
+              value: formatAppointmentDateTime(appointment.dateAndTime),
             },
             {
               label: "Status",

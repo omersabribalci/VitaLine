@@ -15,20 +15,24 @@ VitaLine is a modern, full-stack web application designed with a robust backend 
 ### Backend
 - **Core:** Node.js, TypeScript, Express.js
 - **Database:** MongoDB, Mongoose
-- **Authentication & Security:** JSON Web Tokens (JWT), bcryptjs, Express Rate Limit
+- **Authentication & Security:** JSON Web Tokens (JWT), bcryptjs, role checks
 - **API Documentation:** Swagger UI
-- **Logging & Monitoring:** Winston, Morgan
+- **Logging:** Structured JSON logs written to stdout/stderr and collected by Docker
 
 ## Project Structure
 
-- `/frontend` - The React client application.
-- `/backend` - The Express REST API and database models.
+- `/frontend` - React client, built as static files and served by Nginx.
+- `/backend/api-gateway` - Public backend entry point.
+- `/backend/auth-service` - Users, credentials, sessions, and admin startup.
+- `/backend/patient-service` - Patient profiles.
+- `/backend/doctor-service` - Doctor profiles and unavailable dates.
+- `/backend/appointment-service` - Appointments, booking policy, and slot rules.
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v18 or higher recommended)
-- MongoDB (running locally or via MongoDB Atlas)
+- Docker Desktop with Docker Compose
+- Node.js 24 when running or testing services outside Docker
 
 ### Installation
 
@@ -38,76 +42,39 @@ VitaLine is a modern, full-stack web application designed with a robust backend 
    cd VitaLine
    ```
 
-2. **Install backend dependencies:**
-   ```bash
-   cd backend
-   npm install
-   ```
-
-3. **Install frontend dependencies:**
-   ```bash
-   cd ../frontend
-   npm install
-   ```
+2. Create the ignored root `.env` from `.env.example` and replace the sample
+   secrets and admin credentials.
 
 ### Environment Configuration
 
-**Backend Setup**
-Navigate to the `backend` directory and create a `.env` file based on `.env.example`:
-```env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-```
-
-**Frontend Setup**
-Navigate to the `frontend` directory and create a `.env` file based on `.env.example`:
-```env
-VITE_API_URL=http://localhost:5000/api
-```
+Every executable component has a local `.env` and a Docker-specific
+`.env.docker`. Real shared secrets stay in the ignored root `.env`; the
+versioned Docker files contain only addresses, ports, and database names.
 
 ### Running the Application
 
-**Option A: Running Separately**
+Docker Compose is the primary development runtime:
 
-Start the backend:
-```bash
-cd backend
-npm run dev
-```
-
-The development command runs `server.ts` directly and restarts when a backend
-source file changes. Before committing backend work, run the type checker:
+From the project root:
 
 ```bash
-npm run check
+docker compose up -d --build
+docker compose ps
 ```
 
-For a production-style run, compile the TypeScript source into `backend/dist`
-and start the generated JavaScript:
+For local commands, Compose automatically combines `docker-compose.yml` with
+`docker-compose.override.yml`. The frontend is then available at
+`http://localhost:8080`, and MongoDB is bound only to `127.0.0.1:27018`.
+Application containers use `mongodb:27017` through the private Compose network.
 
-```bash
-npm run build
-npm start
-```
-
-Start the frontend:
-```bash
-cd frontend
-npm run dev
-```
-
-**Option B: Running Concurrently**
-The frontend package is configured to run both servers concurrently.
-```bash
-cd frontend
-npm start
-```
+Coolify must use `/docker-compose.yml` as its Compose location. It deploys only
+the production-safe base file, so neither MongoDB nor the frontend publishes a
+host port. Coolify's proxy reaches the frontend directly on container port 80.
 
 ## API Documentation
 
-Swagger API documentation is integrated into the backend. Once the server is running, you can explore the API endpoints by navigating to:
-`http://localhost:5000/api-docs` (port may vary based on your environment configuration).
+The microservice API contract is exposed through the API Gateway. After the
+Compose stack starts, open `http://localhost:8080/api-docs`.
 
 ## License
 

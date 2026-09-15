@@ -72,15 +72,4 @@ export const addDoctorInputs = [
   },
 ];
 
-export const editDoctorInputs = [
-  ...doctorInputs,
-  {
-    type: "password",
-    placeholder: "New password (optional)",
-    name: "password",
-    rules: {
-      validate: (value: string | undefined) =>
-        !value?.trim() || validatePasswordStrength(value),
-    },
-  },
-];
+export const editDoctorInputs = doctorInputs;

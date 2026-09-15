@@ -10,9 +10,8 @@ RUN npm ci
 
 COPY . .
 
-# Vite embeds this public URL in the JavaScript bundle at build time.
-ARG VITE_API_URL=/api/
-ENV VITE_API_URL=$VITE_API_URL
+# Vite reads Docker-specific public settings while building the static bundle.
+COPY .env.docker .env.production
 
 RUN npm run build
 

@@ -4,6 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import type { BasicSelectProps } from "../../types";
+import { useId } from "react";
 
 export default function BasicSelect({
   label,
@@ -12,13 +13,16 @@ export default function BasicSelect({
   menuItems,
   className,
 }: BasicSelectProps) {
+  const id = useId();
+  const labelId = `${id}-label`;
+
   return (
     <Box className={className} sx={{ width: "100%" }}>
       <FormControl size="small" variant="outlined" sx={{ width: "100%" }}>
-        <InputLabel id="demo-simple-select-label">{label}</InputLabel>
+        <InputLabel id={labelId}>{label}</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          labelId={labelId}
+          id={id}
           value={value ?? ""}
           label={label}
           onChange={onChange}

@@ -47,13 +47,9 @@ const AdminEditDoctorForm = () => {
 
   const onSubmit = async (data: EditDoctorFormData) => {
     try {
-      const { password, ...doctorData } = data;
-      const trimmedPassword = password?.trim();
-
       await updateDoctor({
         id,
-        ...doctorData,
-        ...(trimmedPassword ? { password: trimmedPassword } : {}),
+        ...data,
       }).unwrap();
       toast.success("Doctor profile updated successfully!");
       navigate(`/admin/doctors/${id}`);

@@ -39,6 +39,7 @@ export const appointmentApi = createApi({
       }),
       invalidatesTags: (_, __, { doctorId, patientId }) => [
         { type: "Appointment", id: "LIST" },
+        { type: "Appointment", id: "STATISTICS" },
         { type: "Appointment", id: doctorId },
         { type: "Appointment", id: patientId },
       ],
@@ -61,6 +62,7 @@ export const appointmentApi = createApi({
     >({
       query: (params) => appointmentListQuery(params),
       providesTags: (_, __, { doctorId }) => [
+        { type: "Appointment", id: "LIST" },
         { type: "Appointment", id: doctorId },
       ],
       transformResponse: (
@@ -74,6 +76,7 @@ export const appointmentApi = createApi({
     >({
       query: (params) => appointmentListQuery(params),
       providesTags: (_, __, { patientId }) => [
+        { type: "Appointment", id: "LIST" },
         { type: "Appointment", id: patientId },
       ],
       transformResponse: (
@@ -95,7 +98,11 @@ export const appointmentApi = createApi({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: (_, __, { id }) => [{ type: "Appointment", id }],
+      invalidatesTags: (_, __, { id }) => [
+        { type: "Appointment", id },
+        { type: "Appointment", id: "LIST" },
+        { type: "Appointment", id: "STATISTICS" },
+      ],
     }),
 
     getAvailability: builder.query<
