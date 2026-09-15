@@ -52,8 +52,13 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    env_file:
-      - ./backend/api-gateway/.env.docker
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${API_GATEWAY_PORT:-4000}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth-service:5001}
+      PATIENT_SERVICE_URL: ${PATIENT_SERVICE_URL:-http://patient-service:5002}
+      DOCTOR_SERVICE_URL: ${DOCTOR_SERVICE_URL:-http://doctor-service:5003}
+      APPOINTMENT_SERVICE_URL: ${APPOINTMENT_SERVICE_URL:-http://appointment-service:5004}
     depends_on:
       auth-service:
         condition: service_healthy
@@ -78,9 +83,11 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    env_file:
-      - ./backend/auth-service/.env.docker
     environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${AUTH_SERVICE_PORT:-5001}
+      MONGODB_URI: ${AUTH_MONGODB_URI:-mongodb://mongodb:27017/vitaline_auth?replicaSet=rs0}
+      PATIENT_SERVICE_URL: ${PATIENT_SERVICE_URL:-http://patient-service:5002}
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:?ACCESS_TOKEN_SECRET is required}
       REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET:?REFRESH_TOKEN_SECRET is required}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:?INTERNAL_API_KEY is required}
@@ -107,9 +114,12 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    env_file:
-      - ./backend/patient-service/.env.docker
     environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PATIENT_SERVICE_PORT:-5002}
+      MONGODB_URI: ${PATIENT_MONGODB_URI:-mongodb://mongodb:27017/vitaline_patients?replicaSet=rs0}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth-service:5001}
+      APPOINTMENT_SERVICE_URL: ${APPOINTMENT_SERVICE_URL:-http://appointment-service:5004}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:?INTERNAL_API_KEY is required}
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:?ACCESS_TOKEN_SECRET is required}
     depends_on:
@@ -130,9 +140,12 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    env_file:
-      - ./backend/doctor-service/.env.docker
     environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${DOCTOR_SERVICE_PORT:-5003}
+      MONGODB_URI: ${DOCTOR_MONGODB_URI:-mongodb://mongodb:27017/vitaline_doctors?replicaSet=rs0}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth-service:5001}
+      APPOINTMENT_SERVICE_URL: ${APPOINTMENT_SERVICE_URL:-http://appointment-service:5004}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:?INTERNAL_API_KEY is required}
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:?ACCESS_TOKEN_SECRET is required}
     depends_on:
@@ -153,9 +166,14 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    env_file:
-      - ./backend/appointment-service/.env.docker
     environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      TZ: ${TZ:-Europe/Istanbul}
+      PORT: ${APPOINTMENT_SERVICE_PORT:-5004}
+      MONGODB_URI: ${APPOINTMENT_MONGODB_URI:-mongodb://mongodb:27017/vitaline_appointments?replicaSet=rs0}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth-service:5001}
+      DOCTOR_SERVICE_URL: ${DOCTOR_SERVICE_URL:-http://doctor-service:5003}
+      PATIENT_SERVICE_URL: ${PATIENT_SERVICE_URL:-http://patient-service:5002}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:?INTERNAL_API_KEY is required}
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:?ACCESS_TOKEN_SECRET is required}
     depends_on:
