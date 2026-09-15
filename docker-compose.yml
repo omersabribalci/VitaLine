@@ -53,7 +53,7 @@ services:
         max-size: "10m"
         max-file: "3"
     environment:
-      NODE_ENV: ${NODE_ENV:-production}
+      NODE_ENV: production
       PORT: ${API_GATEWAY_PORT:-4000}
       AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth-service:5001}
       PATIENT_SERVICE_URL: ${PATIENT_SERVICE_URL:-http://patient-service:5002}
@@ -84,7 +84,7 @@ services:
         max-size: "10m"
         max-file: "3"
     environment:
-      NODE_ENV: ${NODE_ENV:-production}
+      NODE_ENV: production
       PORT: ${AUTH_SERVICE_PORT:-5001}
       MONGODB_URI: ${AUTH_MONGODB_URI:-mongodb://mongodb:27017/vitaline_auth?replicaSet=rs0}
       PATIENT_SERVICE_URL: ${PATIENT_SERVICE_URL:-http://patient-service:5002}
@@ -115,7 +115,7 @@ services:
         max-size: "10m"
         max-file: "3"
     environment:
-      NODE_ENV: ${NODE_ENV:-production}
+      NODE_ENV: production
       PORT: ${PATIENT_SERVICE_PORT:-5002}
       MONGODB_URI: ${PATIENT_MONGODB_URI:-mongodb://mongodb:27017/vitaline_patients?replicaSet=rs0}
       AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth-service:5001}
@@ -141,7 +141,7 @@ services:
         max-size: "10m"
         max-file: "3"
     environment:
-      NODE_ENV: ${NODE_ENV:-production}
+      NODE_ENV: production
       PORT: ${DOCTOR_SERVICE_PORT:-5003}
       MONGODB_URI: ${DOCTOR_MONGODB_URI:-mongodb://mongodb:27017/vitaline_doctors?replicaSet=rs0}
       AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth-service:5001}
@@ -167,7 +167,7 @@ services:
         max-size: "10m"
         max-file: "3"
     environment:
-      NODE_ENV: ${NODE_ENV:-production}
+      NODE_ENV: production
       TZ: ${TZ:-Europe/Istanbul}
       PORT: ${APPOINTMENT_SERVICE_PORT:-5004}
       MONGODB_URI: ${APPOINTMENT_MONGODB_URI:-mongodb://mongodb:27017/vitaline_appointments?replicaSet=rs0}
