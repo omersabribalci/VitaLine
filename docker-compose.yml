@@ -18,7 +18,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "mongosh --quiet --eval \"try { rs.status().ok } catch (error) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongodb:27017'}]}).ok }\" | grep 1",
+          "mongosh --quiet --eval \"try { rs.status().members.some(m => m.stateStr === 'PRIMARY') } catch (error) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongodb:27017'}]}); false }\" | grep true",
         ]
       interval: 5s
       timeout: 10s
