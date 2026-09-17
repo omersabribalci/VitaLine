@@ -6,6 +6,15 @@ const appointmentClient = require("../src/clients/appointmentLifecycleClient.js"
 const Doctor = require("../src/models/Doctor.js");
 const doctorService = require("../src/services/doctorService.js");
 
+test("available specialities use the shared catalog order", async (t) => {
+  t.mock.method(Doctor, "distinct", async () => ["Oncology", "Cardiology", "Legacy"]);
+
+  assert.deepEqual(await doctorService.getAvailableSpecialities(), [
+    "Cardiology",
+    "Oncology",
+  ]);
+});
+
 test("doctor creation combines Auth user and Doctor profile", async (t) => {
   const userId = new Types.ObjectId().toString();
   const doctorId = new Types.ObjectId();

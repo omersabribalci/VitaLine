@@ -111,6 +111,13 @@ const addBaseHandlers = () => {
     http.get("http://localhost:5000/api/doctors", () =>
       HttpResponse.json({ success: true, message: "", data: [doctor] }),
     ),
+    http.get("http://localhost:5000/api/doctors/specialities/available", () =>
+      HttpResponse.json({
+        success: true,
+        message: "",
+        data: ["Cardiology"],
+      }),
+    ),
     http.get(
       "http://localhost:5000/api/appointments/availability",
       () =>

@@ -3,6 +3,7 @@ const authClient = require("../clients/authClient.js");
 const appointmentClient = require("../clients/appointmentLifecycleClient.js");
 const AppError = require("../utils/AppError.js");
 const { buildPaginationMeta, getPagination } = require("../utils/pagination.js");
+const { doctorTitles, doctorSpecialities } = require("../config/doctorCatalog.js");
 
 const toInternalDoctor = (doctor: any) => ({
   id: doctor._id.toString(),
@@ -20,25 +21,33 @@ const toPublicDoctor = (doctor: any) => ({
   unavailableDates: doctor.unavailableDates || [],
 });
 
-const countDoctors = () => Doctor.countDocuments({ isDeleted: false });
+const countDoctors = () => Doctor.countDocuments();
+
+const getDoctorCatalog = () => ({
+  titles: [...doctorTitles],
+  specialities: [...doctorSpecialities],
+});
+
+const getAvailableSpecialities = async () => {
+  const available = await Doctor.distinct("speciality", { isDeleted: false });
+  return doctorSpecialities.filter((speciality: string) =>
+    available.includes(speciality),
+  );
+};
 
 const getDoctorForAppointment = async (doctorId: string) => {
-  const doctor = await Doctor.findOne({
-    _id: doctorId,
-    isDeleted: false,
-  }).lean();
+  const doctor = await Doctor.findOne({ _id: doctorId }).lean();
   return doctor ? toInternalDoctor(doctor) : null;
 };
 
 const getDoctorForAppointmentByUserId = async (userId: string) => {
-  const doctor = await Doctor.findOne({ userId, isDeleted: false }).lean();
+  const doctor = await Doctor.findOne({ userId }).lean();
   return doctor ? toInternalDoctor(doctor) : null;
 };
 
 const resolveDoctorsForAppointments = async (doctorIds: string[]) => {
   const doctors = await Doctor.find({
     _id: { $in: doctorIds },
-    isDeleted: false,
   }).lean();
 
   return doctorIds.flatMap((doctorId) => {
@@ -214,6 +223,8 @@ const deleteDoctor = async (doctorId: string, requestId?: string) => {
 
 module.exports = {
   countDoctors,
+  getDoctorCatalog,
+  getAvailableSpecialities,
   getDoctorForAppointment,
   getDoctorForAppointmentByUserId,
   resolveDoctorsForAppointments,

@@ -7,7 +7,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { useGetDoctorsQuery } from "../../store/services/doctorApi";
+import {
+  useGetAvailableSpecialitiesQuery,
+  useGetDoctorsQuery,
+} from "../../store/services/doctorApi";
 import Loading from "../../components/UI/Loading";
 import Error from "../../components/UI/Error";
 import DoctorProfileCard from "../../components/Doctor/DoctorProfileCard";
@@ -40,25 +43,31 @@ const AdminDoctorList = () => {
     page,
     limit: 8,
   });
+  const {
+    data: availableSpecialities,
+    isLoading: isSpecialitiesLoading,
+    error: specialitiesError,
+    refetch: refetchSpecialities,
+    isFetching: isSpecialitiesFetching,
+  } = useGetAvailableSpecialitiesQuery();
   const allDoctors = allDoctorPage?.items;
   const doctors = doctorPage?.items;
 
-  const specialities = Array.from(
-    new Set(allDoctors?.map((doctor) => doctor.speciality) ?? []),
-  ).sort();
-
-  if (isLoading || isAllDoctorsLoading) {
+  if (isLoading || isAllDoctorsLoading || isSpecialitiesLoading) {
     return <Loading />;
   }
 
-  if (error || allDoctorsError) {
+  if (error || allDoctorsError || specialitiesError) {
     return (
       <Error
         refetch={() => {
           void refetch();
           void refetchAllDoctors();
+          void refetchSpecialities();
         }}
-        isFetching={isFetching || isAllDoctorsFetching}
+        isFetching={
+          isFetching || isAllDoctorsFetching || isSpecialitiesFetching
+        }
       />
     );
   }
@@ -127,7 +136,7 @@ const AdminDoctorList = () => {
           fullWidth
         >
           <MenuItem value="all">All specialities</MenuItem>
-          {specialities.map((speciality) => (
+          {(availableSpecialities ?? []).map((speciality) => (
             <MenuItem key={speciality} value={speciality}>
               {speciality}
             </MenuItem>

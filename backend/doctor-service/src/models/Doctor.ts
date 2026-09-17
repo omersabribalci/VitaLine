@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
-const { DOCTOR_TITLES } = require("../types/index.js");
-const { doctorSpecialities } = require("../utils/doctorSpecialities.js");
+const {
+  doctorTitles,
+  doctorSpecialities,
+} = require("../config/doctorCatalog.js");
 
 const dateRangeSchema = new mongoose.Schema(
   {
@@ -25,7 +27,7 @@ const doctorSchema = new mongoose.Schema(
     userId: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
     title: {
       type: String,
-      enum: DOCTOR_TITLES,
+      enum: doctorTitles,
       required: true,
       trim: true,
     },

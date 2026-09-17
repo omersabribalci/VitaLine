@@ -196,6 +196,11 @@ test("public doctor routes preserve auth, update and delete behavior", async (t)
     items: [doctor],
     pagination: { page: 1, limit: 10, totalItems: 1, totalPages: 1 },
   }));
+  t.mock.method(doctorService, "getDoctorCatalog", () => ({
+    titles: ["Dr."],
+    specialities: ["Cardiology"],
+  }));
+  t.mock.method(doctorService, "getAvailableSpecialities", async () => ["Cardiology"]);
   t.mock.method(doctorService, "getDoctorByUserId", async () => doctor);
   t.mock.method(doctorService, "getDoctorById", async () => doctor);
   t.mock.method(doctorService, "createDoctor", async () => ({
@@ -224,6 +229,20 @@ test("public doctor routes preserve auth, update and delete behavior", async (t)
   assert.equal((await fetch(baseUrl, {
     headers: { authorization: `Bearer ${patientToken}` },
   })).status, 200);
+  const catalogResponse = await fetch(`${baseUrl}/catalog`, {
+    headers: { authorization: `Bearer ${patientToken}` },
+  });
+  assert.equal(catalogResponse.status, 200);
+  assert.deepEqual((await catalogResponse.json()).data, {
+    titles: ["Dr."],
+    specialities: ["Cardiology"],
+  });
+  const availableSpecialitiesResponse = await fetch(
+    `${baseUrl}/specialities/available`,
+    { headers: { authorization: `Bearer ${patientToken}` } },
+  );
+  assert.equal(availableSpecialitiesResponse.status, 200);
+  assert.deepEqual((await availableSpecialitiesResponse.json()).data, ["Cardiology"]);
 
   const doctorToken = jwt.sign(
     { id: userId, email: "doctor@example.com", role: "doctor" },

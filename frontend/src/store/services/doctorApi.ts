@@ -14,11 +14,28 @@ export type DoctorListQuery = PaginationQuery & {
   sort?: "name";
 };
 
+export type DoctorCatalog = {
+  titles: string[];
+  specialities: string[];
+};
+
 export const doctorApi = createApi({
   reducerPath: "doctorApi",
-  tagTypes: ["Doctor"],
+  tagTypes: ["Doctor", "Speciality"],
   baseQuery: baseQueryWithReAuth,
   endpoints: (builder) => ({
+    getDoctorCatalog: builder.query<DoctorCatalog, void>({
+      query: () => "doctors/catalog",
+      providesTags: ["Speciality"],
+      transformResponse: (response: ApiResponse<DoctorCatalog>) => response.data,
+    }),
+
+    getAvailableSpecialities: builder.query<string[], void>({
+      query: () => "doctors/specialities/available",
+      providesTags: ["Speciality"],
+      transformResponse: (response: ApiResponse<string[]>) => response.data,
+    }),
+
     getDoctors: builder.query<PaginatedData<Doctor>, DoctorListQuery | void>({
       query: (params) => {
         const query = new URLSearchParams();
@@ -69,7 +86,7 @@ export const doctorApi = createApi({
         method: "POST",
         body: newDoctor,
       }),
-      invalidatesTags: ["Doctor"],
+      invalidatesTags: ["Doctor", "Speciality"],
     }),
 
     updateDoctor: builder.mutation({
@@ -82,6 +99,7 @@ export const doctorApi = createApi({
       invalidatesTags: (_, __, { id }) => [
         { type: "Doctor", id },
         { type: "Doctor" },
+        { type: "Speciality" },
       ],
     }),
 
@@ -90,13 +108,15 @@ export const doctorApi = createApi({
         url: `doctors/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Doctor"],
+      invalidatesTags: ["Doctor", "Speciality"],
     }),
   }),
 });
 
 export const {
   useGetDoctorsQuery,
+  useGetDoctorCatalogQuery,
+  useGetAvailableSpecialitiesQuery,
   useGetDoctorByIdQuery,
   useGetDoctorsBySpecialityQuery,
   useAddDoctorMutation,

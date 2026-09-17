@@ -40,6 +40,30 @@ const getDoctors = async (_req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getDoctorCatalog = (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    res.status(200).json({
+      success: true,
+      data: doctorService.getDoctorCatalog(),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAvailableSpecialities = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const specialities = await doctorService.getAvailableSpecialities();
+    res.status(200).json({ success: true, data: specialities });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getDoctorById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const doctor = await doctorService.getDoctorById(
@@ -110,6 +134,8 @@ const deleteDoctor = async (req: Request, res: Response, next: NextFunction) => 
 module.exports = {
   createDoctor,
   getDoctors,
+  getDoctorCatalog,
+  getAvailableSpecialities,
   getDoctorById,
   getMyDoctorProfile,
   updateDoctor,

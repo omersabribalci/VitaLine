@@ -1,5 +1,7 @@
-import { specialities } from "../../data/specialities";
-import { useGetDoctorsBySpecialityQuery } from "../../store/services/doctorApi";
+import {
+  useGetAvailableSpecialitiesQuery,
+  useGetDoctorsBySpecialityQuery,
+} from "../../store/services/doctorApi";
 import {
   useNewAppointmentMutation,
   useGetAvailabilityQuery,
@@ -49,6 +51,14 @@ const PatientBookAppointment = () => {
     refetch,
     isFetching,
   } = useGetDoctorsBySpecialityQuery(speciality ?? "", { skip: !speciality });
+
+  const {
+    data: availableSpecialities,
+    isLoading: isSpecialitiesLoading,
+    error: specialitiesError,
+    refetch: refetchSpecialities,
+    isFetching: isSpecialitiesFetching,
+  } = useGetAvailableSpecialitiesQuery();
 
   const selectedDoctor = doctorsBySpeciality?.find(
     (doc: Doctor) => doc.userId.name === doctorName,
@@ -125,7 +135,7 @@ const PatientBookAppointment = () => {
     setValue("time", null);
   };
 
-  if (isPatLoading || isLoading || isPolicyLoading)
+  if (isPatLoading || isLoading || isPolicyLoading || isSpecialitiesLoading)
     return (
       <div className="mx-auto mt-4 flex w-full max-w-3xl flex-col gap-4 rounded-2xl bg-cardBg p-4 shadow-xl">
         <Loading />
@@ -138,6 +148,15 @@ const PatientBookAppointment = () => {
 
   if (error) {
     return <Error refetch={refetch} isFetching={isFetching} />;
+  }
+
+  if (specialitiesError) {
+    return (
+      <Error
+        refetch={refetchSpecialities}
+        isFetching={isSpecialitiesFetching}
+      />
+    );
   }
 
   if (policyError) {
@@ -159,7 +178,7 @@ const PatientBookAppointment = () => {
 
         <SpecialityDoctorSelector
           control={control}
-          specialities={specialities}
+          specialities={availableSpecialities ?? []}
           speciality={speciality}
           doctorsBySpeciality={doctorsBySpeciality}
           isLoading={isLoading}

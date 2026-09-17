@@ -2,18 +2,28 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import FormInput from "../Form/FormInput";
 import FormSelect from "../Form/FormSelect";
-import { specialities } from "../../data/specialities";
 import Button from "@mui/material/Button";
-import { useAddDoctorMutation } from "../../store/services/doctorApi";
+import {
+  useAddDoctorMutation,
+  useGetDoctorCatalogQuery,
+} from "../../store/services/doctorApi";
 import { addDoctorInputs } from "../../data/Inputs/doctorInputs";
 import { toast } from "react-toastify";
 import type { AddDoctorFormData } from "../../types";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
-import { doctorTitles } from "../../data/doctorTitles";
 import FormError from "../Form/FormError";
+import Loading from "../UI/Loading";
+import Error from "../UI/Error";
 
 const AdminAddDoctorForm = () => {
   const [addDoctor, { isLoading: isAdding, error }] = useAddDoctorMutation();
+  const {
+    data: catalog,
+    isLoading: isCatalogLoading,
+    error: catalogError,
+    refetch: refetchCatalog,
+    isFetching: isCatalogFetching,
+  } = useGetDoctorCatalogQuery();
 
   const navigate = useNavigate();
 
@@ -41,6 +51,11 @@ const AdminAddDoctorForm = () => {
 
   const errMsg = extractErrorMessage(error, "Adding failed");
 
+  if (isCatalogLoading) return <Loading />;
+  if (catalogError) {
+    return <Error refetch={refetchCatalog} isFetching={isCatalogFetching} />;
+  }
+
   return (
     <div className="max-w-2xl mx-auto p-6 bg-cardBg rounded-2xl shadow-xl mt-8">
       <h2 className="text-xl font-semibold mb-4">Add New Doctor</h2>
@@ -54,7 +69,7 @@ const AdminAddDoctorForm = () => {
           <FormSelect
             label="Select title"
             name="title"
-            options={doctorTitles}
+            options={catalog?.titles ?? []}
             register={register}
             rules={{ required: "Title is required" }}
             errors={errors}
@@ -71,7 +86,7 @@ const AdminAddDoctorForm = () => {
           <FormSelect
             label="Select speciality"
             name="speciality"
-            options={specialities}
+            options={catalog?.specialities ?? []}
             register={register}
             rules={{ required: "Speciality is required" }}
             errors={errors}

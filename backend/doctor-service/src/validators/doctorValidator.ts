@@ -1,8 +1,10 @@
 type RequestHandler = import("express").RequestHandler;
 const { body, param, query } = require("express-validator");
 const { validateRequest } = require("../middleware/validateRequest.js");
-const { DOCTOR_TITLES } = require("../types/index.js");
-const { doctorSpecialities } = require("../utils/doctorSpecialities.js");
+const {
+  doctorTitles,
+  doctorSpecialities,
+} = require("../config/doctorCatalog.js");
 
 const validateDoctorCreation = [
   body("name").trim().isLength({ min: 3, max: 30 }),
@@ -13,7 +15,7 @@ const validateDoctorCreation = [
     .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/),
   body("image").optional().isString(),
   body("title")
-    .isIn([...DOCTOR_TITLES])
+    .isIn([...doctorTitles])
     .withMessage("Please select a valid title."),
   body("speciality")
     .isIn([...doctorSpecialities])
@@ -78,7 +80,7 @@ const validateDoctorProfileUpdate = [
   body("email").optional().trim().isEmail().isLength({ max: 255 }),
   body("phone").optional().trim().matches(/^\d{11}$/),
   body("image").optional().isString(),
-  body("title").optional().isIn([...DOCTOR_TITLES]),
+  body("title").optional().isIn([...doctorTitles]),
   body("speciality").optional().isIn([...doctorSpecialities]),
   body("unavailableDates")
     .optional()

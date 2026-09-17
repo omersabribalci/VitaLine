@@ -2,6 +2,8 @@ const express = require("express");
 const {
   createDoctor,
   getDoctors,
+  getDoctorCatalog,
+  getAvailableSpecialities,
   getDoctorById,
   getMyDoctorProfile,
   updateDoctor,
@@ -25,6 +27,16 @@ router.post(
   authorizeRoles("admin"),
   validateDoctorCreation,
   createDoctor,
+);
+router.get(
+  "/catalog",
+  authorizeRoles("admin", "doctor", "patient"),
+  getDoctorCatalog,
+);
+router.get(
+  "/specialities/available",
+  authorizeRoles("admin", "doctor", "patient"),
+  getAvailableSpecialities,
 );
 router.get("/", authorizeRoles("admin", "doctor", "patient"), validateDoctorListQuery, getDoctors);
 router.get("/me", authorizeRoles("doctor"), getMyDoctorProfile);
