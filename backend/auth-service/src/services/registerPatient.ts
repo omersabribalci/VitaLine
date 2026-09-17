@@ -10,6 +10,16 @@ type RegistrationInput = {
   image: string;
 };
 
+const normalizePersonName = (value: string) =>
+  value
+    .trim()
+    .split(/\s+/)
+    .map(
+      (word) =>
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+    )
+    .join(" ");
+
 const toSafeUser = (user: any) => ({
   _id: user._id.toString(),
   name: user.name,
@@ -34,6 +44,7 @@ const registerPatient = async (
   try {
     user = await User.create({
       ...input,
+      name: normalizePersonName(input.name),
       email,
       image: input.image || "",
       role: "patient",

@@ -6,7 +6,7 @@ const User = require("../src/models/User.js");
 const registrationService = require("../src/services/registerPatient.js");
 
 const input = {
-  name: "Test Patient",
+  name: "tEST pATIENT mIDDLE",
   email: "PATIENT@EXAMPLE.COM",
   phone: "05555555555",
   password: "Strong123",
@@ -26,6 +26,7 @@ test("registration creates the Auth user and Patient profile", async (t: any) =>
 
   const result = await registrationService.registerPatient(input, "request-1");
 
+  assert.equal(result.user.name, "Test Patient Middle");
   assert.equal(result.user.email, "patient@example.com");
   assert.equal(result.patient.userId, userId.toString());
 });
