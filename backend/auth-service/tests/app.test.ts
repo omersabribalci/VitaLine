@@ -275,3 +275,27 @@ test("internal doctor-user profile update requires service auth", async (t: any)
   })).status, 200);
   assert.equal(calls, 1);
 });
+
+test("internal doctor-user password update requires service auth", async (t: any) => {
+  const userId = new Types.ObjectId().toString();
+  let receivedPassword = "";
+  t.mock.method(userService, "updateUserPassword", async (_id: string, password: string) => {
+    receivedPassword = password;
+  });
+  const { server, port } = await startTestServer();
+  t.after(() => close(server));
+  const url = `http://127.0.0.1:${port}/internal/users/${userId}/password`;
+
+  assert.equal((await fetch(url, {
+    method: "PATCH",
+    headers: { "content-type": "application/json", "x-internal-api-key": internalApiKey },
+    body: JSON.stringify({ password: "weak" }),
+  })).status, 400);
+
+  assert.equal((await fetch(url, {
+    method: "PATCH",
+    headers: { "content-type": "application/json", "x-internal-api-key": internalApiKey },
+    body: JSON.stringify({ password: "NewStrong123" }),
+  })).status, 200);
+  assert.equal(receivedPassword, "NewStrong123");
+});

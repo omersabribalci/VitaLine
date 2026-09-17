@@ -116,7 +116,15 @@ const BookingPolicyFormSection = ({
         <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
           Working days
         </Typography>
-        <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
+        <Stack
+          direction={{ xs: "row", md: "row" }}
+          sx={{
+            display: { xs: "grid", md: "flex" },
+            gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "none" },
+            flexWrap: { xs: "nowrap", md: "wrap" },
+            gap: 1,
+          }}
+        >
           {weekDays.map((day) => {
             const selected = formData.workingDays.includes(day.value);
             return (
@@ -127,6 +135,10 @@ const BookingPolicyFormSection = ({
                 color={selected ? "primary" : "default"}
                 variant={selected ? "filled" : "outlined"}
                 onClick={() => handleWorkDayToggle(day.value)}
+                sx={{
+                  width: { xs: "100%", md: "auto" },
+                  justifyContent: "center",
+                }}
               />
             );
           })}

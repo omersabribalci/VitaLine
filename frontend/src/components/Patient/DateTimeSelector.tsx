@@ -19,6 +19,7 @@ export const DateTimeSelector = ({
   slots,
   isAvailabilityLoading,
   hasAvailabilityError,
+  availabilityError,
   refetchAvailability,
   isAvailabilityFetching,
   isAdding,
@@ -57,6 +58,7 @@ export const DateTimeSelector = ({
             <Error
               refetch={refetchAvailability}
               isFetching={isAvailabilityFetching}
+              error={availabilityError}
             />
           ) : isAvailabilityLoading ? (
             <Box

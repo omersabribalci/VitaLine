@@ -24,7 +24,7 @@ const AdminPatientList = (): JSX.Element => {
   }
 
   if (error) {
-    return <Error refetch={refetch} isFetching={isFetching} />;
+    return <Error refetch={refetch} isFetching={isFetching} error={error} />;
   }
 
   if (patients?.length === 0) {

@@ -49,6 +49,26 @@ const updateUserProfile = async (
   }
 };
 
+const updateUserPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    await userService.updateUserPassword(
+      String(req.params.id),
+      String(req.body.password),
+    );
+    res.status(200).json({
+      success: true,
+      data: null,
+      message: "User password updated successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const deactivateUser = async (
   req: Request,
   res: Response,
@@ -72,5 +92,6 @@ module.exports = {
   createDoctorUser,
   resolveUsers,
   updateUserProfile,
+  updateUserPassword,
   deactivateUser,
 };

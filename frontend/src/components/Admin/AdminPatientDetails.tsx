@@ -30,7 +30,7 @@ const AdminPatientDetails = () => {
       if (error.status === 404) {
         return <NotFound role="Patient" />;
       }
-      return <Error refetch={refetch} isFetching={isFetching} />;
+      return <Error refetch={refetch} isFetching={isFetching} error={error} />;
     }
   }
 

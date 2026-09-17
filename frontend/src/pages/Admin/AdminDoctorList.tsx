@@ -68,6 +68,7 @@ const AdminDoctorList = () => {
         isFetching={
           isFetching || isAllDoctorsFetching || isSpecialitiesFetching
         }
+        error={error ?? allDoctorsError ?? specialitiesError}
       />
     );
   }

@@ -32,7 +32,7 @@ const DoctorDailyAppointments = ({ id }: { id: string }) => {
   }
 
   if (error) {
-    return <Error refetch={refetch} isFetching={isFetching} />;
+    return <Error refetch={refetch} isFetching={isFetching} error={error} />;
   }
 
   if (!appointments) return null;

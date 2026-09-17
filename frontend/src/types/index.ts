@@ -196,12 +196,14 @@ export type EditDoctorFormData = {
   email: string;
   phone: string;
   image: string;
+  password?: string;
   speciality: string;
 };
 
 export type ErrorProps = {
   refetch: () => unknown;
   isFetching?: boolean;
+  error?: unknown;
 };
 
 export type DoctorSetHolidayFormData = {
@@ -292,6 +294,7 @@ export type DateTimeSelectorProps = {
   slots: AppointmentSlot[];
   isAvailabilityLoading: boolean;
   hasAvailabilityError: boolean;
+  availabilityError?: unknown;
   refetchAvailability: () => unknown;
   isAvailabilityFetching: boolean;
   isAdding: boolean;

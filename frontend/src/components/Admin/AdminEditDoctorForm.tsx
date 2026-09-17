@@ -16,14 +16,19 @@ import Loading from "../UI/Loading";
 import type { EditDoctorFormData } from "../../types";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import Error from "../UI/Error";
+import NotFound from "../UI/NotFound";
 
 const AdminEditDoctorForm = () => {
   const [updateDoctor, { isLoading: isUpdating }] = useUpdateDoctorMutation();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { data: doctor, isLoading: isFetching } = useGetDoctorByIdQuery(id!, {
-    skip: !id,
-  });
+  const {
+    data: doctor,
+    isLoading: isDoctorLoading,
+    error: doctorError,
+    refetch: refetchDoctor,
+    isFetching: isDoctorFetching,
+  } = useGetDoctorByIdQuery(id!, { skip: !id });
   const {
     data: catalog,
     isLoading: isCatalogLoading,
@@ -54,9 +59,11 @@ const AdminEditDoctorForm = () => {
 
   const onSubmit = async (data: EditDoctorFormData) => {
     try {
+      const { password, ...profileData } = data;
       await updateDoctor({
         id,
-        ...data,
+        ...profileData,
+        ...(password?.trim() ? { password: password.trim() } : {}),
       }).unwrap();
       toast.success("Doctor profile updated successfully!");
       navigate(`/admin/doctors/${id}`);
@@ -65,9 +72,21 @@ const AdminEditDoctorForm = () => {
     }
   };
 
-  if (isFetching || isCatalogLoading) return <Loading />;
+  if (isDoctorLoading || isCatalogLoading) return <Loading />;
+  if (doctorError) {
+    if ("status" in doctorError && doctorError.status === 404) {
+      return <NotFound role="Doctor" />;
+    }
+    return (
+      <Error
+        refetch={refetchDoctor}
+        isFetching={isDoctorFetching}
+        error={doctorError}
+      />
+    );
+  }
   if (catalogError) {
-    return <Error refetch={refetchCatalog} isFetching={isCatalogFetching} />;
+    return <Error refetch={refetchCatalog} isFetching={isCatalogFetching} error={catalogError} />;
   }
 
   return (
@@ -75,7 +94,7 @@ const AdminEditDoctorForm = () => {
       <h2 className="text-xl font-semibold mb-4">Edit Doctor</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FormSelect
             label="Select title"
             name="title"

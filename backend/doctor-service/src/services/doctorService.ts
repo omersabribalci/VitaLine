@@ -205,6 +205,14 @@ const updateDoctor = async (
     );
   }
 
+  if (input.password !== undefined) {
+    await authClient.updateUserPassword(
+      doctor.userId.toString(),
+      input.password,
+      requestId,
+    );
+  }
+
   if (Object.keys(doctorChanges).length > 0) {
     await Doctor.findByIdAndUpdate(doctorId, doctorChanges, {
       runValidators: true,

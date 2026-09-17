@@ -19,7 +19,7 @@ const AdminOverview = () => {
   } = useGetAdminStatisticsQuery();
 
   if (isLoading) return <Loading />;
-  if (error) return <Error refetch={refetch} isFetching={isFetching} />;
+  if (error) return <Error refetch={refetch} isFetching={isFetching} error={error} />;
 
   const appointmentTotal = statistics?.appointmentCount ?? 0;
   const statusData = [

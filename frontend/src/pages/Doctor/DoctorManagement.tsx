@@ -18,7 +18,7 @@ const DoctorManagement = () => {
   if (error) {
     if ("status" in error) {
       if (error.status === 404) return <NotFound role="Doctor" />;
-      return <Error refetch={refetch} isFetching={isFetching} />;
+      return <Error refetch={refetch} isFetching={isFetching} error={error} />;
     }
   }
 

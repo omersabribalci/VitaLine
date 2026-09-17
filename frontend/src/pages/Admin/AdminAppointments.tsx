@@ -24,7 +24,7 @@ const AdminAppointments = () => {
   }
 
   if (error) {
-    return <Error refetch={refetch} isFetching={isFetching} />;
+    return <Error refetch={refetch} isFetching={isFetching} error={error} />;
   }
 
   if (appointments?.length === 0) {

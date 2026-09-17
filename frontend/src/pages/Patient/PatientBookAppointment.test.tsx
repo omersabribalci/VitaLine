@@ -220,9 +220,7 @@ describe("PatientBookAppointment", () => {
     );
     renderPage();
 
-    expect(
-      await screen.findByText("Unable to reach the server, please try again."),
-    ).toBeInTheDocument();
+    expect(await screen.findByText("Policy unavailable")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Try Again" })).toBeEnabled();
   });
 

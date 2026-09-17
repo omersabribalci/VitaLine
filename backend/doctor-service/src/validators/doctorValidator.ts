@@ -58,6 +58,7 @@ const allowedUpdateFields = new Set([
   "email",
   "phone",
   "image",
+  "password",
   "title",
   "speciality",
   "unavailableDates",
@@ -80,6 +81,11 @@ const validateDoctorProfileUpdate = [
   body("email").optional().trim().isEmail().isLength({ max: 255 }),
   body("phone").optional().trim().matches(/^\d{11}$/),
   body("image").optional().isString(),
+  body("password")
+    .optional()
+    .isLength({ min: 8 })
+    .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/)
+    .withMessage("Password must contain upper, lower, and number."),
   body("title").optional().isIn([...doctorTitles]),
   body("speciality").optional().isIn([...doctorSpecialities]),
   body("unavailableDates")

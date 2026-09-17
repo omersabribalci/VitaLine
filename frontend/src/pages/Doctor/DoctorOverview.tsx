@@ -18,7 +18,7 @@ const DoctorOverview = () => {
   }
 
   if (error) {
-    return <Error refetch={refetch} isFetching={isFetching} />;
+    return <Error refetch={refetch} isFetching={isFetching} error={error} />;
   }
 
   if (!doctor) return null;

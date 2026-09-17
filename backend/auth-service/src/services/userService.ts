@@ -104,6 +104,18 @@ const updateUserProfile = async (
   }
 };
 
+const updateUserPassword = async (userId: string, password: string) => {
+  const user = await User.findOne({
+    _id: userId,
+    role: "doctor",
+    registrationStatus: "active",
+  });
+  if (!user) throw new AppError("Active doctor user not found.", 404);
+
+  user.password = password;
+  await user.save();
+};
+
 const deactivateUser = async (userId: string) => {
   const objectId = new mongoose.Types.ObjectId(userId);
   const session = await mongoose.startSession();
@@ -143,5 +155,6 @@ module.exports = {
   createDoctorUser,
   resolveUsers,
   updateUserProfile,
+  updateUserPassword,
   deactivateUser,
 };

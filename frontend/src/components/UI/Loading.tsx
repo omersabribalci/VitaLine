@@ -7,7 +7,8 @@ const Loading = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100%",
+        minHeight: "60vh",
+        width: "100%",
       }}
     >
       <CircularProgress aria-label="Loading…" color="secondary" />

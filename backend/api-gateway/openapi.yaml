@@ -188,6 +188,28 @@ paths:
         "200": { $ref: "#/components/responses/Success" }
         "403": { $ref: "#/components/responses/Forbidden" }
 
+  /api/doctors/catalog:
+    get:
+      tags: [Doctors]
+      summary: Doktor formu icin ortak unvan ve uzmanlik katalogunu getir
+      description: Roller admin, doctor veya patient.
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /api/doctors/specialities/available:
+    get:
+      tags: [Doctors]
+      summary: En az bir aktif doktoru bulunan uzmanliklari getir
+      description: Randevu ve filtre ekranlarinda secilebilecek uzmanliklari doner.
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
   /api/doctors/{id}:
     parameters: [{ $ref: "#/components/parameters/ResourceId" }]
     get:
@@ -454,6 +476,12 @@ components:
         email: { type: string, format: email }
         phone: { type: string, pattern: "^[0-9]{11}$" }
         image: { type: string }
+        password:
+          type: string
+          format: password
+          minLength: 8
+          pattern: "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d).+$"
+          description: Admin doktorun yeni sifresini gonderebilir; bos birakilirsa degismez.
         title: { type: string, enum: [Dr., Ast. Dr., Uzm. Dr., Op. Dr., Doç. Dr., Prof. Dr.] }
         speciality: { type: string }
         unavailableDates:

@@ -1,5 +1,5 @@
-const validatePasswordStrength = (value: string) => {
-  const trimmedValue = value.trim();
+const validatePasswordStrength = (value?: string) => {
+  const trimmedValue = value?.trim() ?? "";
 
   if (trimmedValue.length < 8) {
     return "Password must be at least 8 characters";
@@ -11,6 +11,9 @@ const validatePasswordStrength = (value: string) => {
     "Password must contain upper, lower, and number"
   );
 };
+
+const validateOptionalPasswordStrength = (value?: string) =>
+  value?.trim() ? validatePasswordStrength(value) : true;
 
 const doctorInputs = [
   {
@@ -72,4 +75,14 @@ export const addDoctorInputs = [
   },
 ];
 
-export const editDoctorInputs = doctorInputs;
+export const editDoctorInputs = [
+  ...doctorInputs,
+  {
+    type: "password",
+    placeholder: "New password (leave blank to keep current)",
+    name: "password",
+    rules: {
+      validate: validateOptionalPasswordStrength,
+    },
+  },
+];

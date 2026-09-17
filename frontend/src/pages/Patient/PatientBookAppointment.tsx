@@ -143,11 +143,11 @@ const PatientBookAppointment = () => {
     );
 
   if (patError) {
-    return <Error refetch={patRefetch} isFetching={isPatRefetching} />;
+    return <Error refetch={patRefetch} isFetching={isPatRefetching} error={patError} />;
   }
 
   if (error) {
-    return <Error refetch={refetch} isFetching={isFetching} />;
+    return <Error refetch={refetch} isFetching={isFetching} error={error} />;
   }
 
   if (specialitiesError) {
@@ -155,13 +155,14 @@ const PatientBookAppointment = () => {
       <Error
         refetch={refetchSpecialities}
         isFetching={isSpecialitiesFetching}
+        error={specialitiesError}
       />
     );
   }
 
   if (policyError) {
     return (
-      <Error refetch={refetchPolicy} isFetching={isPolicyFetching} />
+      <Error refetch={refetchPolicy} isFetching={isPolicyFetching} error={policyError} />
     );
   }
 
@@ -228,6 +229,7 @@ const PatientBookAppointment = () => {
             slots={availabilityData?.slots ?? []}
             isAvailabilityLoading={isAvailabilityLoading}
             hasAvailabilityError={Boolean(availabilityError)}
+            availabilityError={availabilityError}
             refetchAvailability={refetchAvailability}
             isAvailabilityFetching={isAvailabilityFetching}
             isAdding={isAdding}

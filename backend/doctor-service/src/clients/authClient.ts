@@ -80,6 +80,23 @@ const updateUserProfile = async (
   }
 };
 
+const updateUserPassword = async (
+  userId: string,
+  password: string,
+  requestId?: string,
+) => {
+  try {
+    await http.patch(
+      "/internal/users/" + encodeURIComponent(userId) + "/password",
+      { password },
+      { headers: requestId ? { "x-request-id": requestId } : undefined },
+    );
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    throw requestError(error, "User password could not be updated.");
+  }
+};
+
 const deactivateUser = async (userId: string, requestId?: string) => {
   try {
     await http.post(
@@ -96,5 +113,6 @@ module.exports = {
   resolveUsers,
   createDoctorUser,
   updateUserProfile,
+  updateUserPassword,
   deactivateUser,
 };

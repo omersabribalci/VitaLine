@@ -16,7 +16,7 @@ const DashboardLayout = ({ headerMinWidth = "min-w-75" }) => {
           isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <div className="h-full border border-white/20 bg-myBlackBg/20 backdrop-blur-sm rounded-r-4xl lg:h-screen lg:rounded-r-4xl">
+        <div className="h-full border border-white/20 bg-myBlackBg/60 backdrop-blur-sm rounded-r-4xl lg:h-screen lg:rounded-r-4xl lg:bg-myBlackBg/20">
           <SideBar onClose={() => setIsSidebarOpen(false)} />
         </div>
       </div>

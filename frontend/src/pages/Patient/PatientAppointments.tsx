@@ -36,11 +36,11 @@ const PatientAppointments = () => {
   }
 
   if (patError) {
-    return <Error refetch={patRefetch} isFetching={isPatRefetching} />;
+    return <Error refetch={patRefetch} isFetching={isPatRefetching} error={patError} />;
   }
 
   if (error) {
-    return <Error refetch={refetch} isFetching={isFetching} />;
+    return <Error refetch={refetch} isFetching={isFetching} error={error} />;
   }
 
   if (appointments?.length === 0) {

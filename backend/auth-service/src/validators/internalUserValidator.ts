@@ -69,9 +69,19 @@ const validateInternalUserDeactivation = [
   validateRequest,
 ];
 
+const validateInternalUserPasswordUpdate = [
+  param("id").isMongoId().withMessage("A valid user ID is required."),
+  body("password")
+    .isLength({ min: 8 })
+    .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/)
+    .withMessage("Password must contain upper, lower, and number."),
+  validateRequest,
+];
+
 module.exports = {
   validateInternalDoctorUserCreation,
   validateUserResolution,
   validateInternalUserProfileUpdate,
   validateInternalUserDeactivation,
+  validateInternalUserPasswordUpdate,
 };

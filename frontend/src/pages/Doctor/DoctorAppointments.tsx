@@ -36,11 +36,11 @@ const DoctorAppointments = () => {
   }
 
   if (docError) {
-    return <Error refetch={docRefetch} isFetching={isDocFetching} />;
+    return <Error refetch={docRefetch} isFetching={isDocFetching} error={docError} />;
   }
 
   if (error) {
-    return <Error refetch={refetch} isFetching={isFetching} />;
+    return <Error refetch={refetch} isFetching={isFetching} error={error} />;
   }
 
   if (appointments?.length === 0) {

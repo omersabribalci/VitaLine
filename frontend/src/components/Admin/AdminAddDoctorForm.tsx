@@ -53,7 +53,7 @@ const AdminAddDoctorForm = () => {
 
   if (isCatalogLoading) return <Loading />;
   if (catalogError) {
-    return <Error refetch={refetchCatalog} isFetching={isCatalogFetching} />;
+    return <Error refetch={refetchCatalog} isFetching={isCatalogFetching} error={catalogError} />;
   }
 
   return (
@@ -65,7 +65,7 @@ const AdminAddDoctorForm = () => {
         className="space-y-4"
         autoComplete="off"
       >
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FormSelect
             label="Select title"
             name="title"

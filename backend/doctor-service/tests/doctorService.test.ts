@@ -58,6 +58,29 @@ test("doctor update sends shared user fields to Auth Service", async (t) => {
   assert.deepEqual(receivedChanges, { name: "Updated Doctor" });
 });
 
+test("doctor update sends a new password to Auth Service separately", async (t) => {
+  const userId = new Types.ObjectId();
+  let receivedPassword = "";
+
+  t.mock.method(Doctor, "findById", () => ({
+    select: () => ({ lean: async () => ({ userId }) }),
+  }));
+  t.mock.method(authClient, "updateUserProfile", async () => {
+    throw new Error("profile update should not be called");
+  });
+  t.mock.method(authClient, "updateUserPassword", async (_id: string, password: string) => {
+    receivedPassword = password;
+  });
+
+  await doctorService.updateDoctor(
+    new Types.ObjectId().toString(),
+    { id: "admin-id", role: "admin" },
+    { password: "NewStrong123" },
+  );
+
+  assert.equal(receivedPassword, "NewStrong123");
+});
+
 test("doctor deletion cancels appointments before deactivating the user", async (t) => {
   const calls: string[] = [];
   const userId = new Types.ObjectId();

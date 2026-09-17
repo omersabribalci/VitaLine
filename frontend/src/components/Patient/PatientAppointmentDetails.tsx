@@ -50,7 +50,7 @@ const PatientAppointmentDetails = () => {
       if (error.status === 404) {
         return <NotFound role="Appointment" />;
       }
-      return <Error refetch={refetch} isFetching={isFetching} />;
+      return <Error refetch={refetch} isFetching={isFetching} error={error} />;
     }
   }
 
