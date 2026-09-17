@@ -119,9 +119,9 @@ const LoginPage = () => {
               <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm backdrop-blur-sm">
                 Live Scheduling
               </span>
-              <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm backdrop-blur-sm">
+              <p className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm backdrop-blur-sm">
                 Expert Care
-              </span>
+              </p>
             </div>
           </div>
         </div>
